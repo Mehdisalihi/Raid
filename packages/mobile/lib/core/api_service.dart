@@ -298,3 +298,45 @@ class UserService {
   }
 }
 
+class WarehouseService {
+  static Future<List<dynamic>> getAll() async =>
+      (await ApiService.get('/warehouses')) as List;
+
+  static Future<dynamic> create(Map<String, dynamic> data) async {
+    final res = await ApiService.post('/warehouses', data);
+    DataSync.notify();
+    return res;
+  }
+
+  static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
+    final res = await ApiService.put('/warehouses/$id', data);
+    DataSync.notify();
+    return res;
+  }
+
+  static Future<void> delete(dynamic id) async {
+    await ApiService.delete('/warehouses/$id');
+    DataSync.notify();
+  }
+}
+
+class InventoryService {
+  static Future<List<dynamic>> getMovements() async =>
+      (await ApiService.get('/inventory/movements')) as List;
+
+  static Future<List<dynamic>> getByWarehouse(dynamic warehouseId) async =>
+      (await ApiService.get('/inventory/warehouses/$warehouseId')) as List;
+
+  static Future<dynamic> transfer(Map<String, dynamic> data) async {
+    final res = await ApiService.post('/inventory/transfer', data);
+    DataSync.notify();
+    return res;
+  }
+
+  static Future<dynamic> addStock(Map<String, dynamic> data) async {
+    final res = await ApiService.post('/inventory/add', data);
+    DataSync.notify();
+    return res;
+  }
+}
+

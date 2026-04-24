@@ -18,13 +18,15 @@ class _SalesScreenState extends State<SalesScreen> {
   List<dynamic> _sales = [];
   List<Map<String, dynamic>> _cart = [];
   String _search = '';
-  String? _customerName; // Default value will be set in initState or tr()
+  String? _customerName;
   bool _loading = true;
   bool _saving = false;
   bool _showCart = false;
   bool _isDebt = false;
   String _paymentMethod = 'cash';
   double _discount = 0;
+  List<dynamic> _warehouses = [];
+  String? _selectedWarehouseId;
   final _discountCtrl = TextEditingController(text: '0');
   int _tabIndex = 0; // 0: POS, 1: History
 
@@ -41,12 +43,18 @@ class _SalesScreenState extends State<SalesScreen> {
         SaleService.getAll(),
         ProductService.getAll(),
         CustomerService.getAll(),
+        WarehouseService.getAll(),
       ]);
       if (mounted) {
         setState(() {
           _sales = results[0];
           _products = results[1];
           _customers = results[2];
+          _warehouses = results[3];
+          if (_selectedWarehouseId == null && _warehouses.isNotEmpty) {
+            _selectedWarehouseId = _warehouses[0]['id'].toString();
+          }
+          _customerName ??= context.tr('cashCustomer');
         });
       }
     } catch (_) {}
@@ -168,13 +176,14 @@ class _SalesScreenState extends State<SalesScreen> {
     setState(() => _saving = true);
     try {
       await SaleService.create({
-        'customerName': _customerName,
+        'customerName': _customerName ?? context.tr('cashCustomer'),
         'cart': _cart,
         'totalAmount': _total,
         'discount': _discount,
         'finalAmount': _total - _discount,
         'paymentMethod': _paymentMethod,
         'isDebt': _isDebt,
+        'warehouseId': _selectedWarehouseId,
         'date': DateTime.now().toIso8601String().split('T')[0],
       });
       if (mounted) {
@@ -471,38 +480,70 @@ class _SalesScreenState extends State<SalesScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: InkWell(
-            onTap: _openCustomerPicker,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
+          child: Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: _openCustomerPicker,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.border),
                     ),
-                    child: const Icon(Icons.person_rounded,
-                        color: AppColors.primary, size: 18),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.person_rounded,
+                              color: AppColors.primary, size: 18),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            '${context.tr('customer')}: ${_customerName ?? context.tr('cashCustomer')}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                color: AppColors.text, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down_rounded,
+                            color: AppColors.textMuted),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: 12),
-                   Text(
-                    '${context.tr('customer')}: ${_customerName ?? context.tr('cashCustomer')}',
-                    style: const TextStyle(
-                        color: AppColors.text, fontWeight: FontWeight.w700),
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.textMuted),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedWarehouseId,
+                      isExpanded: true,
+                      icon: const Icon(Icons.warehouse_rounded, color: AppColors.primary, size: 18),
+                      items: _warehouses.map((w) => DropdownMenuItem(
+                        value: w['id'].toString(),
+                        child: Text(w['name'], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                      )).toList(),
+                      onChanged: (v) => setState(() => _selectedWarehouseId = v),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(child: _buildPOSList()),
@@ -904,8 +945,8 @@ class _SalesScreenState extends State<SalesScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('إجمالي الفاتورة',
-                  style: TextStyle(
+              Text(context.tr('totalInvoice'),
+                  style: const TextStyle(
                       color: AppColors.textMuted,
                       fontSize: 16,
                       fontWeight: FontWeight.w700)),
@@ -917,7 +958,7 @@ class _SalesScreenState extends State<SalesScreen> {
             ],
           ),
           const SizedBox(height: 24),
-          if (_customerName != 'عميل نقدي')
+          if (_customerName != context.tr('cashCustomer'))
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -928,13 +969,13 @@ class _SalesScreenState extends State<SalesScreen> {
                 ),
               ),
               child: SwitchListTile(
-                title: const Text('بيع آجل (دين)',
-                    style: TextStyle(
+                title: Text(context.tr('debtMethod'),
+                    style: const TextStyle(
                         color: AppColors.text,
                         fontWeight: FontWeight.bold,
                         fontSize: 15)),
-                subtitle: const Text('سيتم إضافة المبلغ لحساب العميل',
-                    style: TextStyle(color: AppColors.textMuted, fontSize: 11)),
+                subtitle: Text(context.tr('amountAddedToCustomer'),
+                    style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
                 value: _isDebt,
                 activeThumbColor: AppColors.warning,
                 onChanged: (v) => setState(() => _isDebt = v),
@@ -945,10 +986,10 @@ class _SalesScreenState extends State<SalesScreen> {
 
           // Payment Method Selector
           if (!_isDebt) ...[
-            const Align(
+            Align(
               alignment: Alignment.centerRight,
-              child: Text('طريقة الدفع',
-                  style: TextStyle(
+              child: Text(context.tr('paymentMethod'),
+                  style: const TextStyle(
                       color: AppColors.text,
                       fontWeight: FontWeight.bold,
                       fontSize: 15)),
@@ -959,12 +1000,12 @@ class _SalesScreenState extends State<SalesScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _paymentMethodItem('نقدية', 'cash', Icons.money_rounded),
+                  _paymentMethodItem(context.tr('cash'), 'cash', Icons.money_rounded),
                   _paymentMethodItem('Bankily', 'bankily',
                       Icons.account_balance_wallet_rounded),
                   _paymentMethodItem(
                       'Masrvi', 'masrvi', Icons.account_balance_rounded),
-                  _paymentMethodItem('سداد', 'sedad', Icons.payments_rounded),
+                  _paymentMethodItem(context.tr('sedad'), 'sedad', Icons.payments_rounded),
                   _paymentMethodItem(
                       'Bimbank', 'bimbank', Icons.account_balance_rounded),
                   _paymentMethodItem('Click', 'click', Icons.ads_click_rounded),
@@ -994,13 +1035,13 @@ class _SalesScreenState extends State<SalesScreen> {
                     width: 24,
                     child: CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2))
-                : const Row(
+                : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle_rounded),
-                      SizedBox(width: 12),
-                      Text('تأكيد وإتمام البيع',
-                          style: TextStyle(
+                      const Icon(Icons.check_circle_rounded),
+                      const SizedBox(width: 12),
+                      Text(context.tr('confirmSaleComplete'),
+                          style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w900)),
                     ],
                   ),

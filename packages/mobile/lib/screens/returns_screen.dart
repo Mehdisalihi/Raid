@@ -17,6 +17,8 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
   List<Map<String, dynamic>> _returnItems = [];
   bool _loading = true;
   bool _saving = false;
+  List<dynamic> _warehouses = [];
+  String? _selectedWarehouseId;
   int _tabIndex = 0; // 0: New Return, 1: History
 
   @override
@@ -30,11 +32,16 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
       final results = await Future.wait([
         SaleService.getAll(),
         ReturnService.getAll(),
+        WarehouseService.getAll(),
       ]);
       if (mounted) {
         setState(() {
           _sales = results[0];
           _returns = results[1];
+          _warehouses = results[2];
+          if (_selectedWarehouseId == null && _warehouses.isNotEmpty) {
+            _selectedWarehouseId = _warehouses[0]['id'].toString();
+          }
         });
       }
     } catch (_) {}
@@ -92,6 +99,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
                 })
             .toList(),
         'total': _totalReturn,
+        'warehouseId': _selectedWarehouseId,
         'date': DateTime.now().toIso8601String().split('T')[0],
       });
       if (mounted) {
@@ -189,8 +197,8 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
         ),
         child: Row(
           children: [
-            _tabItem('مرتجع جديد', 0),
-            _tabItem('سجل المرتجعات', 1),
+            _tabItem(context.tr('newReturn'), 0),
+            _tabItem(context.tr('returnHistory'), 1),
           ],
         ),
       ),
@@ -270,6 +278,29 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
   Widget _buildItemReturner() {
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedWarehouseId,
+                isExpanded: true,
+                hint: Text(context.tr('selectWarehouse')),
+                items: _warehouses.map((w) => DropdownMenuItem(
+                  value: w['id'].toString(),
+                  child: Text(w['name']),
+                )).toList(),
+                onChanged: (v) => setState(() => _selectedWarehouseId = v),
+              ),
+            ),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(

@@ -53,7 +53,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> loginGuest() async {
     final guestUser = {
       'id': 'guest',
-      'name': 'زائر',
+      'name': 'Guest',
       'email': 'guest@mohassibe.com',
       'role': 'guest'
     };

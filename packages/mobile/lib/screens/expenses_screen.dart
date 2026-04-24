@@ -129,8 +129,8 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('فشل حذف المصروف'),
+          SnackBar(
+              content: Text(context.tr('deleteExpenseFailed')),
               backgroundColor: AppColors.danger),
         );
       }
@@ -291,7 +291,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                   color: AppColors.danger, size: 18),
             ),
             title: Text(
-              e['description'] ?? 'بدون وصف',
+              e['description'] ?? context.tr('noDescription'),
               style: const TextStyle(
                   color: AppColors.text, fontWeight: FontWeight.w800),
             ),
@@ -299,7 +299,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 '${FormatUtils.formatDate(date)} | ${_categories.firstWhere((c) => c['id'] == e['category'], orElse: () => {
-                      'name': e['category'] ?? 'عام'
+                      'name': e['category'] ?? context.tr('general')
                     })['name']}',
                 style:
                     const TextStyle(color: AppColors.textLight, fontSize: 12),
@@ -343,7 +343,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_editing == null ? 'تسجيل مصروف' : 'تعديل مصروف',
+                Text(_editing == null ? context.tr('addExpense') : context.tr('editExpense'),
                     style: const TextStyle(
                         color: AppColors.text,
                         fontSize: 20,

@@ -19,6 +19,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   bool _showModal = false;
   bool _saving = false;
   Map<String, dynamic>? _editing;
+  List<dynamic> _warehouses = [];
+  String? _warehouseFilter; // null means ALL (Global)
+  String? _selectedWarehouseId; // For new product creation
 
   final _name = TextEditingController();
   final _barcode = TextEditingController();
@@ -60,13 +63,24 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   Future<void> _fetch() async {
     try {
-      final data = await ProductService.getAll();
-      if (mounted) setState(() => _products = data);
+      final results = await Future.wait([
+        ApiService.get('/products${_warehouseFilter != null ? '?warehouseId=$_warehouseFilter' : ''}'),
+        WarehouseService.getAll(),
+      ]);
+      if (mounted) {
+        setState(() {
+          _products = results[0] as List;
+          _warehouses = results[1] as List;
+          if (_selectedWarehouseId == null && _warehouses.isNotEmpty) {
+            _selectedWarehouseId = _warehouses[0]['id'].toString();
+          }
+        });
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ خطأ في تحميل البيانات: $e'),
+            content: Text('${context.tr('errorLoadingData')}: $e'),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -104,7 +118,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Future<void> _save() async {
     if (_name.text.trim().isEmpty) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('يرجى إدخال اسم المنتج')));
+          .showSnackBar(SnackBar(content: Text(context.tr('productNameRequired'))));
       return;
     }
     setState(() => _saving = true);
@@ -115,6 +129,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       'sellPrice': double.tryParse(_sellPrice.text) ?? 0,
       'stockQty': int.tryParse(_stockQty.text) ?? 0,
       'minStockAlert': int.tryParse(_minAlert.text) ?? 5,
+      if (_editing == null) 'warehouseId': _selectedWarehouseId,
     };
     try {
       if (_editing != null) {
@@ -127,8 +142,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ فشل في حفظ بيانات المنتج'),
+          SnackBar(
+            content: Text(context.tr('saveProductFailed')),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -143,22 +158,22 @@ class _ProductsScreenState extends State<ProductsScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.surface,
-        title: const Text(
-          'حذف المنتج',
-          style: TextStyle(color: AppColors.text),
+        title: Text(
+          context.tr('deleteProduct'),
+          style: const TextStyle(color: AppColors.text),
         ),
-        content: const Text(
-          'هل أنت متأكد من حذف هذا المنتج نهائياً؟',
-          style: TextStyle(color: AppColors.textMuted),
+        content: Text(
+          context.tr('confirmDeleteProduct'),
+          style: const TextStyle(color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('إلغاء'),
+            child: Text(context.tr('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('حذف', style: TextStyle(color: AppColors.danger)),
+            child: Text(context.tr('delete'), style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -170,8 +185,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('فشل الحذف. المنتج مرتبط بفواتير.'),
+          SnackBar(
+            content: Text(context.tr('deleteProductFailedLinked')),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -200,11 +215,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
-                  _buildHeader(),
-                  _buildStatsRow(),
-                  _buildSearchBar(),
-                  Expanded(child: _buildProductList()),
-                ],
+                   _buildHeader(),
+                   _buildWarehouseFilter(),
+                   _buildStatsRow(),
+                   _buildSearchBar(),
+                   Expanded(child: _buildProductList()),
+                 ],
               ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -268,6 +284,54 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
+  Widget _buildWarehouseFilter() {
+    return Container(
+      height: 40,
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          _filterChip(null, context.tr('allWarehouses')),
+          ..._warehouses.map((w) => _filterChip(w['id'].toString(), w['name'])),
+        ],
+      ),
+    );
+  }
+
+  Widget _filterChip(String? id, String label) {
+    final active = _warehouseFilter == id;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _warehouseFilter = id;
+          _loading = true;
+        });
+        _fetch();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(left: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: active ? AppColors.primary : AppColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: active ? AppColors.primary : AppColors.border),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: active ? Colors.white : AppColors.textMuted,
+              fontWeight: active ? FontWeight.bold : FontWeight.normal,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatsRow() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -275,7 +339,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         children: [
           Expanded(
             child: _statCard(
-              'قيمة المخزون',
+              context.tr('inventoryValue'),
               FormatUtils.formatNumber(_totalValue),
               'MRU',
               AppColors.success,
@@ -285,9 +349,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: _statCard(
-              'نواقص المخزون',
+              context.tr('stockShortage'),
               FormatUtils.formatNumber(_lowStockCount),
-              'تنبيه',
+              context.tr('alert'),
               AppColors.danger,
               Icons.warning_amber_rounded,
             ),
@@ -475,7 +539,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
             ),
             title: Text(
-              p['name'] ?? '',
+              p['name'] ?? context.tr('guest'),
               style: const TextStyle(
                   color: AppColors.text,
                   fontWeight: FontWeight.w800,
@@ -494,7 +558,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       ),
                       const SizedBox(width: 8),
                       _miniLabel(
-                        'المخزون: ${FormatUtils.formatQuantity(p['stockQty'])}',
+                        '${context.tr('stock')}: ${FormatUtils.formatQuantity(p['stockQty'])}',
                         isLow ? AppColors.danger : AppColors.success,
                       ),
                     ],
@@ -505,7 +569,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   children: [
                     TextButton.icon(
                       icon: const Icon(Icons.edit_rounded, size: 16),
-                      label: const Text('تعديل', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      label: Text(context.tr('edit'), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary, 
                         padding: const EdgeInsets.symmetric(horizontal: 8), 
@@ -518,7 +582,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     const SizedBox(width: 8),
                     TextButton.icon(
                       icon: const Icon(Icons.delete_outline_rounded, size: 16),
-                      label: const Text('حذف', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      label: Text(context.tr('delete'), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.danger, 
                         padding: const EdgeInsets.symmetric(horizontal: 8), 
@@ -590,8 +654,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               children: [
                 Text(
                   _editing == null
-                      ? 'إضافة منتج جديد'
-                      : 'تعديل ${_editing!['name'] ?? ''}',
+                      ? context.tr('addProduct')
+                      : '${context.tr('edit')} ${_editing!['name'] ?? ''}',
                   style: const TextStyle(
                       color: AppColors.text,
                       fontSize: 20,
@@ -624,10 +688,38 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         context.tr('availableQty'), _stockQty, Icons.inventory_rounded, true)),
                 const SizedBox(width: 16),
                 Expanded(
-                    child: _inputField('Min', _minAlert,
+                    child: _inputField(context.tr('minAlert'), _minAlert,
                         Icons.notifications_active_rounded, true)),
               ],
             ),
+            if (_editing == null) ...[
+              const SizedBox(height: 16),
+              Text(context.tr('initialStockDeposit'),
+                  style: const TextStyle(
+                      color: AppColors.textLight,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.bg.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedWarehouseId,
+                    isExpanded: true,
+                    items: _warehouses.map((w) => DropdownMenuItem(
+                      value: w['id'].toString(),
+                      child: Text(w['name']),
+                    )).toList(),
+                    onChanged: (v) => setState(() => _selectedWarehouseId = v),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 32),
             _saving
                 ? const Center(child: CircularProgressIndicator())

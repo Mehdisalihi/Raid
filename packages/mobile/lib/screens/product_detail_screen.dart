@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
+import '../core/app_localizations.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -39,6 +40,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ReturnService.getAll(),
       ]);
 
+      if (!mounted) return;
+      final loc = AppLocalizations.of(context);
+
       final allSales = results[0];
       final allPurchases = results[1];
       final allReturns = results[2];
@@ -53,7 +57,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             moves.add({
               'createdAt': s['createdAt'],
               'type': 'sale',
-              'label': 'بيع - فاتورة #${FormatUtils.toLatinNumerals((s['invoiceNo'] ?? s['id']).toString())}',
+              'label': '${loc.tr('saleInvoice')} #${FormatUtils.toLatinNumerals((s['invoiceNo'] ?? s['id']).toString())}',
               'qty': -(item['qty'] ?? item['quantity'] ?? 0),
               'color': AppColors.danger,
             });
@@ -68,7 +72,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             moves.add({
               'createdAt': p['createdAt'],
               'type': 'purchase',
-              'label': 'شراء من مورد',
+              'label': loc.tr('buyFromSupplier'),
               'qty': item['qty'] ?? item['quantity'] ?? 0,
               'color': AppColors.success,
             });
@@ -83,7 +87,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             moves.add({
               'createdAt': r['createdAt'],
               'type': 'return',
-              'label': 'مرتجع مبيعات',
+              'label': loc.tr('returnSale'),
               'qty': item['qty'] ?? item['quantity'] ?? 0,
               'color': AppColors.warning,
             });
@@ -112,9 +116,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('تفاصيل المنتج',
+        title: Text(context.tr('productDetail'),
             style:
-                TextStyle(color: AppColors.text, fontWeight: FontWeight.w900)),
+                const TextStyle(color: AppColors.text, fontWeight: FontWeight.w900)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.text),
@@ -143,7 +147,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(height: 32),
             _buildSummaryStats(),
             const SizedBox(height: 24),
-            _buildSectionTitle('سجل الحركات (المخزون)'),
+            _buildSectionTitle(context.tr('stockLog')),
             _loading
                 ? const CircularProgressIndicator()
                 : _buildMovementsList(),
@@ -178,7 +182,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 color: AppColors.text,
                 fontSize: 24,
                 fontWeight: FontWeight.w900)),
-        Text(_product['barcode']?.toString() ?? 'بدون باركود',
+        Text(_product['barcode']?.toString() ?? context.tr('noBarcode'),
             style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
       ],
     );
@@ -187,10 +191,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget _buildSummaryStats() {
     return Row(
       children: [
-        _statBox('المخزون', FormatUtils.toLatinNumerals((_product['stockQty'] ?? 0).toString()),
+        _statBox(context.tr('stock'), FormatUtils.toLatinNumerals((_product['stockQty'] ?? 0).toString()),
             AppColors.secondary),
         const SizedBox(width: 16),
-        _statBox('سعر البيع', '${FormatUtils.toLatinNumerals((_product['sellPrice'] ?? 0).toString())} MRU',
+        _statBox(context.tr('sellPrice'), '${FormatUtils.toLatinNumerals((_product['sellPrice'] ?? 0).toString())} MRU',
             AppColors.primary),
       ],
     );
@@ -248,8 +252,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Widget _buildMovementsList() {
     if (_movements.isEmpty) {
-      return const Text('لا توجد حركات مسجلة',
-          style: TextStyle(color: AppColors.textMuted));
+      return Text(context.tr('noMovements'),
+          style: const TextStyle(color: AppColors.textMuted));
     }
     return Column(
       children: _movements
@@ -308,7 +312,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _saveEdit() async {
     if (_name.text.trim().isEmpty) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('يرجى إدخال اسم المنتج')));
+          .showSnackBar(SnackBar(content: Text(context.tr('productNameRequired'))));
       return;
     }
     setState(() => _saving = true);
@@ -333,8 +337,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ فشل في حفظ بيانات المنتج'),
+          SnackBar(
+            content: Text(context.tr('saveProductFailed')),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -349,22 +353,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.surface,
-        title: const Text(
-          'حذف المنتج',
-          style: TextStyle(color: AppColors.text),
+        title: Text(
+          context.tr('deleteProduct'),
+          style: const TextStyle(color: AppColors.text),
         ),
-        content: const Text(
-          'هل أنت متأكد من حذف هذا المنتج نهائياً؟',
-          style: TextStyle(color: AppColors.textMuted),
+        content: Text(
+          context.tr('confirmDeleteProduct'),
+          style: const TextStyle(color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('إلغاء'),
+            child: Text(context.tr('cancel')),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('حذف', style: TextStyle(color: AppColors.danger)),
+            onPressed: () { if (mounted) Navigator.pop(context, true); },
+            child: Text(context.tr('delete'), style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -376,8 +380,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('فشل الحذف. المنتج مرتبط بفواتير.'),
+          SnackBar(
+            content: Text(context.tr('deleteProductFailedLinked')),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -405,7 +409,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'تعديل ${_product['name'] ?? ''}',
+                      '${context.tr('edit')} ${_product['name'] ?? ''}',
                       style: const TextStyle(
                           color: AppColors.text,
                           fontSize: 20,
@@ -418,27 +422,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ],
                 ),
                 const Divider(color: AppColors.border, height: 32),
-                _inputField('اسم المنتج', _name, Icons.label_rounded),
-                _inputField('كود المنتج', _barcode, Icons.qr_code_rounded),
+                _inputField(context.tr('productName'), _name, Icons.label_rounded),
+                _inputField(context.tr('productCode'), _barcode, Icons.qr_code_rounded),
                 Row(
                   children: [
                     Expanded(
                         child: _inputField(
-                            'سعر الشراء', _buyPrice, Icons.download_rounded, true)),
+                            context.tr('purchasePrice'), _buyPrice, Icons.download_rounded, true)),
                     const SizedBox(width: 16),
                     Expanded(
                         child: _inputField(
-                            'سعر البيع', _sellPrice, Icons.sell_rounded, true)),
+                            context.tr('sellPrice'), _sellPrice, Icons.sell_rounded, true)),
                   ],
                 ),
                 Row(
                   children: [
                     Expanded(
                         child: _inputField(
-                            'الكمية', _stockQty, Icons.inventory_rounded, true)),
+                            context.tr('quantity'), _stockQty, Icons.inventory_rounded, true)),
                     const SizedBox(width: 16),
                     Expanded(
-                        child: _inputField('الحد الأدنى', _minAlert,
+                        child: _inputField(context.tr('minAlert'), _minAlert,
                             Icons.notifications_active_rounded, true)),
                   ],
                 ),
@@ -460,9 +464,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               borderRadius: BorderRadius.circular(16)),
                           elevation: 5,
                         ),
-                        child: const Text(
-                          'تحديث',
-                          style: TextStyle(
+                        child: Text(
+                          context.tr('update'),
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),

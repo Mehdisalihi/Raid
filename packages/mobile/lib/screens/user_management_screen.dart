@@ -322,7 +322,7 @@ class _UserFormState extends State<UserForm> {
         fillColor: Colors.white.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       ),
-      validator: (v) => v!.isEmpty && widget.user == null ? 'Veuillez remplir ce champ' : null,
+      validator: (v) => v!.isEmpty && widget.user == null ? context.tr('fieldRequired') : null,
     );
   }
 

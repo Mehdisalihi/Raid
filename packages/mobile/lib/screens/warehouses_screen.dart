@@ -3,25 +3,24 @@ import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
-import 'customer_statement_screen.dart';
 
-class CustomersScreen extends StatefulWidget {
-  const CustomersScreen({super.key});
+class WarehousesScreen extends StatefulWidget {
+  const WarehousesScreen({super.key});
   @override
-  State<CustomersScreen> createState() => _CustomersScreenState();
+  State<WarehousesScreen> createState() => _WarehousesScreenState();
 }
 
-class _CustomersScreenState extends State<CustomersScreen> {
-  List<dynamic> _customers = [];
+class _WarehousesScreenState extends State<WarehousesScreen> {
+  List<dynamic> _warehouses = [];
   bool _loading = true;
   String _search = '';
   bool _showModal = false;
   bool _saving = false;
   Map<String, dynamic>? _editing;
 
-  final _nameCtrl = TextEditingController();
-  final _phoneCtrl = TextEditingController();
-  final _emailCtrl = TextEditingController();
+  final _name = TextEditingController();
+  final _location = TextEditingController();
+  final _manager = TextEditingController();
 
   @override
   void initState() {
@@ -31,49 +30,49 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
   Future<void> _fetch() async {
     try {
-      final data = await CustomerService.getAll();
-      if (mounted) setState(() => _customers = data);
+      final data = await WarehouseService.getAll();
+      if (mounted) setState(() => _warehouses = data);
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
 
-  List<dynamic> get _filtered => _customers.where((c) {
-        final s = _search.toLowerCase();
-        return (c['name'] ?? '').toLowerCase().contains(s) ||
-            (c['phone'] ?? '').contains(s);
+  List<dynamic> get _filtered => _warehouses.where((w) {
+        final q = _search.toLowerCase();
+        return (w['name'] ?? '').toLowerCase().contains(q) ||
+            (w['location'] ?? '').toLowerCase().contains(q);
       }).toList();
 
-  void _openModal([Map<String, dynamic>? customer]) {
-    _editing = customer;
-    if (customer != null) {
-      _nameCtrl.text = customer['name']?.toString() ?? '';
-      _phoneCtrl.text = customer['phone']?.toString() ?? '';
-      _emailCtrl.text = customer['email']?.toString() ?? '';
+  void _openModal([Map<String, dynamic>? warehouse]) {
+    _editing = warehouse;
+    if (warehouse != null) {
+      _name.text = warehouse['name']?.toString() ?? '';
+      _location.text = warehouse['location']?.toString() ?? '';
+      _manager.text = warehouse['manager']?.toString() ?? '';
     } else {
-      _nameCtrl.clear();
-      _phoneCtrl.clear();
-      _emailCtrl.clear();
+      _name.clear();
+      _location.clear();
+      _manager.clear();
     }
     setState(() => _showModal = true);
   }
 
   Future<void> _save() async {
-    if (_nameCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(context.tr('fillRequired'))));
+    if (_name.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.tr('warehouseNameRequired'))));
       return;
     }
     setState(() => _saving = true);
     final body = {
-      'name': _nameCtrl.text.trim(),
-      'phone': _phoneCtrl.text.trim(),
-      'email': _emailCtrl.text.trim(),
+      'name': _name.text.trim(),
+      'location': _location.text.trim(),
+      'manager': _manager.text.trim(),
     };
     try {
       if (_editing != null) {
-        await CustomerService.update(_editing!['id'], body);
+        await WarehouseService.update(_editing!['id'], body);
       } else {
-        await CustomerService.create(body);
+        await WarehouseService.create(body);
       }
       setState(() => _showModal = false);
       _fetch();
@@ -81,7 +80,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.tr('userError')),
+            content: Text(context.tr('saveWarehouseFailed')),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -96,33 +95,34 @@ class _CustomersScreenState extends State<CustomersScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.surface,
-        title:
-             Text(context.tr('delete'), style: const TextStyle(color: AppColors.text)),
-        content:  Text(
-          context.tr('confirmDelete'),
+        title: Text(context.tr('deleteWarehouseTitle'),
+            style: const TextStyle(color: AppColors.text)),
+        content: Text(
+          context.tr('deleteWarehouseConfirm'),
           style: const TextStyle(color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child:  Text(context.tr('cancel')),
+            child: Text(context.tr('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child:  Text(context.tr('delete'), style: const TextStyle(color: AppColors.danger)),
+            child: Text(context.tr('delete'),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
     );
     if (ok != true) return;
     try {
-      await CustomerService.delete(id);
+      await WarehouseService.delete(id);
       _fetch();
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.tr('userError')),
+            content: Text(context.tr('deleteWarehouseFailed')),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -142,30 +142,30 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   _buildHeader(),
                   _buildStatsRow(),
                   _buildSearchBar(),
-                  Expanded(child: _buildCustomerList()),
+                  Expanded(child: _buildWarehouseList()),
                 ],
               ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openModal(),
         elevation: 10,
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.secondary,
         child: Container(
           width: 60,
           height: 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: AppColors.primaryGradient,
+            gradient: AppColors.accentGradient,
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.4),
+                color: AppColors.secondary.withValues(alpha: 0.4),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               )
             ],
           ),
-          child: const Icon(Icons.person_add_rounded,
-              color: Colors.white, size: 28),
+          child:
+              const Icon(Icons.add_business_rounded, color: Colors.white, size: 28),
         ),
       ),
       bottomSheet: _showModal ? _buildAddEditModal() : null,
@@ -182,14 +182,14 @@ class _CustomersScreenState extends State<CustomersScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                context.tr('customers'),
+                context.tr('warehouses'),
                 style: const TextStyle(
                     color: AppColors.text,
                     fontSize: 24,
                     fontWeight: FontWeight.w900),
               ),
               Text(
-                context.tr('manageCustomers'),
+                context.tr('manageWarehouses'),
                 style: const TextStyle(color: AppColors.textLight, fontSize: 13),
               ),
             ],
@@ -197,11 +197,11 @@ class _CustomersScreenState extends State<CustomersScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Icon(Icons.people_alt_rounded,
-                color: AppColors.primary, size: 28),
+            child: const Icon(Icons.warehouse_rounded,
+                color: AppColors.secondary, size: 28),
           ),
         ],
       ),
@@ -215,26 +215,11 @@ class _CustomersScreenState extends State<CustomersScreen> {
         children: [
           Expanded(
             child: _statCard(
-              context.tr('customers'),
-              FormatUtils.formatNumber(_customers.length),
-              context.tr('user'),
-              AppColors.primary,
-              Icons.group_rounded,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _statCard(
-              context.tr('balanceLabel'),
-              FormatUtils.formatNumber(_customers.fold(
-                      0.0,
-                      (sum, c) =>
-                          sum +
-                          (double.tryParse(c['balance']?.toString() ?? '0') ??
-                              0))),
-              'MRU',
+              context.tr('totalWarehousesCount'),
+              FormatUtils.formatNumber(_warehouses.length),
+              context.tr('warehouseUnit'),
               AppColors.secondary,
-              Icons.account_balance_wallet_rounded,
+              Icons.home_work_rounded,
             ),
           ),
         ],
@@ -302,7 +287,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
           hintText: context.tr('search'),
           hintStyle: const TextStyle(color: AppColors.textLight),
           prefixIcon:
-              const Icon(Icons.search_rounded, color: AppColors.primary),
+              const Icon(Icons.search_rounded, color: AppColors.secondary),
           filled: true,
           fillColor: AppColors.surface,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -312,24 +297,24 @@ class _CustomersScreenState extends State<CustomersScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            borderSide: const BorderSide(color: AppColors.secondary, width: 2),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCustomerList() {
+  Widget _buildWarehouseList() {
     if (_filtered.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_outline_rounded,
+            Icon(Icons.home_work_outlined,
                 size: 80, color: AppColors.textLight.withValues(alpha: 0.3)),
             const SizedBox(height: 16),
-            const Text('-',
-                style: TextStyle(color: AppColors.textLight)),
+            Text(context.tr('noWarehousesFound'),
+                style: const TextStyle(color: AppColors.textLight)),
           ],
         ),
       );
@@ -339,8 +324,8 @@ class _CustomersScreenState extends State<CustomersScreen> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
       itemCount: _filtered.length,
       itemBuilder: (context, index) {
-        final c = _filtered[index];
-        final balance = double.tryParse(c['balance']?.toString() ?? '0') ?? 0;
+        final w = _filtered[index];
+        final itemCount = w['_count']?['Inventory'] ?? 0;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -351,20 +336,14 @@ class _CustomersScreenState extends State<CustomersScreen> {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
-            onTap: () => _openModal(c),
+            onTap: () => _openModal(w),
             leading: CircleAvatar(
               radius: 28,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              child: Text(
-                (c['name']?[0] ?? '?').toUpperCase(),
-                style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
-              ),
+              backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
+              child: const Icon(Icons.warehouse_rounded, color: AppColors.secondary),
             ),
             title: Text(
-              c['name'] ?? '',
+              w['name'] ?? '',
               style: const TextStyle(
                   color: AppColors.text,
                   fontWeight: FontWeight.w800,
@@ -372,52 +351,48 @@ class _CustomersScreenState extends State<CustomersScreen> {
             ),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.phone_rounded,
-                      size: 14, color: AppColors.textLight),
-                  const SizedBox(width: 4),
-                  Text(c['phone'] ?? context.tr('noPhone'),
-                      style: const TextStyle(
-                          color: AppColors.textLight, fontSize: 13)),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on_rounded,
+                          size: 14, color: AppColors.textLight),
+                      const SizedBox(width: 4),
+                      Text(w['location'] ?? '',
+                          style: const TextStyle(
+                              color: AppColors.textLight, fontSize: 13)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.person_rounded,
+                          size: 14, color: AppColors.textLight),
+                      const SizedBox(width: 4),
+                      Text(w['manager'] ?? '',
+                          style: const TextStyle(
+                              color: AppColors.textLight, fontSize: 13)),
+                    ],
+                  ),
                 ],
               ),
             ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      FormatUtils.formatCurrency(balance),
-                      style: TextStyle(
-                        color: balance > 0
-                            ? AppColors.secondary
-                            : AppColors.success,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 15,
-                      ),
-                    ),
-                     Text(context.tr('balanceLabel'),
-                        style: const TextStyle(
-                            color: AppColors.textLight, fontSize: 10)),
-                  ],
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          CustomerStatementScreen(initialName: c['name']),
-                    ),
+                Text(
+                  FormatUtils.formatNumber(itemCount),
+                  style: const TextStyle(
+                    color: AppColors.secondary,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
                   ),
-                  icon: const Icon(Icons.description_rounded,
-                      color: AppColors.primary),
-                  tooltip: context.tr('statement'),
                 ),
+                Text(context.tr('items'),
+                    style: const TextStyle(
+                        color: AppColors.textLight, fontSize: 10)),
               ],
             ),
           ),
@@ -444,7 +419,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _editing == null ? context.tr('addCustomer') : context.tr('editCustomer'),
+                  _editing == null
+                      ? context.tr('addNewWarehouse')
+                      : context.tr('editWarehouse'),
                   style: const TextStyle(
                       color: AppColors.text,
                       fontSize: 20,
@@ -457,16 +434,16 @@ class _CustomersScreenState extends State<CustomersScreen> {
               ],
             ),
             const Divider(color: AppColors.border, height: 32),
-            _inputField(context.tr('name'), _nameCtrl, Icons.person_rounded),
-            _inputField(context.tr('phone'), _phoneCtrl, Icons.phone_rounded, true),
-            _inputField(context.tr('email'), _emailCtrl, Icons.email_rounded),
+            _inputField(context.tr('warehouseName'), _name, Icons.warehouse_rounded),
+            _inputField(context.tr('location'), _location, Icons.location_on_rounded),
+            _inputField(context.tr('manager'), _manager, Icons.person_rounded),
             const SizedBox(height: 32),
             _saving
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _save,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.secondary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       shape: RoundedRectangleBorder(
@@ -495,8 +472,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
     );
   }
 
-  Widget _inputField(String label, TextEditingController ctrl, IconData icon,
-      [bool isNum = false]) {
+  Widget _inputField(String label, TextEditingController ctrl, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -510,11 +486,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
           const SizedBox(height: 8),
           TextField(
             controller: ctrl,
-            keyboardType: isNum ? TextInputType.phone : TextInputType.text,
             style: const TextStyle(color: AppColors.text),
             decoration: InputDecoration(
               prefixIcon:
-                  Icon(icon, color: AppColors.primary.withValues(alpha: 0.6)),
+                  Icon(icon, color: AppColors.secondary.withValues(alpha: 0.6)),
               filled: true,
               fillColor: AppColors.bg.withValues(alpha: 0.5),
               enabledBorder: OutlineInputBorder(
@@ -523,7 +498,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.primary),
+                borderSide: const BorderSide(color: AppColors.secondary),
               ),
             ),
           ),
@@ -534,9 +509,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
-    _phoneCtrl.dispose();
-    _emailCtrl.dispose();
+    _name.dispose();
+    _location.dispose();
+    _manager.dispose();
     super.dispose();
   }
 }

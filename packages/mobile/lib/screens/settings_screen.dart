@@ -8,6 +8,7 @@ import '../core/app_localizations.dart';
 import '../core/format_utils.dart';
 import '../core/api_service.dart';
 import 'user_management_screen.dart';
+import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -89,8 +90,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             context,
             icon: Icons.color_lens_rounded,
             iconColor: themeProvider.primaryColor,
-            title: localeProvider.isRTL ? 'اللون الأساسي' : 'Couleur principale',
-            subtitle: localeProvider.isRTL ? 'تخصيص هوية التطبيق' : 'Personnaliser l\'identité',
+            title: context.tr('primaryColor'),
+            subtitle: context.tr('customizeIdentity'),
             onTap: () => _showColorDialog(context, themeProvider),
           ),
           _buildSettingItem(
@@ -98,7 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.language_rounded,
             iconColor: AppColors.primary,
             title: context.tr('language'),
-            subtitle: localeProvider.isRTL ? 'العربية' : 'Français',
+            subtitle: localeProvider.isRTL ? context.tr('arabic') : context.tr('french'),
             onTap: () => _showLanguageDialog(context, localeProvider),
           ),
           if (user?['role'] == 'ADMIN') ...[
@@ -109,9 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: Icons.manage_accounts_rounded,
               iconColor: AppColors.secondary,
               title: context.tr('userManagement'),
-              subtitle: localeProvider.isRTL
-                  ? 'إدارة المستخدمين والصلاحيات'
-                  : 'Gérer les utilisateurs et permissions',
+              subtitle: context.tr('userPermissionsMgmt'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -127,7 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.info_outline_rounded,
             iconColor: AppColors.secondary,
             title: context.tr('systemInfo'),
-            subtitle: 'Raid v${FormatUtils.toLatinNumerals('1.0.0')}',
+            subtitle: '${context.tr('appName')} v${FormatUtils.toLatinNumerals('1.0.0')}',
             onTap: () {},
           ),
           const SizedBox(height: 40),
@@ -490,13 +489,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildFooter(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final locale = context.watch<LocaleProvider>().locale.languageCode;
+    final now = DateTime.now();
+    final pattern = locale == 'ar' ? 'EEEE، d MMMM y' : 'EEEE d MMMM y';
+    final dateStr = FormatUtils.toLatinNumerals(DateFormat(pattern, locale).format(now));
     return Center(
       child: Column(
         children: [
-          Text('Raid Cloud v${FormatUtils.toLatinNumerals('1.0.0')}',
+          Text('${context.tr('appName')} v${FormatUtils.toLatinNumerals('1.0.0')}',
               style: TextStyle(color: textTheme.bodySmall?.color, fontSize: 11)),
           const SizedBox(height: 4),
-          Text('© ${FormatUtils.toLatinNumerals('2026')}',
+          Text(dateStr,
               style: TextStyle(color: textTheme.bodySmall?.color, fontSize: 10)),
         ],
       ),

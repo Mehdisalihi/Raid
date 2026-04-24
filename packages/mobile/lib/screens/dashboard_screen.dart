@@ -68,7 +68,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     final textTheme = theme.textTheme;
 
     // Force Latin numerals for date (1, 2, 3...)
-    final dateStr = FormatUtils.toLatinNumerals(DateFormat('EEEE، d MMMM y', locale).format(now));
+    final pattern = locale == 'ar' ? 'EEEE، d MMMM y' : 'EEEE d MMMM y';
+    final dateStr = FormatUtils.toLatinNumerals(DateFormat(pattern, locale).format(now));
 
     if (_loading) {
       return const Center(
@@ -93,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             Row(
               children: [
                 Text(
-                  user?['storeName'] ?? 'رائد', // Use dynamic store name from database
+                  user?['storeName'] ?? context.tr('appName'), // Use dynamic store name from database
                   style: const TextStyle(
                     color: AppColors.text,
                     fontSize: 24,
@@ -117,13 +118,16 @@ class _DashboardScreenState extends State<DashboardScreen>
               Row(
                 children: [
                   Expanded(
-                    child: _buildStatCard(
-                      context,
-                      Icons.inventory_2_rounded,
-                      context.tr('inventory'),
-                      FormatUtils.formatNumber(_stats?['products']),
-                      context.tr('totalProducts'),
-                      AppColors.primary,
+                    child: InkWell(
+                      onTap: () => widget.onNavigate(13),
+                      child: _buildStatCard(
+                        context,
+                        Icons.inventory_2_rounded,
+                        context.tr('inventory'),
+                        FormatUtils.formatNumber(_stats?['products']),
+                        context.tr('totalProducts'),
+                        AppColors.primary,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -156,6 +160,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.shopping_bag_rounded, context.tr('totalPurchases'),
                           AppColors.success, () => widget.onNavigate(3)),
+                    if (canAccess('canManageInventory'))
+                      _buildAction(context, Icons.inventory_rounded, context.tr('inventory'),
+                          AppColors.secondary, () => widget.onNavigate(13)),
                     if (canAccess('canAccessSales'))
                       _buildAction(context, Icons.assignment_return_rounded, context.tr('returns'),
                           AppColors.danger, () => widget.onNavigate(4)),
@@ -182,6 +189,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     if (canAccess('canManageExpenses'))
                       _buildAction(context, Icons.payments_rounded, context.tr('expenses'),
                           const Color(0xFF10B981), () => widget.onNavigate(11)),
+                    if (canAccess('canManageInventory'))
+                      _buildAction(context, Icons.warehouse_rounded, context.tr('warehouses'),
+                          const Color(0xFF6366F1), () => widget.onNavigate(14)),
                   ]),
                 ],
               ),
@@ -490,7 +500,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         color: textTheme.bodyLarge?.color,
                         fontSize: 14,
                         fontWeight: FontWeight.bold)),
-                Text('-', // Removed static "منذ قليل"
+                Text(context.tr('justNow'),
                     style: TextStyle(
                         color: textTheme.bodySmall?.color, fontSize: 11)),
               ],

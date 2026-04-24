@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
 import '../core/theme.dart';
+import '../core/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,7 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _emailCtrl.text.isEmpty ||
         _passwordCtrl.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى إدخال جميع البيانات المطلوبة')),
+        SnackBar(content: Text(context.tr('fillRequired'))),
       );
       return;
     }
@@ -40,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ: ${e.toString()}'),
+            content: Text('${context.tr('error')}: ${e.toString()}'),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -102,9 +103,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'إنشاء حساب جديد',
-                        style: TextStyle(
+                      Text(
+                        context.tr('newAccount'),
+                        style: const TextStyle(
                           color: AppColors.text,
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
@@ -112,9 +113,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'انضم إلينا لإدارة أعمالك بلمسة فخامة',
-                        style: TextStyle(
+                      Text(
+                        context.tr('joinUs'),
+                        style: const TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -123,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 48),
 
                       // Name
-                      _buildLabel('الاسم الكامل'),
+                      _buildLabel(context.tr('fullNameLabel')),
                       const SizedBox(height: 10),
                       TextField(
                         controller: _nameCtrl,
@@ -132,13 +133,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                         decoration: const InputDecoration(
-                          hintText: 'ياسر الشريف',
+                          hintText: '',
                         ),
                       ),
                       const SizedBox(height: 24),
 
                       // Email
-                      _buildLabel('البريد الإلكتروني'),
+                      _buildLabel(context.tr('email')),
                       const SizedBox(height: 10),
                       TextField(
                         controller: _emailCtrl,
@@ -155,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 24),
 
                       // Password
-                      _buildLabel('كلمة المرور'),
+                      _buildLabel(context.tr('passwordLabel')),
                       const SizedBox(height: 10),
                       TextField(
                         controller: _passwordCtrl,
@@ -212,9 +213,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     strokeWidth: 2.5,
                                   ),
                                 )
-                              : const Text(
-                                  'تسجيل الحساب',
-                                  style: TextStyle(
+                              : Text(
+                                  context.tr('registerButton'),
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 16),
                                 ),
@@ -223,9 +224,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 24),
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'لديك حساب بالفعل؟ سجل دخولك',
-                          style: TextStyle(
+                        child: Text(
+                          context.tr('hasAccount'),
+                          style: const TextStyle(
                             color: AppColors.textMuted,
                             fontSize: 13,
                           ),

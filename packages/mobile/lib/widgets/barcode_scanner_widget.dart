@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../core/theme.dart';
+import '../core/app_localizations.dart';
 
 class BarcodeScannerWidget extends StatefulWidget {
   final Function(String) onScan;
@@ -62,9 +63,9 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                const Text(
-                  'امسح الباركود',
-                  style: TextStyle(
+                Text(
+                  context.tr('scanBarcode'),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -99,10 +100,10 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
-              child: const Text(
-                'ضع الباركود داخل الإطار للمسح التلقائي',
+              child: Text(
+                context.tr('placeBarcodeInsideFrame'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 13),
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
               ),
             ),
           ),

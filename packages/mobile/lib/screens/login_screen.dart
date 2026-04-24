@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
 import '../core/theme.dart';
+import '../core/app_localizations.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,8 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (_emailCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('يرجى إدخال البريد الإلكتروني وكلمة المرور')),
+        SnackBar(
+            content: Text(context.tr('emailHint'))),
       );
       return;
     }
@@ -34,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: ${e.toString()}'),
+              content: Text('${context.tr('error')}: ${e.toString()}'),
               backgroundColor: AppColors.danger),
         );
       }
@@ -51,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: ${e.toString()}'),
+              content: Text('${context.tr('error')}: ${e.toString()}'),
               backgroundColor: AppColors.danger),
         );
       }
@@ -96,10 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       _buildLogo(),
                       const SizedBox(height: 32),
-                      _buildTextField(_emailCtrl, 'البريد الإلكتروني',
+                      _buildTextField(_emailCtrl, context.tr('email'),
                           Icons.email_outlined, false),
                       const SizedBox(height: 16),
-                      _buildTextField(_passwordCtrl, 'كلمة المرور',
+                      _buildTextField(_passwordCtrl, context.tr('password'),
                           Icons.lock_outline, true),
                       const SizedBox(height: 32),
                       _buildLoginButton(),
@@ -134,13 +135,13 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.white, size: 40),
         ),
         const SizedBox(height: 16),
-        const Text('Raid',
-            style: TextStyle(
+        Text(context.tr('appName'),
+            style: const TextStyle(
                 color: AppColors.text,
                 fontSize: 28,
                 fontWeight: FontWeight.w900)),
-        const Text('إدارة أعمالك بلمسة فخامة',
-            style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
+        Text(context.tr('luxuryBusiness'),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
       ],
     );
   }
@@ -186,8 +187,8 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 20,
               child: CircularProgressIndicator(
                   color: Colors.white, strokeWidth: 2))
-          : const Text('دخول',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          : Text(context.tr('loginButton'),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -201,8 +202,8 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(15),
             side: const BorderSide(color: AppColors.primary, width: 1)),
       ),
-      child: const Text('متابعة كضيف',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      child: Text(context.tr('guestLogin'),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -223,8 +224,8 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(15),
             side: const BorderSide(color: AppColors.primary, width: 1)),
       ),
-      child: const Text('حساب جديد',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      child: Text(context.tr('newAccount'),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
     );
   }
 

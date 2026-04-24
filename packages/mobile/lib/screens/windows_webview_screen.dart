@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_windows/webview_windows.dart';
+import '../core/app_localizations.dart';
 
 /// Full-screen WebView that loads the Next.js web app on Windows.
 /// This makes the Flutter Windows build identical to the Electron version.
@@ -27,8 +28,7 @@ class _WindowsWebviewScreenState extends State<WindowsWebviewScreen> {
       final version = await WebviewController.getWebViewVersion();
       if (version == null) {
         setState(() {
-          _error =
-              'WebView2 Runtime غير مثبت.\nيرجى تثبيته من موقع Microsoft.';
+          _error = context.tr('webviewMissing');
         });
         return;
       }
@@ -48,7 +48,7 @@ class _WindowsWebviewScreenState extends State<WindowsWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _error = 'خطأ في تهيئة WebView:\n$e');
+        setState(() => _error = '${context.tr('webviewError')}:\n$e');
       }
     }
   }
@@ -89,7 +89,7 @@ class _WindowsWebviewScreenState extends State<WindowsWebviewScreen> {
                   _initWebView();
                 },
                 icon: const Icon(Icons.refresh),
-                label: const Text('إعادة المحاولة'),
+                label: Text(context.tr('retry')),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6366f1),
                   foregroundColor: Colors.white,
@@ -138,9 +138,9 @@ class _WindowsWebviewScreenState extends State<WindowsWebviewScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'إدارة أموالك بذكاء',
-                style: TextStyle(
+              Text(
+                context.tr('manageMoneySmart'),
+                style: const TextStyle(
                   color: Colors.white54,
                   fontSize: 14,
                 ),
@@ -155,9 +155,9 @@ class _WindowsWebviewScreenState extends State<WindowsWebviewScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'جاري تحميل التطبيق...',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
+              Text(
+                context.tr('loadingApp'),
+                style: const TextStyle(color: Colors.white38, fontSize: 12),
               ),
             ],
           ),

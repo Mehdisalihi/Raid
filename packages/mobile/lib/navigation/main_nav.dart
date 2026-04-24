@@ -19,6 +19,8 @@ import '../screens/archive_screen.dart';
 import '../screens/invoices_screen.dart';
 import '../screens/barcode_scan_screen.dart';
 import '../screens/account_screen.dart';
+import '../screens/inventory_screen.dart';
+import '../screens/warehouses_screen.dart';
 
 class MainNav extends StatefulWidget {
   const MainNav({super.key});
@@ -70,6 +72,8 @@ class _MainNavState extends State<MainNav> {
         10 => const SuppliersScreen(),
         11 => const ExpensesScreen(),
         12 => const ReportsScreen(),
+        13 => const InventoryScreen(),
+        14 => const WarehousesScreen(),
         _ => DashboardScreen(onNavigate: _navigateToSubScreen),
       };
     } else {

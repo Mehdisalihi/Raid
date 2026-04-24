@@ -223,7 +223,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _tabIndex == 0 ? 'توريد جديد' : 'سجل التوريد',
+                _tabIndex == 0 ? context.tr('newPurchase') : context.tr('purchaseHistory'),
                 style: const TextStyle(
                     color: AppColors.text,
                     fontSize: 24,
@@ -231,8 +231,8 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
               ),
               Text(
                 _tabIndex == 0
-                    ? 'إضافة سلع جديدة للمخزون'
-                    : 'مراجعة المشتريات السابقة',
+                    ? context.tr('addItemsToStock')
+                    : context.tr('reviewPastPurchases'),
                 style:
                     const TextStyle(color: AppColors.textLight, fontSize: 13),
               ),

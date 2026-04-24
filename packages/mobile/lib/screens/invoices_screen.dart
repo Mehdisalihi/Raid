@@ -17,8 +17,10 @@ class _InvoicesScreenState extends State<InvoicesScreen>
   List<dynamic> _products = [];
   List<dynamic> _customers = [];
   List<dynamic> _suppliers = [];
+  List<dynamic> _warehouses = [];
   bool _loading = true;
   bool _saving = false;
+  String? _selectedWarehouseId;
 
   // Cart for Sales (Daily/Debt)
   List<Map<String, dynamic>> _salesCart = [];
@@ -29,16 +31,16 @@ class _InvoicesScreenState extends State<InvoicesScreen>
   String _selectedCustomerName = '';
   String _selectedSupplierId = '';
   String _search = '';
-  String _paymentMethod = 'Cash';
+  String _paymentMethod = 'cash';
   final List<String> _paymentMethods = [
-    'Cash',
-    'Bankily',
-    'Masrvi',
-    'Sedad',
-    'Amanty',
-    'Click',
-    'Bimbank',
-    'Gimtel'
+    'cash',
+    'bankily',
+    'masrvi',
+    'sedad',
+    'amanty',
+    'click',
+    'bimbank',
+    'gimtel'
   ];
   final _manualNameCtrl = TextEditingController();
   final _manualQtyCtrl = TextEditingController();
@@ -69,12 +71,17 @@ class _InvoicesScreenState extends State<InvoicesScreen>
         ProductService.getAll(),
         CustomerService.getAll(),
         SupplierService.getAll(),
+        WarehouseService.getAll(),
       ]);
       if (mounted) {
         setState(() {
           _products = results[0];
           _customers = results[1];
           _suppliers = results[2];
+          _warehouses = results[3];
+          if (_selectedWarehouseId == null && _warehouses.isNotEmpty) {
+            _selectedWarehouseId = _warehouses[0]['id'].toString();
+          }
           _loading = false;
         });
       }
@@ -139,6 +146,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
     return Column(
       children: [
         _buildCustomerSelector(isOptional: !isDebt),
+        _buildWarehouseSelector(),
         if (!isDebt) _buildPaymentSelector(),
         _buildSearchBar(),
         if (cart.isNotEmpty) _buildCartGraph(cart, isPurchase: false),
@@ -164,6 +172,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
     return Column(
       children: [
         _buildSupplierSelector(),
+        _buildWarehouseSelector(),
         _buildManualEntryForm(),
         _buildSearchBar(),
         if (cart.isNotEmpty) _buildCartGraph(cart, isPurchase: true),
@@ -271,11 +280,38 @@ class _InvoicesScreenState extends State<InvoicesScreen>
           value: _paymentMethod,
           isExpanded: true,
           items: _paymentMethods
-              .map((p) => DropdownMenuItem(value: p, child: Text(p)))
+              .map((p) => DropdownMenuItem(value: p, child: Text(context.tr(p))))
               .toList(),
           onChanged: (v) {
             if (v != null) {
               setState(() => _paymentMethod = v);
+            }
+          },
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildWarehouseSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: AppColors.border)),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedWarehouseId,
+          isExpanded: true,
+          hint: Text(context.tr('selectWarehouse')),
+          items: _warehouses.map((w) => DropdownMenuItem(
+            value: w['id'].toString(),
+            child: Text(w['name']),
+          )).toList(),
+          onChanged: (v) {
+            if (v != null) {
+              setState(() => _selectedWarehouseId = v);
             }
           },
         ),
@@ -708,6 +744,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
         'discount': 0,
         'paymentMethod': isDebt ? 'debt' : _paymentMethod,
         'cart': _salesCart,
+        'warehouseId': _selectedWarehouseId,
         'date': DateTime.now().toIso8601String().split('T')[0],
         'type': isDebt ? 'SALE' : 'QUOTATION',
       });
@@ -745,6 +782,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
         'supplierId': _selectedSupplierId,
         'items': _purchaseCart,
         'total': total,
+        'warehouseId': _selectedWarehouseId,
         'date': _manualDate.toIso8601String().split('T')[0],
       });
       if (mounted) {
