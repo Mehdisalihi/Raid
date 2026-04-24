@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Mohassibe",
+    "slug": "mohassibe-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "android": {
+      "package": "com.mohassibe.mobile"
+    }
+  }
+}

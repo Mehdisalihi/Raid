@@ -1,0 +1,19 @@
+Analyzing mobile...                                             
+
+   info - Statements in an if should be enclosed in a block - lib\screens\customers_screen.dart:80:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\customers_screen.dart:120:9 - curly_braces_in_flow_control_structures
+warning - The value of the field '_refreshing' isn't used - lib\screens\dashboard_screen.dart:19:8 - unused_field
+   info - Statements in an if should be enclosed in a block - lib\screens\dashboard_screen.dart:42:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\expenses_screen.dart:36:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\expenses_screen.dart:91:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\expenses_screen.dart:131:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\products_screen.dart:92:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\products_screen.dart:134:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\reports_screen.dart:33:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\sales_screen.dart:37:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\sales_screen.dart:75:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\sales_screen.dart:145:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\suppliers_screen.dart:80:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\suppliers_screen.dart:120:9 - curly_braces_in_flow_control_structures
+
+15 issues found. (ran in 4.3s)

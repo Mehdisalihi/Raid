@@ -1,0 +1,4 @@
+LOG: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+LOG: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+REQ_FAIL: http://gc.kis.v2.scr.kaspersky-labs.com/DFEBDC1E-3876-40E0-8B36-291B07FFA6AF/786F1CC5-3171-4410-A71B-1F976DF5C7BD/shutdown/pagehide?tm=2026-03-12T15%3A13%3A33.937Z - net::ERR_ABORTED
+LOG: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold

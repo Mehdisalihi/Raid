@@ -1,0 +1,2 @@
+C:/Users/pc/mohassibe/packages/mobile/android/app/.cxx/release/5u4n5f6q/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/pc/mohassibe/packages/mobile/android/app/.cxx/release/5u4n5f6q/x86_64/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,14 @@
+{
+    "name": "@mohassibe/mobile",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "flutter run",
+        "start": "flutter run",
+        "android": "flutter run -d android",
+        "ios": "flutter run -d ios",
+        "web": "flutter run -d chrome",
+        "build": "flutter build web",
+        "build:apk": "flutter build apk"
+    }
+}

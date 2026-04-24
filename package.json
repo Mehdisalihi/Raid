@@ -1,0 +1,27 @@
+{
+    "name": "mohassibe-platform",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "install:all": "npm install && npm install --workspaces",
+        "dev:backend": "npm run dev --workspace=@mohassibe/backend",
+        "dev:web": "npm run dev --workspace=@mohassibe/web",
+        "dev:mobile": "npm run dev --workspace=@mohassibe/mobile",
+        "dev": "npm run dev:backend & npm run dev:web",
+        "start:all": "npm run dev",
+        "dev:legacy": "npm run dev --prefix legacy",
+        "build": "npm run build --workspaces",
+        "build:apk": "npm run build:apk --workspace=@mohassibe/mobile"
+    },
+    "dependencies": {
+        "puppeteer": "^24.39.0"
+    },
+    "overrides": {},
+    "devDependencies": {
+        "7zip-bin": "^5.2.0",
+        "electron": "^41.0.2",
+        "electron-builder": "^26.8.1"
+    }
+}

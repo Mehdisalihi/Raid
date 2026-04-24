@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mohassibe - النظام المحاسبي المتكامل</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .welcome-card {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn {
+      margin: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .summary-card {
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .transaction-income {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .transaction-expense {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .product-card {
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .product-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .low-stock {
+      background-color: #fff3cd;
+    }
+
+    .out-of-stock {
+      background-color: #f8d7da;
+    }
+
+    .bank-method {
+      background-color: #f0f8ff;
+      border-left: 4px solid #007bff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- بطاقة الترحيب -->
+    <div class="welcome-card text-center" id="welcomeCard">
+      <h2 id="welcomeMessage" data-translate="welcomeMessage">مرحباً بك في mohassibe</h2>
+      <p class="mb-0" data-translate="welcomeDescription">نظام متكامل لإدارة المبيعات والمشتريات والعملاء</p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 id="appTitle">mohassibe</h2>
+      <button class="btn btn-outline-secondary" onclick="toggleLanguage()">Français</button>
+    </div>
+
+    <div class="mb-3 d-flex flex-wrap">
+      <button class="btn btn-primary nav-btn" onclick="showSection('home')" data-translate="home">الرئيسية</button>
+      <button class="btn btn-success nav-btn" onclick="showSection('sales')" data-translate="sales">المبيعات</button>
+      <button class="btn btn-danger nav-btn" onclick="showSection('expense')"
+        data-translate="expense">المصروفات</button>
+      <button class="btn btn-warning nav-btn" onclick="showSection('storage')" data-translate="storage">المخزون</button>
+      <button class="btn btn-info nav-btn" onclick="showSection('clients')" data-translate="clients">العملاء</button>
+      <button class="btn btn-secondary nav-btn" onclick="showSection('returns')"
+        data-translate="returns">المرتجعات</button>
+    </div>
+
+    <!-- الرئيسية -->
+    <div class="section active" id="home">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card text-white bg-success summary-card">
+            <div class="card-body">
+              <h5 class="card-title" data-translate="totalSales">إجمالي المبيعات</h5>
+              <p class="card-text"><span id="totalSales">0</span> MRU</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white bg-danger summary-card">
+            <div class="card-body">
+              <h5 class="card-title" data-translate="totalExpense">إجمالي المصروفات</h5>
+              <p class="card-text"><span id="totalExpense">0</span> MRU</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white bg-primary summary-card">
+            <div class="card-body">
+              <h5 class="card-title" data-translate="balance">الرصيد الحالي</h5>
+              <p class="card-text"><span id="balance">0</span> MRU</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white bg-dark summary-card">
+            <div class="card-body">
+              <h5 class="card-title" data-translate="totalProducts">المنتجات في المخزون</h5>
+              <p class="card-text"><span id="totalProducts">0</span> منتج</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-body">
+          <h4>آخر المعاملات</h4>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>الوصف</th>
+                  <th>المبلغ</th>
+                  <th>النوع</th>
+                  <th>التاريخ</th>
+                </tr>
+              </thead>
+              <tbody id="recentTransactions"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- المبيعات -->
+    <div class="section" id="sales">
+      <div class="card">
+        <div class="card-body">
+          <h4>فاتورة بيع</h4>
+          <div class="mb-3">
+            <label class="form-label">اختر العميل</label>
+            <select class="form-select" id="clientSelect">
+              <option value="">عميل نقدي</option>
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-success">
+                <tr>
+                  <th>المنتج</th>
+                  <th>الكمية</th>
+                  <th>السعر</th>
+                  <th>المجموع</th>
+                  <th>حذف</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceItems"></tbody>
+            </table>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="form-label">طريقة الدفع</label>
+              <select class="form-select" id="paymentMethod">
+                <option value="cash">نقدي</option>
+                <option value="mcb">بنك MCB</option>
+                <option value="bima">بنك البيمه</option>
+                <option value="bankily">بنكلي BANKILY</option>
+                <option value="masrefi">المصرفي MASREFI</option>
+                <option value="card">بطاقة ائتمان</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5>ملخص الفاتورة</h5>
+                  <p>عدد الأصناف: <span id="itemsCount">0</span></p>
+                  <p>المجموع: <span id="invoiceTotal">0</span> MRU</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-success mt-3 w-100" onclick="completeSale()">إتمام البيع</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- المصروفات -->
+    <div class="section" id="expense">
+      <div class="card">
+        <div class="card-body">
+          <h4>تسجيل مصروف</h4>
+          <form id="expenseForm">
+            <div class="mb-3">
+              <label class="form-label">وصف المصروف</label>
+              <input type="text" class="form-control" id="expenseDesc" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">المبلغ (MRU)</label>
+              <input type="number" class="form-control" id="expenseAmount" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">طريقة الدفع</label>
+              <select class="form-select" id="paymentMethodExpense" required>
+                <option value="cash">نقدي</option>
+                <option value="mcb">بنك MCB</option>
+                <option value="bima">بنك البيمه</option>
+                <option value="bankily">بنكلي BANKILY</option>
+                <option value="masrefi">المصرفي MASREFI</option>
+                <option value="card">بطاقة ائتمان</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-danger w-100">تسجيل المصروف</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- المخزون -->
+    <div class="section" id="storage">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h4>إضافة منتج</h4>
+          <form id="productForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">اسم المنتج</label>
+                  <input type="text" class="form-control" id="productName" placeholder="أدخل اسم المنتج" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">كود المنتج</label>
+                  <input type="text" class="form-control" id="productCode" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">الكمية</label>
+                  <input type="number" class="form-control" id="productQty" placeholder="أدخل الكمية" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">سعر الشراء (MRU)</label>
+                  <input type="number" step="0.01" class="form-control" id="purchasePrice" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">سعر البيع (MRU)</label>
+                  <input type="number" step="0.01" class="form-control" id="salePrice" required>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100">حفظ المنتج</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h4>قائمة المخزون</h4>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-warning">
+                <tr>
+                  <th>اسم المنتج</th>
+                  <th>الكود</th>
+                  <th>الكمية</th>
+                  <th>سعر الشراء</th>
+                  <th>سعر البيع</th>
+                  <th>خيارات</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- العملاء -->
+    <div class="section" id="clients">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h4>تسجيل عميل جديد</h4>
+          <form id="clientForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">اسم العميل</label>
+                  <input type="text" class="form-control" id="clientName" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">رقم الهاتف</label>
+                  <input type="text" class="form-control" id="clientPhone" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">البريد الإلكتروني (اختياري)</label>
+              <input type="email" class="form-control" id="clientEmail">
+            </div>
+
+            <button type="submit" class="btn btn-info w-100">تسجيل العميل</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h4>قائمة العملاء</h4>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-info">
+                <tr>
+                  <th>اسم العميل</th>
+                  <th>رقم الهاتف</th>
+                  <th>البريد الإلكتروني</th>
+                  <th>خيارات</th>
+                </tr>
+              </thead>
+              <tbody id="clientsList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- المرتجعات -->
+    <div class="section" id="returns">
+      <div class="card">
+        <div class="card-body">
+          <h4>سجل المرتجعات</h4>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-secondary">
+                <tr>
+                  <th>رقم الفاتورة</th>
+                  <th>المنتج</th>
+                  <th>الكمية</th>
+                  <th>المبلغ</th>
+                  <th>التاريخ</th>
+                </tr>
+              </thead>
+              <tbody id="returnsList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // البيانات
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let clients = JSON.parse(localStorage.getItem('clients')) || [];
+    let sales = JSON.parse(localStorage.getItem('sales')) || [];
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    let returns = JSON.parse(localStorage.getItem('returns')) || [];
+
+    let currentInvoice = {
+      items: [],
+      clientId: null,
+      paymentMethod: 'cash'
+    };
+
+    let language = 'ar';
+    let currentUser = "مدير النظام"; // يمكن جلبها من نظام تسجيل الدخول
+
+    // تهيئة الصفحة
+    document.addEventListener('DOMContentLoaded', function () {
+      // تعيين رسالة الترحيب
+      document.getElementById('welcomeMessage').textContent = `مرحباً ${currentUser} في البرنامج المحاسبي المتكامل`;
+
+      loadProducts();
+      loadClients();
+      loadSales();
+      loadExpenses();
+      loadReturns();
+      updateDashboard();
+
+      // أحداث النماذج
+      document.getElementById('productForm').addEventListener('submit', addProduct);
+      document.getElementById('clientForm').addEventListener('submit', addClient);
+      document.getElementById('expenseForm').addEventListener('submit', addExpense);
+    });
+
+    // عرض القسم المحدد
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+
+      // إخفاء رسالة الترحيب عند الانتقال لأي قسم
+      document.getElementById('welcomeCard').style.display = sectionId === 'home' ? 'block' : 'none';
+    }
+
+    // تبديل اللغة
+    function toggleLanguage() {
+      language = language === 'ar' ? 'fr' : 'ar';
+      document.getElementById('appTitle').textContent = language === 'ar' ? 'البرنامج المحاسبي المتكامل' : 'Application de Comptabilité';
+      document.getElementById('welcomeMessage').textContent = language === 'ar' ?
+        `مرحباً ${currentUser} في البرنامج المحاسبي المتكامل` :
+        `Bienvenue ${currentUser} dans l'Application de Comptabilité`;
+      document.querySelector('button[onclick="toggleLanguage()"]').textContent = language === 'ar' ? 'Français' : 'العربية';
+
+      // تحديث النصوص الأخرى
+      updateLanguageTexts();
+    }
+
+    function updateLanguageTexts() {
+      const translations = {
+        ar: {
+          home: 'الرئيسية',
+          sales: 'المبيعات',
+          expense: 'المصروفات',
+          storage: 'المخزون',
+          clients: 'العملاء',
+          returns: 'المرتجعات',
+          totalSales: 'إجمالي المبيعات',
+          totalExpense: 'إجمالي المصروفات',
+          balance: 'الرصيد الحالي',
+          totalProducts: 'المنتجات في المخزون',
+        },
+        fr: {
+          home: 'Accueil',
+          sales: 'Ventes',
+          expense: 'Dépenses',
+          storage: 'Stock',
+          clients: 'Clients',
+          returns: 'Retours',
+          totalSales: 'Total des ventes',
+          totalExpense: 'Total des dépenses',
+          balance: 'Solde actuel',
+          totalProducts: 'Produits en stock',
+        }
+      };
+
+      const texts = translations[language];
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        el.textContent = texts[key];
+      });
+    }
+
+    // إدارة المنتجات
+    function loadProducts() {
+      const table = document.getElementById('inventoryList');
+      const fragment = document.createDocumentFragment();
+
+      products.forEach(product => {
+        const row = document.createElement('tr');
+        row.className = product.qty <= 0 ? 'out-of-stock' : (product.qty <= 5 ? 'low-stock' : '');
+        row.innerHTML = `
+          <td>${product.name}</td>
+          <td>${product.code}</td>
+          <td>${product.qty}</td>
+          <td>${product.purchasePrice.toFixed(2)} MRU</td>
+          <td>${product.salePrice.toFixed(2)} MRU</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" onclick="editProduct('${product.code}')">تعديل</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product.code}')">حذف</button>
+          </td>
+        `;
+        fragment.appendChild(row);
+      });
+
+      table.innerHTML = '';
+      table.appendChild(fragment);
+    }
+
+    function addProduct(e) {
+      e.preventDefault();
+
+      const product = {
+        name: document.getElementById('productName').value,
+        code: document.getElementById('productCode').value,
+        qty: parseInt(document.getElementById('productQty').value),
+        purchasePrice: parseFloat(document.getElementById('purchasePrice').value),
+        salePrice: parseFloat(document.getElementById('salePrice').value)
+      };
+      products.push(product);
+      saveToLocalStorage('products', products);
+      this.reset();
+      loadProducts();
+      alert(language === 'ar' ? 'تمت إضافة المنتج بنجاح' : 'Produit ajouté avec succès');
+    }
+
+    function editProduct(code) {
+      const product = products.find(p => p.code === code);
+      if (!product) return;
+
+      const form = document.getElementById('productForm');
+      form.productName.value = product.name;
+      form.productCode.value = product.code;
+      form.productQty.value = product.qty;
+      form.purchasePrice.value = product.purchasePrice;
+      form.salePrice.value = product.salePrice;
+
+      // تغيير سلوك النموذج للتحديث بدلاً من الإضافة
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        product.name = form.productName.value;
+        product.code = form.productCode.value;
+        product.qty = parseInt(form.productQty.value);
+        product.purchasePrice = parseFloat(form.purchasePrice.value);
+        product.salePrice = parseFloat(form.salePrice.value);
+        saveToLocalStorage('products', products);
+        form.reset();
+        loadProducts();
+        alert(language === 'ar' ? 'تم تحديث المنتج بنجاح' : 'Produit mis à jour avec succès');
+        // إعادة تعيين النموذج للإضافة
+        resetFormBehavior(form, addProduct);
+      };
+    }
+
+    function deleteProduct(code) {
+      if (confirm(language === 'ar' ? 'هل أنت متأكد من حذف هذا المنتج؟' : 'Êtes-vous sûr de supprimer ce produit?')) {
+        products = products.filter(p => p.code !== code);
+        saveToLocalStorage('products', products);
+        loadProducts();
+      }
+    }
+
+    // إدارة العملاء
+    function loadClients() {
+      const table = document.getElementById('clientsList');
+      const select = document.getElementById('clientSelect');
+      table.innerHTML = '';
+      select.innerHTML = '<option value="">عميل نقدي</option>';
+      clients.forEach(client => {
+        // إضافة إلى الجدول
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${client.name}</td>
+          <td>${client.phone}</td>
+          <td>${client.email || '-'}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" onclick="editClient('${client.phone}')">تعديل</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteClient('${client.phone}')">حذف</button>
+          </td>
+        `;
+        table.appendChild(row);
+        // إضافة إلى القائمة المنسدلة
+        const option = document.createElement('option');
+        option.value = client.phone;
+        option.textContent = client.name;
+        select.appendChild(option);
+      });
+    }
+
+    function addClient(e) {
+      e.preventDefault();
+      const client = {
+        name: document.getElementById('clientName').value,
+        phone: document.getElementById('clientPhone').value,
+        email: document.getElementById('clientEmail').value || null
+      };
+      clients.push(client);
+      saveToLocalStorage('clients', clients);
+      this.reset();
+      loadClients();
+      alert(language === 'ar' ? 'تمت إضافة العميل بنجاح' : 'Client ajouté avec succès');
+    }
+
+    function editClient(phone) {
+      const client = clients.find(c => c.phone === phone);
+      if (!client) return;
+
+      const form = document.getElementById('clientForm');
+      form.clientName.value = client.name;
+      form.clientPhone.value = client.phone;
+      form.clientEmail.value = client.email || '';
+
+      // تغيير سلوك النموذج للتحديث بدلاً من الإضافة
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        client.name = form.clientName.value;
+        client.phone = form.clientPhone.value;
+        client.email = form.clientEmail.value || null;
+        saveToLocalStorage('clients', clients);
+        form.reset();
+        loadClients();
+        alert(language === 'ar' ? 'تم تحديث العميل بنجاح' : 'Client mis à jour avec succès');
+        // إعادة تعيين النموذج للإضافة
+        resetFormBehavior(form, addClient);
+      };
+    }
+
+    function deleteClient(phone) {
+      if (confirm(language === 'ar' ? 'هل أنت متأكد من حذف هذا العميل؟' : 'Êtes-vous sûr de supprimer ce client?')) {
+        clients = clients.filter(c => c.phone !== phone);
+        saveToLocalStorage('clients', clients);
+        loadClients();
+      }
+    }
+
+    // إدارة المبيعات
+    function loadSales() {
+      // يمكنك تنفيذ هذه الوظيفة لتحميل سجل المبيعات
+    }
+
+    function completeSale() {
+      if (currentInvoice.items.length === 0) {
+        alert(language === 'ar' ? 'الرجاء إضافة منتجات إلى الفاتورة' : 'Veuillez ajouter des produits à la facture');
+        return;
+      }
+      const sale = {
+        clientId: document.getElementById('clientSelect').value,
+        items: [...currentInvoice.items],
+        total: currentInvoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        paymentMethod: document.getElementById('paymentMethod').value,
+        date: new Date().toLocaleDateString(),
+      };
+      sales.push(sale);
+      saveToLocalStorage('sales', sales);
+      // تحديث المخزون
+      sale.items.forEach(item => {
+        const product = products.find(p => p.code === item.productCode);
+        if (product) {
+          product.qty -= item.quantity;
+        }
+      });
+      saveToLocalStorage('products', products);
+      // إعادة تعيين الفاتورة
+      currentInvoice = {
+        items: [],
+        clientId: null,
+        paymentMethod: 'cash'
+      };
+      updateInvoiceDisplay();
+      loadProducts();
+      updateDashboard();
+      alert(language === 'ar' ? 'تمت عملية البيع بنجاح' : 'Vente complétée avec succès');
+    }
+
+    // إدارة المصروفات
+    function loadExpenses() {
+      // يمكنك تنفيذ هذه الوظيفة لتحميل سجل المصروفات
+    }
+
+    function addExpense(e) {
+      e.preventDefault();
+      const expense = {
+        description: document.getElementById('expenseDesc').value,
+        amount: parseFloat(document.getElementById('expenseAmount').value),
+        paymentMethod: document.getElementById('paymentMethodExpense').value,
+        date: new Date().toLocaleDateString(),
+      };
+      expenses.push(expense);
+      saveToLocalStorage('expenses', expenses);
+      this.reset();
+      updateDashboard();
+      alert(language === 'ar' ? 'تمت إضافة المصروف بنجاح' : 'Dépense ajoutée avec succès');
+    }
+
+    // إدارة المرتجعات
+    function loadReturns() {
+      const table = document.getElementById('returnsList');
+      table.innerHTML = '';
+      returns.forEach(ret => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${ret.invoiceNumber}</td>
+          <td>${ret.productName}</td>
+          <td>${ret.quantity}</td>
+          <td>${ret.amount.toFixed(2)} MRU</td>
+          <td>${ret.date}</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    // لوحة التحكم
+    function updateDashboard() {
+      const totalSales = sales.reduce((sum, sale) => sum + sale.total, 0);
+      const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+      document.getElementById('totalSales').textContent = totalSales.toFixed(2);
+      document.getElementById('totalExpense').textContent = totalExpenses.toFixed(2);
+      document.getElementById('balance').textContent = (totalSales - totalExpenses).toFixed(2);
+      // تحديث قائمة المعاملات الأخيرة
+      const transactions = [
+        ...sales.map(s => ({ ...s, type: 'sale' })),
+        ...expenses.map(e => ({ ...e, type: 'expense' }))
+      ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+      const table = document.getElementById('recentTransactions');
+      table.innerHTML = '';
+      transactions.forEach((t, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${t.type === 'sale' ? 'بيع (' + t.items.map(i => i.productName).join(', ') + ')' : t.description}</td>
+          <td class="${t.type === 'sale' ? 'transaction-income' : 'transaction-expense'}">
+            ${t.type === 'sale' ? t.total.toFixed(2) : t.amount.toFixed(2)} MRU
+          </td>
+          <td>${t.type === 'sale' ? 'بيع' : 'مصروف'}</td>
+          <td>${t.date}</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    // وظائف الفاتورة
+    function addToInvoice(productCode) {
+      const product = products.find(p => p.code === productCode);
+      if (!product) return;
+      if (product.qty <= 0) {
+        alert(language === 'ar' ? 'لا يوجد كمية كافية من هذا المنتج في المخزون' : 'Stock insuffisant pour ce produit');
+        return;
+      }
+      const existingItem = currentInvoice.items.find(i => i.productCode === productCode);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        currentInvoice.items.push({
+          productCode,
+          productName: product.name,
+          price: product.salePrice,
+          quantity: 1,
+        });
+      }
+      updateInvoiceDisplay();
+    }
+
+    function updateInvoiceDisplay() {
+      const table = document.getElementById('invoiceItems');
+      table.innerHTML = '';
+      currentInvoice.items.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.productName}</td>
+          <td>
+            <input type="number" value="${item.quantity}" min="1" 
+              onchange="updateInvoiceItem(${index}, this.value)" class="form-control form-control-sm">
+          </td>
+          <td>${item.price.toFixed(2)} MRU</td>
+          <td>${(item.price * item.quantity).toFixed(2)} MRU</td>
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="removeFromInvoice(${index})">حذف</button>
+          </td>
+        `;
+        table.appendChild(row);
+      });
+      document.getElementById('itemsCount').textContent = currentInvoice.items.length;
+      document.getElementById('invoiceTotal').textContent = currentInvoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+    }
+
+    function updateInvoiceItem(index, newQuantity) {
+      newQuantity = parseInt(newQuantity);
+      if (isNaN(newQuantity) || newQuantity < 1) {
+        alert(language === 'ar' ? 'الكمية يجب أن تكون رقم صحيح موجب' : 'La quantité doit être un entier positif');
+        return;
+      }
+      const productCode = currentInvoice.items[index].productCode;
+      const product = products.find(p => p.code === productCode);
+      if (newQuantity > product.qty) {
+        alert(language === 'ar' ? 'لا يمكن إضافة كمية أكبر من المتاح في المخزون' : 'Quantité non disponible en stock');
+        return;
+      }
+      currentInvoice.items[index].quantity = newQuantity;
+      updateInvoiceDisplay();
+    }
+
+    function removeFromInvoice(index) {
+      currentInvoice.items.splice(index, 1);
+      updateInvoiceDisplay();
+    }
+
+    function saveToLocalStorage(key, data) {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        alert(language === 'ar' ? 'لا يمكن حفظ البيانات. السعة ممتلئة.' : 'Impossible de sauvegarder les données. Capacité pleine.');
+      }
+    }
+
+    function resetFormBehavior(form, defaultSubmitHandler) {
+      form.onsubmit = defaultSubmitHandler;
+    }
+  </script>
+</body>
+
+</html>

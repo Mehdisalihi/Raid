@@ -1,0 +1,21 @@
+Analyzing mobile...                                             
+
+warning - The declaration '_total' isn't referenced - lib\screens\expenses_screen.dart:50:14 - unused_element
+  error - Expected to find ';' - lib\screens\reports_screen.dart:495:7 - expected_token
+warning - Dead code - lib\screens\reports_screen.dart:495:8 - dead_code
+  error - Expected an identifier - lib\screens\reports_screen.dart:495:8 - missing_identifier
+  error - Expected to find ';' - lib\screens\reports_screen.dart:495:8 - expected_token
+  error - Unexpected text ';' - lib\screens\reports_screen.dart:495:8 - unexpected_token
+  error - Expected an identifier - lib\screens\reports_screen.dart:496:5 - missing_identifier
+  error - Unexpected text ';' - lib\screens\reports_screen.dart:496:5 - unexpected_token
+   info - Unnecessary empty statement - lib\screens\reports_screen.dart:496:6 - empty_statements
+  error - Expected to find ';' - lib\screens\settings_screen.dart:197:7 - expected_token
+warning - Dead code - lib\screens\settings_screen.dart:197:8 - dead_code
+  error - Expected an identifier - lib\screens\settings_screen.dart:197:8 - missing_identifier
+  error - Expected to find ';' - lib\screens\settings_screen.dart:197:8 - expected_token
+  error - Unexpected text ';' - lib\screens\settings_screen.dart:197:8 - unexpected_token
+  error - Expected an identifier - lib\screens\settings_screen.dart:198:5 - missing_identifier
+  error - Unexpected text ';' - lib\screens\settings_screen.dart:198:5 - unexpected_token
+   info - Unnecessary empty statement - lib\screens\settings_screen.dart:198:6 - empty_statements
+
+17 issues found. (ran in 5.0s)
