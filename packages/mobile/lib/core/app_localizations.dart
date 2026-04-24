@@ -98,6 +98,7 @@ class AppLocalizations {
       'loginButton': 'دخول للنظام',
       'invalidLogin': 'بيانات الدخول غير صحيحة',
       'usernameLabel': 'اسم المستخدم',
+      'rememberMe': 'البقاء مسجلاً',
       'passwordLabel': 'كلمة المرور',
 
       // Dashboard
@@ -538,6 +539,7 @@ class AppLocalizations {
       'loginButton': 'Se connecter',
       'invalidLogin': 'Identifiants incorrects',
       'usernameLabel': 'Nom d\'utilisateur',
+      'rememberMe': 'Se souvenir de moi',
       'passwordLabel': 'Mot de passe',
 
       // Dashboard

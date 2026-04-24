@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordCtrl = TextEditingController();
   bool _loading = false;
   bool _obscure = true;
+  bool _rememberMe = false;
 
   Future<void> _login() async {
     if (_emailCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) {
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await context.read<AuthProvider>().login(
             _emailCtrl.text.trim(),
             _passwordCtrl.text,
+            rememberMe: _rememberMe,
           );
     } catch (e) {
       if (mounted) {
@@ -102,7 +104,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 16),
                       _buildTextField(_passwordCtrl, context.tr('password'),
                           Icons.lock_outline, true),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _rememberMe,
+                            onChanged: (val) {
+                              setState(() => _rememberMe = val ?? false);
+                            },
+                            activeColor: AppColors.primary,
+                          ),
+                          Text(context.tr('rememberMe'), style: const TextStyle(color: AppColors.textMuted)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       _buildLoginButton(),
                       const SizedBox(height: 16),
                       Row(
