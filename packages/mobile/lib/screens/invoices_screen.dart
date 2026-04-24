@@ -525,33 +525,63 @@ class _InvoicesScreenState extends State<InvoicesScreen>
 
   Widget _buildProductList({required Function(Map<String, dynamic>) onAdd}) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: _filteredProducts.length,
       itemBuilder: (_, i) {
         final p = _filteredProducts[i];
+        final stock = p['stockQty'] ?? 0;
+        final isLowStock = stock <= 5;
         return Container(
+          margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(
-                    color: AppColors.border.withValues(alpha: 0.5), width: 1)),
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              )
+            ],
           ),
           child: ListTile(
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             onTap: () => onAdd(Map<String, dynamic>.from(p)),
             title: Text(p['name'] ?? '',
                 style: const TextStyle(
-                    color: AppColors.text, fontWeight: FontWeight.bold),
+                    color: AppColors.text, fontWeight: FontWeight.w900, fontSize: 14),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
-            subtitle: Text('${context.tr('inventory')}: ${FormatUtils.formatNumber(p['stockQty'])}',
-                style:
-                    const TextStyle(color: AppColors.textLight, fontSize: 12)),
-            trailing: Text(FormatUtils.formatCurrency(p['sellPrice']),
-                style: const TextStyle(
-                    color: AppColors.success,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 14)),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isLowStock ? AppColors.danger.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text('${context.tr('inventory')}: ${FormatUtils.formatNumber(stock)}',
+                        style: TextStyle(color: isLowStock ? AppColors.danger : AppColors.primary, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(FormatUtils.formatCurrency(p['sellPrice']),
+                    style: const TextStyle(
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16)),
+                const Text('MRU', style: TextStyle(color: AppColors.textMuted, fontSize: 9, fontWeight: FontWeight.bold)),
+              ],
+            ),
           ),
         );
       },
@@ -648,56 +678,86 @@ class _InvoicesScreenState extends State<InvoicesScreen>
   Widget _buildSummaryBar(
       double total, VoidCallback action, String label, VoidCallback onCancel) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(
+      padding: EdgeInsets.only(
+        left: 20, 
+        right: 20, 
+        top: 16, 
+        bottom: MediaQuery.of(context).padding.bottom + 16
+      ),
+      decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)]),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.1), 
+              blurRadius: 20,
+              offset: const Offset(0, -5)
+            )
+          ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(context.tr('total'),
-                style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
-            Text(FormatUtils.formatCurrency(total),
-                style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start, 
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(context.tr('total').toUpperCase(),
+                  style: const TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(FormatUtils.formatCurrency(total),
+                      style: const TextStyle(
+                          color: AppColors.text,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900)),
+                  const SizedBox(width: 4),
+                  const Text('MRU', style: TextStyle(color: AppColors.textMuted, fontSize: 12, fontWeight: FontWeight.bold)),
+                ],
+              ),
           ]),
           Row(
             children: [
-              TextButton(
-                onPressed: _saving ? null : onCancel,
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.danger,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  minimumSize: const Size(0, 36),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.danger.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
                 ),
-                child: Text(context.tr('cancel'),
-                    style:
-                        const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                child: IconButton(
+                  onPressed: _saving ? null : onCancel,
+                  icon: const Icon(Icons.delete_outline_rounded, color: AppColors.danger, size: 20),
+                  tooltip: context.tr('cancel'),
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               ElevatedButton(
-                onPressed: _saving ? null : action,
+                onPressed: _saving || total == 0 ? null : action,
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    minimumSize: const Size(0, 40),
+                    elevation: 0,
+                    minimumSize: const Size(120, 48),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))),
+                        borderRadius: BorderRadius.circular(16))),
                 child: _saving
                     ? const SizedBox(
-                        width: 16,
-                        height: 16,
+                        width: 20,
+                        height: 20,
                         child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2))
-                    : Text(label,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14)),
+                            color: Colors.white, strokeWidth: 3))
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.check_circle_outline_rounded, size: 18),
+                          const SizedBox(width: 8),
+                          Text(label,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w900, fontSize: 14)),
+                        ],
+                      ),
               ),
             ],
           ),
