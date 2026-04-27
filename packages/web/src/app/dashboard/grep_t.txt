@@ -1,0 +1,292 @@
+archive\page.js:21:    useEffect(() => {
+archive\page.js:28:                api.get('/sales'),
+archive\page.js:29:                api.get('/expenses')
+archive\page.js:42:            setTransactions([...sales, ...expenses].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+archive\page.js:89:                                <h1 className="text-2xl lg:text-3xl font-black text-[var(--text-primary)]">{t('archive')}</h1>
+archive\page.js:207:                                            onClick={() => window.print()}
+archive\page.js:222:function MiniStat({ icon, label, value, color, isRTL }) {
+customers\page.js:22:    useEffect(() => {
+customers\page.js:28:            const { data } = await api.get('/customers');
+customers\page.js:38:        e.preventDefault();
+customers\page.js:41:                await api.put(`/customers/${currentCustomer.id}`, formData);
+customers\page.js:43:                await api.post('/customers', formData);
+customers\page.js:47:            alert(isRTL ? 'تم حفظ بيانات العميل بنجاح ✨' : 'Données client enregistrées avec succès ✨');
+customers\page.js:49:            alert(isRTL ? 'خطأ في معالجة الطلب ❌' : 'Erreur lors du traitement ❌');
+customers\page.js:60:                alert(isRTL ? 'خطأ في الحذف ❌' : 'Erreur lors de la suppression ❌');
+customers\page.js:103:                                <h1 className="text-xl lg:text-2xl font-black text-[var(--text-primary)]">{t('customers')}</h1>
+customers\page.js:214:    const initials = customer.name.split(' ').map(n => n[0]).join('').slice(0, 2);
+customers\[id]\statement\page.js:27:        const amount = parseFloat(inv.total || inv.grandTotal || inv.finalAmount || 0);
+customers\[id]\statement\page.js:41:    rows.sort((a, b) => new Date(a.date) - new Date(b.date));
+customers\[id]\statement\page.js:71:    useEffect(() => { if (id) fetchData(); }, [id]);
+customers\[id]\statement\page.js:76:            const { data } = await api.get(`/customers/${id}/statement`);
+customers\[id]\statement\page.js:108:        return [...data].sort((a, b) => {
+customers\[id]\statement\page.js:142:        const a = document.createElement('a'); a.href = url; a.download = `statement_${customer?.name || id}.csv`; a.click();
+customers\[id]\statement\page.js:192:    const initials = customer.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+customers\[id]\statement\page.js:230:                    <Btn onClick={() => window.print()} icon={<Printer size={15} />} label={isRTL ? 'طباعة' : 'Imprimer'} />
+customers\[id]\statement\page.js:262:                        <div className={`text-3xl font-black ${isDebtor ? 'text-red-600' : 'text-secondary'}`}>{fmt(customer.balance || 0)}</div>
+customers\[id]\statement\page.js:296:                <SummaryCard title={isRTL ? 'إجمالي المبيعات' : 'Total Ventes'} value={fmt(summary.totalDebit)} icon={<TrendingUp size={20} />} color="blue" suffix="MRU" sub={`${summary.invoicesCount} ${isRTL ? 'فاتورة' : 'factures'}`} />
+customers\[id]\statement\page.js:297:                <SummaryCard title={isRTL ? 'إجمالي المدفوعات' : 'Total Paiements'} value={fmt(summary.paymentsTotal)} icon={<Wallet size={20} />} color="green" suffix="MRU" />
+customers\[id]\statement\page.js:299:                <SummaryCard title={isRTL ? 'الرصيد المتبقي' : 'Solde Restant'} value={fmt(summary.finalBalance)} icon={<CreditCard size={20} />} color={summary.finalBalance > 0 ? 'red' : 'green'} suffix="MRU" highlight />
+customers\[id]\statement\page.js:333:                                    <th key={col.field} onClick={() => handleSort(col.field)}
+customers\[id]\statement\page.js:389:                    <FinalCard label={isRTL ? 'إجمالي المدين' : 'Total Débit'} value={fmt(summary.totalDebit)} color="blue" icon={<ArrowUpRight size={16} />} isRTL={isRTL} />
+customers\[id]\statement\page.js:390:                    <FinalCard label={isRTL ? 'إجمالي الدائن' : 'Total Crédit'} value={fmt(summary.totalCredit)} color="green" icon={<ArrowDownRight size={16} />} isRTL={isRTL} />
+customers\[id]\statement\page.js:397:                            {fmt(Math.abs(summary.finalBalance))}
+customers\[id]\statement\page.js:442:                {tx.debit > 0 ? <span className="text-blue-700">{fmt(tx.debit)}</span> : <span className="opacity-20 text-[var(--text-muted)]">—</span>}
+customers\[id]\statement\page.js:445:                {tx.credit > 0 ? <span className="text-green-700">{fmt(tx.credit)}</span> : <span className="opacity-20 text-[var(--text-muted)]">—</span>}
+customers\[id]\statement\page.js:449:                    {fmt(Math.abs(tx.balance))}
+customers\[id]\statement\page.js:509:                            ? `نقر نحن "رائد" بأن الرصيد المستحق على السيد/ة ${customer.name} هو بمبلغ وقدره ${fmt(Math.abs(summary.finalBalance))} MRU وذلك حتى تاريخ ${fmtDate(new Date())}.`
+customers\[id]\statement\page.js:510:                            : `Nous, RAID, attestons que le solde dû par Mr/Mme ${customer.name} est de ${fmt(Math.abs(summary.finalBalance))} MRU en date du ${fmtDate(new Date())}.`
+customers\[id]\statement\page.js:532:                            <span className="text-blue-700 font-black">{fmt(summary.totalDebit)} MRU</span>
+customers\[id]\statement\page.js:536:                            <span className="text-green-700 font-black">{fmt(summary.totalCredit)} MRU</span>
+customers\[id]\statement\page.js:541:                                {fmt(Math.abs(summary.finalBalance))} MRU
+debts\page.js:24:    useEffect(() => {
+debts\page.js:31:                api.get('/debts/debtors'),
+debts\page.js:32:                api.get('/debts/creditors')
+debts\page.js:44:        e.preventDefault();
+debts\page.js:48:            await api.post(`/debts/${selectedEntity.id}/pay`, { amount: parseFloat(payAmount) });
+debts\page.js:52:            alert(isRTL ? 'خطأ في تسجيل الدفعة ❌' : 'Erreur lors du paiement ❌');
+debts\page.js:58:        setPayAmount('');
+debts\page.js:65:        setPayAmount('');
+debts\page.js:97:                                <h1 className="text-xl lg:text-2xl font-black text-[var(--text-primary)]">{t('debts')}</h1>
+debts\page.js:217:                                            onChange={e => setPayAmount(e.target.value)}
+debts\page.js:227:                                        background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+debts\page.js:246:    const initials = name.split(' ').slice(0, 2).map(w => w[0]).join('');
+error.js:5:  useEffect(() => {
+error.js:14:      <button onClick={() => reset()} className="mt-4 px-4 py-2 bg-red-600 text-white rounded">Try again</button>
+expenses\page.js:24:        date: new Date().toISOString().split('T')[0]
+expenses\page.js:27:    useEffect(() => {
+expenses\page.js:33:            const { data } = await api.get('/expenses');
+expenses\page.js:43:        e.preventDefault();
+expenses\page.js:45:            await api.post('/expenses', {
+expenses\page.js:47:                amount: parseFloat(formData.amount)
+expenses\page.js:56:                date: new Date().toISOString().split('T')[0]
+expenses\page.js:59:            alert(isRTL ? 'خطأ في إضافة المصروف ❌' : 'Erreur lors de l\'ajout ❌');
+expenses\page.js:64:    const todayExpenses = expenses.filter(e => e.date?.split('T')[0] === new Date().toISOString().split('T')[0])
+expenses\page.js:86:                                <h1 className="text-xl lg:text-2xl font-black text-[var(--text-primary)]">{t('expenses')}</h1>
+expenses\page.js:104:                            onClick={() => window.print()}
+expenses\page.js:393:                    <div className={`w-12 h-1 bg-current opacity-20 rounded-full mt-2 transition-all group-hover:w-20 ${colorStyles[color].split(' ')[0]}`} />
+expenses\page.js:398:            <div className={`text-3xl font-black flex items-baseline gap-2 ${colorStyles[color].split(' ')[0]} ${isRTL ? '' : 'flex-row-reverse'}`}>
+invoices\new\page.js:9:    useEffect(() => {
+invoices\page.js:21:    const [customerName, setCustomerName] = useState(t('cash_customer'));
+invoices\page.js:26:    useEffect(() => {
+invoices\page.js:30:                    api.get('/products'),
+invoices\page.js:31:                    api.get('/customers')
+invoices\page.js:45:    useEffect(() => {
+invoices\page.js:47:            setCustomerName(t('cash_customer'));
+invoices\page.js:54:            setCart(cart.map(item =>
+invoices\page.js:58:            setCart([...cart, { ...product, qty: 1 }]);
+invoices\page.js:63:        setCart(cart.map(item =>
+invoices\page.js:69:        setCart(cart.filter(item => item.id !== id));
+invoices\page.js:79:        if (activeTab === 'debt' && (!customerName || customerName === t('cash_customer'))) {
+invoices\page.js:80:            alert(t('select_customer_debt'));
+invoices\page.js:87:                await api.post('/purchases', {
+invoices\page.js:92:                await api.post('/sales', {
+invoices\page.js:93:                    customerName: activeTab !== 'input' ? customerName : t('cash_customer'),
+invoices\page.js:103:                window.print();
+invoices\page.js:105:            alert(t('confirm_success'));
+invoices\page.js:106:            setCart([]);
+invoices\page.js:107:            if (activeTab !== 'debt') setCustomerName(t('cash_customer'));
+invoices\page.js:109:            alert(t('confirm_error'));
+invoices\page.js:123:            <p className="text-xl font-black animate-pulse text-[var(--text-primary)]">{t('loading_data')}</p>
+invoices\page.js:145:                            <TabBtn active={activeTab === 'daily'} onClick={() => setActiveTab('daily')} icon={<ShoppingCart size={16} />} label={t('daily_sales')} color="secondary" />
+invoices\page.js:146:                            <TabBtn active={activeTab === 'debt'} onClick={() => setActiveTab('debt')} icon={<CreditCard size={16} />} label={t('debt')} color="primary" />
+invoices\page.js:147:                            <TabBtn active={activeTab === 'input'} onClick={() => setActiveTab('input')} icon={<PackagePlus size={16} />} label={t('stock_input')} color="accent" />
+invoices\page.js:176:                                onClick={() => addToCart(product)}
+invoices\page.js:224:                            {activeTab === 'input' ? (t('general_supplier')) : (isRTL ? 'العميل المستلم' : 'Destination')}
+invoices\page.js:233:                                    <option value={t('cash_customer')}>{isRTL ? "إختر عميلاً..." : "Choisir client..."}</option>
+invoices\page.js:241:                                    value={activeTab === 'input' ? t('general_supplier') : customerName}
+invoices\page.js:262:                                        <button onClick={() => removeFromCart(item.id)} className="w-12 h-12 flex items-center justify-center text-red-500 bg-red-50 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm">
+invoices\page.js:318:                                        <Receipt size={14} className="text-primary" /> {t('total_net')}
+invoices\page.js:329:                                        {activeTab === 'input' ? t('stock_input') : activeTab === 'debt' ? t('debt') : (isRTL ? 'قبض نقدي' : 'Espèces')}
+invoices\page.js:358:                        <p className="text-xl font-bold uppercase tracking-widest">{isRTL ? 'نوع الفاتورة:' : 'Facture Type:'} {activeTab === 'input' ? t('stock_input') : (isRTL ? 'مبيعات' : 'Vente')}</p>
+invoices\page.js:392:                                <div className="text-sm font-bold text-gray-500 mb-1">{t('total_net')}</div>
+layout.js:29:export default function DashboardLayout({ children }) {
+layout.js:35:function DashboardContent({ children }) {
+layout.js:42:    useEffect(() => {
+layout.js:80:                            {user.name?.charAt(0)?.toUpperCase()}
+layout.js:103:                        <span>{t('logout')}</span>
+layout.js:113:                            {t(NAV_ITEMS.find(n => n.href === pathname)?.labelKey || 'dashboard')}
+layout.js:117:                            {t('system_version')} 2.0
+layout.js:128:                                placeholder={t('search_placeholder')}
+layout.js:190:                {t(labelKey)}
+page.js:23:    useEffect(() => {
+page.js:27:                    api.get('/reports/stats').catch(() => ({ data: { products: 0, sales: 0, expenses: 0 } })),
+page.js:28:                    api.get('/reports/activities').catch(() => ({ data: [] })),
+page.js:29:                    api.get('/reports/charts').catch(() => ({ data: [] })),
+page.js:30:                    api.get('/reports/top-products').catch(() => ({ data: [] }))
+page.js:48:        setTimeout(() => setAnimBars(true), 200);
+page.js:54:            <p className="text-[--text-muted] text-sm animate-pulse font-bold">{t('syncing')}</p>
+page.js:65:                    title={t('products_in_stock')}
+page.js:74:                    title={t('total_expenses')}
+page.js:82:                    title={t('total_sales_today')}
+page.js:90:                    title={t('due_debts')}
+page.js:109:                                <h3 className="font-extrabold text-[1.3rem] text-[var(--text-primary)]">{t('sales_analysis')}</h3>
+page.js:110:                                <p className="text-[11px] text-[--text-muted] mt-1 font-bold tracking-[0.1em] uppercase">{t('last_7_days')}</p>
+page.js:118:                            <span className="text-xs font-bold text-[--text-muted]">{t('live')}</span>
+page.js:132:                                                background: `linear-gradient(180deg, var(--primary) 0%, rgba(99,102,241,0.1) 100%)`,
+page.js:157:                            <h3 className="font-extrabold text-[1.2rem] text-[var(--text-primary)]">{t('recent_activity')}</h3>
+page.js:158:                            <p className="text-[10px] text-[--text-muted] font-bold uppercase tracking-widest mt-1">{t('live_log')}</p>
+page.js:168:                                    amount={fmtNumber(parseFloat(act.amount.replace(/[^0-9.-]/g, '')) || 0)}
+page.js:196:                                const revValue = parseFloat(prod.rev.replace(/[^0-9.]/g, '')) || 0;
+page.js:197:                                const maxRev = Math.max(...topProducts.map(p => parseFloat(p.rev.replace(/[^0-9.]/g, '')) || 0), 1);
+page.js:227:                    <h2 className="text-xl font-bold text-[--text-primary]">{t('quick_actions')}</h2>
+page.js:230:                    <QuickAction href="/dashboard/products" icon={<Package size={28} />} title={t('products')} desc={isRTL ? 'إدارة المخزون' : 'Gérer le stock'} color="orange" />
+page.js:231:                    <QuickAction href="/dashboard/sales" icon={<ShoppingCart size={28} />} title={t('sales')} desc={isRTL ? 'عرض المبيعات' : 'Voir les ventes'} color="purple" />
+page.js:232:                    <QuickAction href="/dashboard/returns" icon={<Undo2 size={28} />} title={t('returns')} desc={isRTL ? 'إدارة المرتجعات' : 'Gérer les retours'} color="pink" />
+page.js:233:                    <QuickAction href="/dashboard/invoices" icon={<Receipt size={28} />} title={t('invoices')} desc={isRTL ? 'فاتورة سريعة' : 'Facture rapide'} color="green" />
+page.js:234:                    <QuickAction href="/dashboard/settings" icon={<Zap size={28} />} title={t('settings')} desc={isRTL ? 'إعدادات النظام' : 'Paramètres système'} color="gray" />
+page.js:235:                    <QuickAction href="/dashboard/customers" icon={<Users size={28} />} title={t('customers')} desc={isRTL ? 'إدارة العملاء' : 'Gérer les clients'} color="teal" />
+products\page.js:30:    useEffect(() => {
+products\page.js:36:            const { data } = await api.get('/products');
+products\page.js:55:        e.preventDefault();
+products\page.js:59:                buyPrice: parseFloat(formData.buyPrice),
+products\page.js:60:                sellPrice: parseFloat(formData.sellPrice),
+products\page.js:61:                stockQty: parseInt(formData.stockQty),
+products\page.js:62:                minStockAlert: parseInt(formData.minStockAlert)
+products\page.js:65:                await api.put(`/products/${currentProduct.id}`, payload);
+products\page.js:67:                await api.post('/products', payload);
+products\page.js:72:            alert(isRTL ? 'خطأ في حفظ المنتج ❌' : 'Erreur lors de l\'enregistrement ❌');
+products\page.js:83:                alert(isRTL ? 'خطأ في حذف المنتج ❌' : 'Erreur lors de la suppression ❌');
+products\page.js:90:            setCurrentProduct(product);
+products\page.js:100:            setCurrentProduct(null);
+products\page.js:115:        setCurrentProduct(null);
+products\page.js:142:        const link = document.createElement("a");
+products\page.js:144:        link.setAttribute("download", `inventory_${new Date().toISOString().split('T')[0]}.csv`);
+products\page.js:161:                                    <h1 className="text-xl lg:text-2xl font-extrabold text-[var(--text-primary)]">{t('products')}</h1>
+products\page.js:360:function SmallStat({ label, value, unit, icon, color, bg, isRTL }) {
+purchases\page.js:24:        date: new Date().toISOString().split('T')[0],
+purchases\page.js:27:    useEffect(() => {
+purchases\page.js:34:                api.get('/purchases').catch(() => ({ data: [] })),
+purchases\page.js:35:                api.get('/suppliers').catch(() => ({ data: [] })),
+purchases\page.js:47:        e.preventDefault();
+purchases\page.js:56:            await api.post('/purchases', payload);
+purchases\page.js:60:            alert(isRTL ? 'خطأ في تسجيل عملية الشراء ❌' : 'Erreur lors de l’enregistrement de l’achat ❌');
+purchases\page.js:70:            date: new Date().toISOString().split('T')[0],
+purchases\page.js:103:                                <h1 className="text-xl lg:text-2xl font-black text-[var(--text-primary)]">{t('manage_purchases')}</h1>
+purchases\page.js:111:                            onClick={() => window.print()}
+purchases\page.js:121:                                background: 'linear-gradient(135deg, var(--accent) 0%, #db2777 100%)',
+purchases\page.js:126:                            {t('new_purchase')}
+purchases\page.js:172:                    title={t('total_purchases')}
+purchases\page.js:226:                    <option value="all">{t('all_suppliers')}</option>
+purchases\page.js:246:                            <p className="font-extrabold text-xl">{search ? (isRTL ? 'لا توجد مشتريات مطابقة للبحث' : 'Aucun résultat trouvé') : t('no_purchases')}</p>
+purchases\page.js:276:                                        <h2 className="text-2xl font-black text-[var(--text-primary)]">{t('new_purchase')}</h2>
+purchases\page.js:308:                                            <DollarSign size={12} /> {t('amount_label')}
+purchases\page.js:325:                                            <Calendar size={12} /> {t('date_label')}
+purchases\page.js:338:                                        <Package size={12} /> {t('notes_label')}
+purchases\page.js:353:                                        background: 'linear-gradient(135deg, var(--accent), #db2777)',
+purchases\page.js:359:                                    {t('save_purchase')}
+purchases\page.js:374:    const initials = supplierName.split(' ').slice(0, 2).map(w => w[0]).join('');
+reports\page.js:24:    useEffect(() => {
+reports\page.js:28:                    api.get('/reports/stats').catch(() => ({ data: { sales: 0, expenses: 0, profit: 0, products: 0, customers: 0, lowStock: 0 } })),
+reports\page.js:29:                    api.get('/reports/charts').catch(() => ({ data: [] })),
+reports\page.js:30:                    api.get('/reports/top-products').catch(() => ({ data: [] })),
+reports\page.js:39:        setTimeout(() => setAnimated(true), 400);
+reports\page.js:54:        window.print();
+reports\page.js:71:                                <h1 className="text-2xl lg:text-3xl font-black text-[var(--text-primary)]">{t('reports')}</h1>
+reports\page.js:327:                                        background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
+returns\page.js:25:    useEffect(() => {
+returns\page.js:31:            const res = await api.get('/returns');
+returns\page.js:44:            const res = await api.get(`/sales?invoiceNo=${searchInvoice}`);
+returns\page.js:54:                alert(isRTL ? 'عذراً، لم يتم العثور على الفاتورة المطلوبة ❌' : 'Désolé, la facture demandée n’a pas été trouvée ❌');
+returns\page.js:76:        if (itemsToReturn.length === 0) return alert(isRTL ? 'برجاء اختيار منتج واحد على الأقل للمرتجع' : 'Veuillez sélectionner au moins un produit à retourner');
+returns\page.js:81:            await api.post('/returns', {
+returns\page.js:89:            alert(isRTL ? 'تم معالجة المرتجع بنجاح ✅' : 'Retour traité avec succès ✅');
+returns\page.js:91:            alert(isRTL ? 'خطأ في معالجة المرتجع ❌' : 'Erreur lors du traitement du retour ❌');
+returns\page.js:125:                                <h1 className="text-2xl lg:text-3xl font-black text-[var(--text-primary)]">{t('manage_returns')}</h1>
+returns\page.js:126:                                <p className="text-[--text-muted] text-sm mt-1.5 font-bold opacity-80">{t('process_returns')}</p>
+returns\page.js:142:                            background: 'linear-gradient(135deg, var(--warning) 0%, #f59e0b 100%)',
+returns\page.js:147:                        {t('start_return')}
+returns\page.js:159:                        <p className="font-black text-xl">{t('no_returns')}</p>
+returns\page.js:179:                                        <h2 className="text-2xl font-black text-[var(--text-primary)]">{t('new_return')}</h2>
+returns\page.js:192:                                            <Hash size={12} /> {t('original_invoice')}
+returns\page.js:198:                                                    placeholder={t('search_invoice_placeholder')}
+returns\page.js:226:                                            <div className="text-[10px] font-black text-[--text-muted] uppercase tracking-widest mb-1.5 opacity-60">{t('invoice_data')}</div>
+returns\page.js:234:                                        <h3 className={`text-sm font-black text-[var(--text-primary)] px-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('select_return_items')}:</h3>
+returns\page.js:240:                                                        <div className="text-[10px] text-[--text-muted] font-bold mt-1">{t('original_qty')}: {item.qty}</div>
+returns\page.js:271:                                            <div className="text-lg font-black text-[var(--text-primary)]">{t('total_return')}:</div>
+returns\page.js:282:                                                background: 'linear-gradient(135deg, var(--warning), #f59e0b)',
+returns\page.js:287:                                            {t('complete_return')}
+sales\page.js:18:    const [customer, setCustomer] = useState(t('cash_customer'));
+sales\page.js:25:    useEffect(() => {
+sales\page.js:30:    useEffect(() => {
+sales\page.js:32:            setCustomer(t('cash_customer'));
+sales\page.js:35:    }, [t('cash_customer')]);
+sales\page.js:37:    useEffect(() => {
+sales\page.js:45:            const { data } = await api.get('/products');
+sales\page.js:56:            setCart(cart.map(item =>
+sales\page.js:60:            setCart([...cart, { ...product, qty: 1 }]);
+sales\page.js:65:        setCart(cart.map(item =>
+sales\page.js:71:        setCart(cart.filter(item => item.id !== id));
+sales\page.js:89:            await api.post('/sales', {
+sales\page.js:97:            alert(t('confirm_success'));
+sales\page.js:98:            setCart([]);
+sales\page.js:99:            setDiscount(0);
+sales\page.js:100:            setCustomer(t('cash_customer'));
+sales\page.js:103:            alert(t('confirm_error'));
+sales\page.js:152:                                onClick={() => addToCart(product)}
+sales\page.js:224:                                        onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+sales\page.js:261:                                    <button onClick={() => removeFromCart(item.id)} className="text-red-500/60 hover:text-red-500 p-1.5 hover:bg-red-50 rounded-xl">
+sales\page.js:320:                                onClick={() => window.print()}
+settings\page.js:24:    useEffect(() => {
+settings\page.js:34:        e.preventDefault();
+settings\page.js:40:            await new Promise(resolve => setTimeout(resolve, 800));
+settings\page.js:42:            setTimeout(() => setMessage(''), 3000);
+settings\page.js:58:        { id: 'profile', icon: User, label: t('profile') },
+settings\page.js:59:        { id: 'security', icon: Shield, label: t('security') },
+settings\page.js:60:        { id: 'appearance', icon: Palette, label: t('appearance') },
+settings\page.js:61:        { id: 'notifications', icon: Bell, label: t('notifications') },
+settings\page.js:62:        { id: 'data', icon: Database, label: t('data_mgmt') },
+settings\page.js:68:            <p className="text-lg font-black animate-pulse text-[var(--text-primary)]">{t('syncing')}</p>
+settings\page.js:83:                                <h1 className="text-xl lg:text-2xl font-black text-[var(--text-primary)]">{t('settings')}</h1>
+settings\page.js:139:                                    {t('profile')}
+settings\page.js:155:                                            <label className="text-[11px] font-black uppercase text-[--text-muted] tracking-widest mr-1 opacity-70">{t('language')}</label>
+settings\page.js:180:                                    {t('appearance')}
+settings\page.js:184:                                        <h4 className="font-black text-[--text-muted] uppercase text-xs tracking-widest pl-1 opacity-60">{t('theme')}</h4>
+settings\page.js:186:                                            <ThemeOption active={theme === 'light'} onClick={() => toggleTheme()} icon={<Sun size={24} />} label={t('light')} />
+settings\page.js:187:                                            <ThemeOption active={theme === 'dark'} onClick={() => toggleTheme()} icon={<Moon size={24} />} label={t('dark')} />
+settings\page.js:199:                                    {t('data_mgmt')}
+settings\page.js:224:                                    {t('security')}
+settings\page.js:267:                                    {t('notifications')}
+statement\page.js:27:        const amount = parseFloat(inv.total || inv.grandTotal || inv.finalAmount || 0);
+statement\page.js:41:    rows.sort((a, b) => new Date(a.date) - new Date(b.date));
+statement\page.js:73:    useEffect(() => {
+statement\page.js:78:    useEffect(() => {
+statement\page.js:80:            fetchStatement(selectedCustomerId);
+statement\page.js:86:            const { data } = await api.get('/customers');
+statement\page.js:89:        finally { setLoadingList(false); }
+statement\page.js:95:            const { data } = await api.get(`/customers/${cid}/statement`);
+statement\page.js:123:        return [...data].sort((a, b) => {
+statement\page.js:157:        const a = document.createElement('a'); a.href = url; a.download = `statement_${customer?.name || selectedCustomerId}.csv`; a.click();
+statement\page.js:194:        const initials = customer.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+statement\page.js:218:                        <Btn onClick={() => window.print()} icon={<Printer size={15} />} label={isRTL ? 'طباعة' : 'Imprimer'} />
+statement\page.js:220:                        <Btn onClick={() => fetchStatement(selectedCustomerId)} icon={<RefreshCw size={15} />} label={isRTL ? 'تحديث' : 'Actualiser'} ghost />
+statement\page.js:273:                                        <th key={col.field} onClick={() => handleSort(col.field)}
+statement\page.js:374:                                    {c.name.charAt(0).toUpperCase()}
+statement\page.js:412:                <td className={`px-5 py-4 text-[10px] font-black ${isRTL ? 'text-right' : 'text-left'}`}>{tx.debit > 0 ? fmt(tx.debit) : '—'}</td>
+statement\page.js:413:                <td className={`px-5 py-4 text-[10px] font-black ${isRTL ? 'text-right' : 'text-left'}`}>{tx.credit > 0 ? fmt(tx.credit) : '—'}</td>
+statement\page.js:414:                <td className={`px-5 py-4 text-[11px] font-black ${isRTL ? 'text-right' : 'text-left'}`}>{fmt(Math.abs(tx.balance))}</td>
+statement\page.js:424:                                        <span>{item.qty} × {fmt(item.price || item.sellPrice || 0)}</span>
+statement\page.js:425:                                        <span className="font-black text-primary border-l rtl:border-r rtl:border-l-0 border-gray-300 pl-3 rtl:pr-3">{fmt(item.qty * (item.price || item.sellPrice || 0))}</span>
+statement\page.js:467:                    <p className="text-2xl font-black">{fmt(Math.abs(summary.finalBalance))} MRU</p>
+suppliers\page.js:23:    useEffect(() => {
+suppliers\page.js:29:            const { data } = await api.get('/suppliers');
+suppliers\page.js:39:        e.preventDefault();
+suppliers\page.js:42:                await api.put(`/suppliers/${currentSupplier.id}`, formData);
+suppliers\page.js:44:                await api.post('/suppliers', formData);
+suppliers\page.js:48:            alert(isRTL ? 'تم حفظ بيانات المورد بنجاح ✅' : 'Fournisseur enregistré avec succès ✅');
+suppliers\page.js:50:            alert(isRTL ? 'خطأ في حفظ بيانات المورد ❌' : 'Erreur lors de l’enregistrement du fournisseur ❌');
+suppliers\page.js:60:                alert(isRTL ? 'خطأ في الحذف ❌' : 'Erreur de suppression ❌');
+suppliers\page.js:108:                                <h1 className="text-xl lg:text-2xl font-black text-[var(--text-primary)]">{t('supplier_network')}</h1>
+suppliers\page.js:117:                        style={{ background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', boxShadow: '0 8px 24px rgba(249,115,22,0.25)' }}
+suppliers\page.js:120:                        {t('add_supplier')}
+suppliers\page.js:133:                    placeholder={t('search_supplier_placeholder')}
+suppliers\page.js:189:                                            {currentSupplier ? t('edit_supplier_data') : t('new_supplier')}
+suppliers\page.js:203:                                <FormField label={t('supplier_name_label')} icon={<Truck size={14} />} required isRTL={isRTL}>
+suppliers\page.js:207:                                        placeholder={t('supplier_name_placeholder')}
+suppliers\page.js:213:                                <FormField label={t('company_name_label')} icon={<Building2 size={14} />} isRTL={isRTL}>
+suppliers\page.js:216:                                        placeholder={t('company_name_placeholder')}
+suppliers\page.js:223:                                    <FormField label={t('phone_label')} icon={<Phone size={14} />} isRTL={isRTL}>
+suppliers\page.js:231:                                    <FormField label={t('email_label')} icon={<Mail size={14} />} isRTL={isRTL}>
+suppliers\page.js:245:                                    style={{ background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', boxShadow: '0 10px 30px rgba(249,115,22,0.25)' }}
+suppliers\page.js:248:                                    {currentSupplier ? t('save_changes') : t('register_supplier')}
+suppliers\page.js:262:    const initials = supplier.name.split(' ').slice(0, 2).map(w => w[0]).join('');
