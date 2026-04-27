@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: raid-backend
+    env: node
+    region: oregon
+    plan: free
+    rootDir: packages/backend
+    buildCommand: npm install && npx prisma generate
+    startCommand: node src/app.js
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres.rcbxuoddjvpoaiflwdkf:Mehdy%4043173070@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+      - key: JWT_SECRET
+        value: supersafesecretkey123
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://web-smoky-iota-94.vercel.app
+      - key: SUPABASE_URL
+        value: https://rcbxuoddjvpoaiflwdkf.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjYnh1b2RkanZwb2FpZmx3ZGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDk0NzYsImV4cCI6MjA5Mjc4NTQ3Nn0.61DJg1y-ldWEX5EbzGawpnFmS5nn1SGnNrQlSDWORQI
