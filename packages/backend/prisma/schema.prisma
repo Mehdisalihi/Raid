@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,10 +18,10 @@ model User {
   canAccessSales     Boolean  @default(true)
   canCreateInvoices  Boolean  @default(true)
   canManageInventory Boolean  @default(true)
-  canViewReports     Boolean  @default(false)
+  canViewReports     Boolean  @default(true)
   canManageCustomers Boolean  @default(true)
-  canManageExpenses  Boolean  @default(false)
-  canAccessSettings  Boolean  @default(false)
+  canManageExpenses  Boolean  @default(true)
+  canAccessSettings  Boolean  @default(true)
   language           String   @default("ar")
   theme              String   @default("system")
   primaryColor       String   @default("#1E40AF")
@@ -32,6 +32,8 @@ model User {
   storePhone         String?
   storeEmail         String?
   currency           String   @default("MRU")
+  isVerified         Boolean  @default(false)
+  verificationCode   String?
   createdAt          DateTime @default(now())
 }
 
@@ -136,6 +138,8 @@ model Invoice {
   supplierId    String?
   totalAmount   Float
   discount      Float      @default(0)
+  taxRate       Float      @default(0)
+  taxAmount     Float      @default(0)
   finalAmount   Float
   type          String     @default("SALE")
   isDebt        Boolean    @default(false)

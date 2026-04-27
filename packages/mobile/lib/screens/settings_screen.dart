@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
 import '../core/auth_provider.dart';
 import '../core/theme.dart';
 import '../core/locale_provider.dart';
@@ -8,7 +11,7 @@ import '../core/app_localizations.dart';
 import '../core/format_utils.dart';
 import '../core/api_service.dart';
 import 'user_management_screen.dart';
-import 'package:intl/intl.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -19,12 +22,95 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _isSyncing = false;
+  bool _isSaving = false;
+  final _storeNameController = TextEditingController();
+  final _storeTaxIdController = TextEditingController();
+  final _storeAddressController = TextEditingController();
+  final _storePhoneController = TextEditingController();
+  final _storeEmailController = TextEditingController();
+  String? _logoBase64;
   String? _lastSyncTime;
 
   @override
   void initState() {
     super.initState();
     _loadSyncTime();
+    _loadStoreData();
+  }
+
+  void _loadStoreData() {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final user = auth.user;
+    if (user != null) {
+      _storeNameController.text = (user['storeName'] ?? '').toString();
+      _storeTaxIdController.text = (user['storeTaxId'] ?? '').toString();
+      _storeAddressController.text = (user['storeAddress'] ?? '').toString();
+      _storePhoneController.text = (user['storePhone'] ?? '').toString();
+      _storeEmailController.text = (user['storeEmail'] ?? '').toString();
+      _logoBase64 = user['storeLogo']?.toString();
+    }
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery, maxWidth: 800, maxHeight: 800, imageQuality: 70);
+      if (image != null) {
+        final bytes = await File(image.path).readAsBytes();
+        setState(() {
+          _logoBase64 = 'data:image/png;base64,${base64Encode(bytes)}';
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    setState(() => _isSaving = true);
+    try {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final data = {
+        'storeName': _storeNameController.text,
+        'storeTaxId': _storeTaxIdController.text,
+        'storeAddress': _storeAddressController.text,
+        'storePhone': _storePhoneController.text,
+        'storeEmail': _storeEmailController.text,
+        'storeLogo': _logoBase64,
+      };
+      
+      // Update locally first for immediate feedback
+      final updatedUser = Map<String, dynamic>.from(auth.user ?? {});
+      updatedUser.addAll(data);
+      await auth.updateUser(updatedUser);
+
+      // Save to server
+      await AuthService.updateSettings(data);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('تم حفظ الإعدادات بنجاح'), backgroundColor: AppColors.primary),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('فشل حفظ الإعدادات'), backgroundColor: AppColors.danger),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _storeNameController.dispose();
+    _storeTaxIdController.dispose();
+    _storeAddressController.dispose();
+    _storePhoneController.dispose();
+    _storeEmailController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadSyncTime() async {
@@ -73,6 +159,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildHeader(context),
           const SizedBox(height: 28),
           _buildProfileCard(context, user),
+          const SizedBox(height: 28),
+          _buildSectionTitle(context, context.watch<LocaleProvider>().isRTL ? 'هوية المتجر' : 'Identité du magasin', Icons.business_rounded),
+          _buildStoreSettingsCard(context),
           const SizedBox(height: 28),
           _buildSectionTitle(context, context.tr('dataSync'), Icons.sync_rounded),
           _buildSyncItem(context),
@@ -158,7 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             child: _isSyncing 
               ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.cloud_sync_rounded, color: AppColors.primary),
+              : Icon(Icons.cloud_sync_rounded, color: AppColors.primary),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -173,7 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           IconButton(
             onPressed: _isSyncing ? null : _handleSync,
-            icon: const Icon(Icons.refresh_rounded, color: AppColors.primary),
+            icon: Icon(Icons.refresh_rounded, color: AppColors.primary),
             tooltip: context.tr('syncNow'),
           ),
         ],
@@ -203,7 +292,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isSelected = themeProvider.themeMode == mode;
     return ListTile(
       title: Text(context.tr(labelKey)),
-      trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.primary) : null,
+      trailing: isSelected ? Icon(Icons.check_circle, color: AppColors.primary) : null,
       onTap: () {
         themeProvider.setThemeMode(mode);
         Navigator.pop(dialogCtx);
@@ -296,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
               title: const Text('العربية 🇸🇦'),
               trailing: localeProvider.locale.languageCode == 'ar' 
-                  ? const Icon(Icons.check_circle, color: AppColors.primary) 
+                  ? Icon(Icons.check_circle, color: AppColors.primary) 
                   : null,
               onTap: () {
                 localeProvider.changeLanguage('ar');
@@ -306,7 +395,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
               title: const Text('Français 🇫🇷'),
               trailing: localeProvider.locale.languageCode == 'fr' 
-                  ? const Icon(Icons.check_circle, color: AppColors.primary) 
+                  ? Icon(Icons.check_circle, color: AppColors.primary) 
                   : null,
               onTap: () {
                 localeProvider.changeLanguage('fr');
@@ -325,7 +414,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Builder(
           builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu_rounded,
+            icon: Icon(Icons.menu_rounded,
                 color: AppColors.primary, size: 28),
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
@@ -492,7 +581,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final locale = context.watch<LocaleProvider>().locale.languageCode;
     final now = DateTime.now();
     final pattern = locale == 'ar' ? 'EEEE، d MMMM y' : 'EEEE d MMMM y';
-    final dateStr = FormatUtils.toLatinNumerals(DateFormat(pattern, locale).format(now));
+    final dateStr = FormatUtils.formatDate(now, format: pattern);
     return Center(
       child: Column(
         children: [
@@ -502,6 +591,90 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Text(dateStr,
               style: TextStyle(color: textTheme.bodySmall?.color, fontSize: 10)),
         ],
+      ),
+    );
+  }
+  Widget _buildStoreSettingsCard(BuildContext context) {
+    final isRTL = context.watch<LocaleProvider>().isRTL;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+                  ),
+                  child: _logoBase64 != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.memory(base64Decode(_logoBase64!.split(',').last), fit: BoxFit.cover),
+                      )
+                    : Icon(Icons.add_a_photo_rounded, color: AppColors.primary, size: 30),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(isRTL ? 'شعار المؤسسة' : 'Logo de l\'entreprise', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(isRTL ? 'انقر لتغيير الشعار' : 'Cliquez pour changer', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildTextField(_storeNameController, isRTL ? 'اسم المؤسسة' : 'Nom du magasin', Icons.store_rounded),
+          _buildTextField(_storeTaxIdController, isRTL ? 'الرقم الضريبي' : 'ID Fiscal', Icons.badge_rounded),
+          _buildTextField(_storeAddressController, isRTL ? 'العنوان' : 'Adresse', Icons.location_on_rounded),
+          _buildTextField(_storePhoneController, isRTL ? 'الهاتف' : 'Téléphone', Icons.phone_rounded),
+          _buildTextField(_storeEmailController, isRTL ? 'البريد الإلكتروني' : 'Email', Icons.email_rounded),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isSaving ? null : _saveSettings,
+              icon: _isSaving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.save_rounded),
+              label: Text(isRTL ? 'حفظ المعلومات' : 'Enregistrer'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        style: const TextStyle(fontSize: 14),
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, size: 20),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
       ),
     );
   }

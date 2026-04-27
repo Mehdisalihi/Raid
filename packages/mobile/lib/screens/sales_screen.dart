@@ -3,11 +3,11 @@ import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
-import 'invoice_detail_screen.dart';
 import '../widgets/barcode_scanner_widget.dart';
 
 class SalesScreen extends StatefulWidget {
-  const SalesScreen({super.key});
+  final Map<String, dynamic>? invoiceToEdit;
+  const SalesScreen({super.key, this.invoiceToEdit});
   @override
   State<SalesScreen> createState() => _SalesScreenState();
 }
@@ -23,24 +23,48 @@ class _SalesScreenState extends State<SalesScreen> {
   bool _saving = false;
   bool _showCart = false;
   bool _isDebt = false;
+  double _taxRate = 16.0;
   String _paymentMethod = 'cash';
-  double _discount = 0;
   List<dynamic> _warehouses = [];
   String? _selectedWarehouseId;
   final _discountCtrl = TextEditingController(text: '0');
   int _tabIndex = 0; // 0: POS, 1: History
+  String? _editingInvoiceId;
+  String _filterDate = DateTime.now().toIso8601String().split('T')[0];
+  String _filterPayment = 'all';
 
   @override
   void initState() {
     super.initState();
+    if (widget.invoiceToEdit != null) {
+      _loadInvoiceForEdit(widget.invoiceToEdit!);
+    }
     _fetch();
     DataSync.notifier.addListener(_fetch);
+  }
+
+  void _loadInvoiceForEdit(Map<String, dynamic> inv) {
+    _editingInvoiceId = inv['id'];
+    _customerName = inv['customer']?['name'];
+    _isDebt = inv['isDebt'] ?? false;
+    _taxRate = (inv['taxRate'] ?? 16.0).toDouble();
+    _paymentMethod = inv['paymentMethod'] ?? 'cash';
+    _selectedWarehouseId = inv['warehouseId'];
+    
+    _cart = ((inv['items'] as List?) ?? []).map((item) {
+      return {
+        'id': item['productId'],
+        'name': item['product']?['name'] ?? '',
+        'sellPrice': (item['price'] ?? 0.0).toDouble(),
+        'qty': item['qty'] ?? 1,
+      };
+    }).toList();
   }
 
   Future<void> _fetch() async {
     try {
       final results = await Future.wait([
-        SaleService.getAll(),
+        SaleService.getAll(date: _filterDate, paymentMethod: _filterPayment),
         ProductService.getAll(),
         CustomerService.getAll(),
         WarehouseService.getAll(),
@@ -175,31 +199,39 @@ class _SalesScreenState extends State<SalesScreen> {
     if (_cart.isEmpty) return;
     setState(() => _saving = true);
     try {
-      await SaleService.create({
+      final taxAmt = _total * (_taxRate / 100);
+      final discount = double.tryParse(_discountCtrl.text) ?? 0.0;
+      final finalAmt = _total + taxAmt - discount;
+
+      final payload = {
         'customerName': _customerName ?? context.tr('cashCustomer'),
         'cart': _cart,
         'totalAmount': _total,
-        'discount': _discount,
-        'finalAmount': _total - _discount,
-        'paymentMethod': _paymentMethod,
+        'taxRate': _taxRate,
+        'taxAmount': taxAmt,
+        'discount': discount,
+        'finalAmount': finalAmt,
         'isDebt': _isDebt,
+        'paymentMethod': _paymentMethod,
+        'type': 'SALE',
         'warehouseId': _selectedWarehouseId,
         'date': DateTime.now().toIso8601String().split('T')[0],
-      });
+      };
+
+      if (_editingInvoiceId != null) {
+        await SaleService.update(_editingInvoiceId, payload);
+      } else {
+        await SaleService.create(payload);
+      }
+      
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ ${context.tr('saleSuccess')}'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('✅ ${context.tr(_editingInvoiceId != null ? 'invoiceUpdated' : 'invoiceSaved')}'),
+            backgroundColor: AppColors.success));
         setState(() {
-          _cart.clear();
-          _showCart = false;
-          _discount = 0;
-          _discountCtrl.text = '0';
-          _paymentMethod = 'cash';
-          _isDebt = false;
+          _cart = [];
+          _saving = false;
+          _editingInvoiceId = null;
         });
         _fetch();
       }
@@ -334,7 +366,7 @@ class _SalesScreenState extends State<SalesScreen> {
                     ),
                     child: Text(
                       _tabIndex == 0 ? context.tr('quickSales') : context.tr('financialArchive'),
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 11,
                           fontWeight: FontWeight.w800),
@@ -388,7 +420,7 @@ class _SalesScreenState extends State<SalesScreen> {
                 hintText: context.tr('searchHint'),
                 hintStyle: const TextStyle(color: AppColors.textMuted),
                 prefixIcon:
-                    const Icon(Icons.search_rounded, color: AppColors.primary),
+                    Icon(Icons.search_rounded, color: AppColors.primary),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -500,7 +532,7 @@ class _SalesScreenState extends State<SalesScreen> {
                             color: AppColors.primary.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.person_rounded,
+                          child: Icon(Icons.person_rounded,
                               color: AppColors.primary, size: 18),
                         ),
                         const SizedBox(width: 12),
@@ -533,7 +565,7 @@ class _SalesScreenState extends State<SalesScreen> {
                     child: DropdownButton<String>(
                       value: _selectedWarehouseId,
                       isExpanded: true,
-                      icon: const Icon(Icons.warehouse_rounded, color: AppColors.primary, size: 18),
+                      icon: Icon(Icons.warehouse_rounded, color: AppColors.primary, size: 18),
                       items: _warehouses.map((w) => DropdownMenuItem(
                         value: w['id'].toString(),
                         child: Text(w['name'], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
@@ -583,7 +615,7 @@ class _SalesScreenState extends State<SalesScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.bold)),
                   Text(FormatUtils.formatCurrency(_total),
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w900)),
@@ -681,7 +713,7 @@ class _SalesScreenState extends State<SalesScreen> {
                         children: [
                           Text(
                             FormatUtils.formatCurrency(p['sellPrice']),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
@@ -714,75 +746,199 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  Widget _buildHistory() {
-    if (_sales.isEmpty) {
-      return Center(
-          child: Text(context.tr('noSales'),
-              style: const TextStyle(color: AppColors.textLight)));
-    }
-    return ListView.builder(
-      padding: const EdgeInsets.all(20),
-      itemCount: _sales.length,
-      itemBuilder: (context, index) {
-        final s = _sales[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: AppColors.premiumShadow,
-          ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => InvoiceDetailScreen(sale: s))),
-            leading: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+  Widget _buildHistoryFilters() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () async {
+                final d = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.parse(_filterDate),
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime.now(),
+                );
+                if (d != null) {
+                  setState(() => _filterDate = d.toIso8601String().split('T')[0]);
+                  _fetch();
+                }
+              },
+              icon: const Icon(Icons.calendar_today, size: 16),
+              label: Text(FormatUtils.toLatinNumerals(_filterDate)),
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Icon(Icons.receipt_long_rounded,
-                  color: AppColors.primary, size: 22),
             ),
-            title: Text(s['customerName'] ?? context.tr('cashCustomer'),
-                style: const TextStyle(
-                    color: AppColors.text,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 15)),
-            subtitle: Text('${FormatUtils.toLatinNumerals(s['date']?.toString() ?? '')} | ${s['paymentMethod']}',
-                style:
-                    const TextStyle(color: AppColors.textMuted, fontSize: 12)),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _filterPayment,
+                  isExpanded: true,
+                  onChanged: (v) {
+                    setState(() => _filterPayment = v!);
+                    _fetch();
+                  },
+                  items: ['all', 'cash', 'bankily', 'masrvi'].map((m) => DropdownMenuItem(
+                    value: m,
+                    child: Text(context.tr(m), style: const TextStyle(fontSize: 12)),
+                  )).toList(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentSummary() {
+    final Map<String, double> totals = {'cash': 0, 'bankily': 0, 'masrvi': 0};
+    double grandTotal = 0;
+    for (var s in _sales) {
+      final amt = (s['finalAmount'] ?? 0).toDouble();
+      grandTotal += amt;
+      final m = s['paymentMethod'] ?? 'cash';
+      if (totals.containsKey(m)) totals[m] = totals[m]! + amt;
+    }
+
+    return Container(
+      height: 80,
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          _summaryCard(context.tr('total'), grandTotal, AppColors.primary),
+          _summaryCard(context.tr('cash'), totals['cash']!, AppColors.success),
+          _summaryCard('Bankily', totals['bankily']!, Colors.amber),
+          _summaryCard('Masrvi', totals['masrvi']!, Colors.indigo),
+        ],
+      ),
+    );
+  }
+
+  Widget _summaryCard(String title, double amount, Color color) {
+    return Container(
+      width: 120,
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(title, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          FittedBox(
+            child: Text(FormatUtils.formatCurrency(amount),
+                style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 15)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryItem(dynamic s) {
+    final items = (s['items'] as List?) ?? [];
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: AppColors.premiumShadow,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(s['customerName'] ?? context.tr('cashCustomer'),
+                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+              Text(FormatUtils.formatCurrency(s['finalAmount']),
+                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...items.map((it) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(FormatUtils.formatCurrency(s['finalAmount']),
-                        style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 16)),
-                    const Icon(Icons.chevron_left_rounded,
-                        color: AppColors.textLight, size: 16),
-                  ],
-                ),
+                Icon(Icons.circle, size: 6, color: AppColors.primary),
                 const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded,
-                      color: AppColors.danger, size: 20),
-                  onPressed: () => _delete(s['id']),
+                Expanded(
+                  child: Text('${it['product']?['name'] ?? it['productName'] ?? ''}',
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                 ),
+                Text('× ${it['qty']}', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
               ],
             ),
+          )),
+          const Divider(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('${FormatUtils.toLatinNumerals(s['createdAt']?.toString().split('T')[0] ?? '')} | ${s['paymentMethod']}',
+                  style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit_note_rounded, color: Colors.blue, size: 24),
+                    onPressed: () {
+                      setState(() {
+                        _tabIndex = 0;
+                        _loadInvoiceForEdit(s);
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded, color: AppColors.danger, size: 24),
+                    onPressed: () => _delete(s['id']),
+                  ),
+                ],
+              ),
+            ],
           ),
-        );
-      },
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistory() {
+    return Column(
+      children: [
+        _buildHistoryFilters(),
+        _buildPaymentSummary(),
+        Expanded(
+          child: _sales.isEmpty
+              ? Center(child: Text(context.tr('noSales'), style: const TextStyle(color: AppColors.textLight)))
+              : RefreshIndicator(
+                  onRefresh: _fetch,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    itemCount: _sales.length,
+                    itemBuilder: (context, index) {
+                      return _buildHistoryItem(_sales[index]);
+                    },
+                  ),
+                ),
+        ),
+      ],
     );
   }
 
@@ -831,7 +987,7 @@ class _SalesScreenState extends State<SalesScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text('${_cart.length} ${context.tr('items')}',
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w800,
                           fontSize: 12)),
@@ -861,7 +1017,7 @@ class _SalesScreenState extends State<SalesScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.shopping_bag_outlined,
+                          child: Icon(Icons.shopping_bag_outlined,
                               color: AppColors.primary),
                         ),
                         const SizedBox(width: 16),
@@ -875,7 +1031,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15)),
                               Text(FormatUtils.formatCurrency(i['sellPrice']),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w800)),
                             ],
@@ -945,15 +1101,60 @@ class _SalesScreenState extends State<SalesScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(context.tr('totalInvoice'),
+              Text(context.tr('subtotal'),
                   style: const TextStyle(
                       color: AppColors.textMuted,
                       fontSize: 16,
                       fontWeight: FontWeight.w700)),
               Text(FormatUtils.formatCurrency(_total),
                   style: const TextStyle(
+                      color: AppColors.text,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(context.tr('taxRate'),
+                  style: const TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700)),
+              SizedBox(
+                width: 60,
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.end,
+                  decoration: const InputDecoration(
+                      suffixText: '%', border: InputBorder.none, isDense: true),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w900,
                       color: AppColors.primary,
-                      fontSize: 22,
+                      fontSize: 16),
+                  onChanged: (v) {
+                    setState(() => _taxRate = double.tryParse(v) ?? 0);
+                  },
+                  controller:
+                      TextEditingController(text: _taxRate.toStringAsFixed(0)),
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(context.tr('total'),
+                  style: const TextStyle(
+                      color: AppColors.text,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900)),
+              Text(FormatUtils.formatCurrency(_total * (1 + _taxRate / 100)),
+                  style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 26,
                       fontWeight: FontWeight.w900)),
             ],
           ),

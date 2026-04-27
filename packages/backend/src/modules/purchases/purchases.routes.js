@@ -7,9 +7,12 @@ const prisma = new PrismaClient();
 // Create Creditor Invoice (Purchase from Customer/Supplier)
 router.post('/', async (req, res) => {
     const { customerId, supplierId, items, total, date, warehouseId } = req.body;
+    const cleanCustomerId = customerId && customerId !== '' ? customerId : null;
+    const cleanSupplierId = supplierId && supplierId !== '' ? supplierId : null;
     const invoiceDate = date ? new Date(date) : new Date();
-    const sId = supplierId || customerId; // Support both for backward compatibility
+    const sId = cleanSupplierId || cleanCustomerId; // Support both for backward compatibility
 
+    console.log('Incoming Purchase Request:', req.body);
     try {
         const result = await prisma.$transaction(async (tx) => {
             const processedItems = [];
@@ -38,8 +41,8 @@ router.post('/', async (req, res) => {
                     processedItems.push({
                         productId,
                         qty: parseInt(item.qty || 0),
-                        price: parseFloat(item.purchasePrice || 0),
-                        total: parseFloat((item.purchasePrice || 0) * (item.qty || 0))
+                        price: parseFloat(item.purchasePrice || item.price || 0),
+                        total: parseFloat((item.purchasePrice || item.price || 0) * (item.qty || 0))
                     });
                 }
             }
@@ -48,10 +51,12 @@ router.post('/', async (req, res) => {
             const invoice = await tx.invoice.create({
                 data: {
                     invoiceNo: `PUR-${Date.now()}`,
-                    customerId: (!supplierId && customerId) ? customerId : null,
-                    supplierId: supplierId || null,
+                    customerId: cleanCustomerId,
+                    supplierId: cleanSupplierId,
                     totalAmount: parseFloat(total || 0),
                     discount: 0,
+                    taxRate: 0,
+                    taxAmount: 0,
                     finalAmount: parseFloat(total || 0),
                     type: "PURCHASE",
                     createdAt: invoiceDate,

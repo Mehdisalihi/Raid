@@ -3,7 +3,7 @@ import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
-import 'package:intl/intl.dart';
+
 
 class InvoicesScreen extends StatefulWidget {
   const InvoicesScreen({super.key});
@@ -46,6 +46,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
   final _manualQtyCtrl = TextEditingController();
   final _manualPriceCtrl = TextEditingController();
   DateTime _manualDate = DateTime.now();
+  double _taxRate = 16.0;
 
   @override
   void initState() {
@@ -145,17 +146,22 @@ class _InvoicesScreenState extends State<InvoicesScreen>
 
     return Column(
       children: [
-        _buildCustomerSelector(isOptional: !isDebt),
-        _buildWarehouseSelector(),
-        if (!isDebt) _buildPaymentSelector(),
-        _buildSearchBar(),
-        if (cart.isNotEmpty) _buildCartGraph(cart, isPurchase: false),
         Expanded(
-          child:
-              _buildProductList(onAdd: (p) => _addToCart(p, isPurchase: false)),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              _buildCustomerSelector(isOptional: !isDebt),
+              _buildWarehouseSelector(),
+              if (!isDebt) _buildPaymentSelector(),
+              _buildSearchBar(),
+              if (cart.isNotEmpty) _buildCartGraph(cart, isPurchase: false),
+              const SizedBox(height: 8),
+              _buildProductList(onAdd: (p) => _addToCart(p, isPurchase: false), shrinkWrap: true),
+            ],
+          ),
         ),
         if (cart.isNotEmpty)
-          _buildSummaryBar(total, () => _saveSale(isDebt), context.tr('confirmSale'), () {
+          _buildSummaryBar(total, () => _showSalesCheckout(isDebt), context.tr('checkout'), () {
             setState(() => _salesCart.clear());
           }),
       ],
@@ -171,17 +177,22 @@ class _InvoicesScreenState extends State<InvoicesScreen>
 
     return Column(
       children: [
-        _buildSupplierSelector(),
-        _buildWarehouseSelector(),
-        _buildManualEntryForm(),
-        _buildSearchBar(),
-        if (cart.isNotEmpty) _buildCartGraph(cart, isPurchase: true),
         Expanded(
-          child:
-              _buildProductList(onAdd: (p) => _addToCart(p, isPurchase: true)),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              _buildSupplierSelector(),
+              _buildWarehouseSelector(),
+              _buildManualEntryForm(),
+              _buildSearchBar(),
+              if (cart.isNotEmpty) _buildCartGraph(cart, isPurchase: true),
+              const SizedBox(height: 8),
+              _buildProductList(onAdd: (p) => _addToCart(p, isPurchase: true), shrinkWrap: true),
+            ],
+          ),
         ),
         if (cart.isNotEmpty)
-          _buildSummaryBar(total, _savePurchase, context.tr('confirmInput'), () {
+          _buildSummaryBar(total, _showPurchaseCheckout, context.tr('purchaseCheckout'), () {
             setState(() => _purchaseCart.clear());
           }),
       ],
@@ -340,43 +351,61 @@ class _InvoicesScreenState extends State<InvoicesScreen>
   Widget _buildManualEntryForm() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)
+          BoxShadow(color: AppColors.primary.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 4))
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(context.tr('addNewProduct'), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: AppColors.primary)),
+          const SizedBox(height: 16),
           TextField(
             controller: _manualNameCtrl,
-            decoration:
-                InputDecoration(hintText: context.tr('productName')),
+            decoration: InputDecoration(
+              hintText: context.tr('productName'),
+              filled: true,
+              fillColor: AppColors.bg,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _manualQtyCtrl,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(hintText: context.tr('quantity')),
+                  decoration: InputDecoration(
+                    hintText: context.tr('quantity'),
+                    filled: true,
+                    fillColor: AppColors.bg,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Expanded(
                 child: TextField(
                   controller: _manualPriceCtrl,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(hintText: context.tr('purchasePrice')),
+                  decoration: InputDecoration(
+                    hintText: context.tr('purchasePrice'),
+                    filled: true,
+                    fillColor: AppColors.bg,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -391,71 +420,35 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                     if (picked != null) setState(() => _manualDate = picked);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.border),
+                      color: AppColors.bg,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Center(
-                        child:
-                            Text(FormatUtils.toLatinNumerals(DateFormat('yyyy-MM-dd').format(_manualDate)))),
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.primary),
+                        const SizedBox(width: 8),
+                        Text(FormatUtils.formatDate(_manualDate), style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               ElevatedButton(
                 onPressed: _addManualToCart,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.secondary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                  minimumSize: const Size(80, 48),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: Text(context.tr('add')),
+                child: const Icon(Icons.add_rounded),
               ),
             ],
           ),
-          if (_purchaseCart.isNotEmpty) ...[
-            const Divider(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(context.tr('total'),
-                        style: const TextStyle(
-                            color: AppColors.textMuted, fontSize: 12)),
-                    Text(
-                        FormatUtils.formatCurrency(_purchaseCart.fold<double>(0.0, (s, i) => s + (i['purchasePrice'] ?? 0) * (i['qty'] as int))),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: AppColors.primary)),
-                  ],
-                ),
-                ElevatedButton.icon(
-                  onPressed: _saving ? null : _savePurchase,
-                  icon: _saving
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
-                      : const Icon(Icons.check_circle_outline),
-                  label: Text(context.tr('confirmInvoice')),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.success,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );
@@ -523,9 +516,11 @@ class _InvoicesScreenState extends State<InvoicesScreen>
     });
   }
 
-  Widget _buildProductList({required Function(Map<String, dynamic>) onAdd}) {
+  Widget _buildProductList({required Function(Map<String, dynamic>) onAdd, bool shrinkWrap = false}) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shrinkWrap: shrinkWrap,
+      physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       itemCount: _filteredProducts.length,
       itemBuilder: (_, i) {
         final p = _filteredProducts[i];
@@ -614,7 +609,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                 children: [
                   Text(
                     item['name'] ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                         color: AppColors.primary),
@@ -628,43 +623,46 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                         BoxShadow(color: Colors.black12, blurRadius: 2)
                       ],
                     ),
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (item['qty'] > 1) {
-                                item['qty']--;
-                              } else {
-                                cart.removeAt(index);
-                              }
-                            });
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            child: Icon(Icons.remove,
-                                size: 16, color: AppColors.danger),
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (item['qty'] > 1) {
+                                  item['qty']--;
+                                } else {
+                                  cart.removeAt(index);
+                                }
+                              });
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              child: Icon(Icons.remove,
+                                  size: 16, color: AppColors.danger),
+                            ),
                           ),
-                        ),
-                        Text(FormatUtils.formatQuantity(item['qty']),
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              item['qty']++;
-                            });
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            child: Icon(Icons.add,
-                                size: 16, color: AppColors.success),
+                          InkWell(
+                            onTap: () => _showQuantityDialog(item, isPurchase),
+                            child: Text(FormatUtils.formatQuantity(item['qty']),
+                                style:
+                                    const TextStyle(fontWeight: FontWeight.bold)),
                           ),
-                        ),
-                      ],
-                    ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                item['qty']++;
+                              });
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              child: Icon(Icons.add,
+                                  size: 16, color: AppColors.success),
+                            ),
+                          ),
+                        ],
+                      ),
                   ),
                 ],
               ),
@@ -679,10 +677,10 @@ class _InvoicesScreenState extends State<InvoicesScreen>
       double total, VoidCallback action, String label, VoidCallback onCancel) {
     return Container(
       padding: EdgeInsets.only(
-        left: 20, 
-        right: 20, 
-        top: 16, 
-        bottom: MediaQuery.of(context).padding.bottom + 16
+        left: 12, 
+        right: 12, 
+        top: 12, 
+        bottom: MediaQuery.of(context).padding.bottom + 12
       ),
       decoration: BoxDecoration(
           color: AppColors.surface,
@@ -697,27 +695,35 @@ class _InvoicesScreenState extends State<InvoicesScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start, 
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(context.tr('total').toUpperCase(),
-                  style: const TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(FormatUtils.formatCurrency(total),
-                      style: const TextStyle(
-                          color: AppColors.text,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900)),
-                  const SizedBox(width: 4),
-                  const Text('MRU', style: TextStyle(color: AppColors.textMuted, fontSize: 12, fontWeight: FontWeight.bold)),
-                ],
-              ),
-          ]),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, 
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(context.tr('total').toUpperCase(),
+                    style: const TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(FormatUtils.formatCurrency(total),
+                          style: const TextStyle(
+                              color: AppColors.text,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900)),
+                      const SizedBox(width: 4),
+                      const Text('MRU', style: TextStyle(color: AppColors.textMuted, fontSize: 12, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+            ]),
+          ),
+          const SizedBox(width: 12),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 decoration: BoxDecoration(
@@ -785,6 +791,217 @@ class _InvoicesScreenState extends State<InvoicesScreen>
     });
   }
 
+  void _showSalesCheckout(bool isDebt) {
+    final total = _salesCart.fold<double>(0.0, (s, i) => s + (i['sellPrice'] ?? 0) * (i['qty'] as int));
+    final customer = _customers.firstWhere((c) => c['id'].toString() == _selectedCustomerId, orElse: () => null);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2)))),
+            const SizedBox(height: 24),
+            Text(context.tr('checkout'), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: AppColors.bg, borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                children: [
+                  _buildSummaryRow(context.tr('selectCustomer'), customer?['name'] ?? context.tr('cashCustomer')),
+                  const Divider(height: 24),
+                  _buildSummaryRow(context.tr('warehouse'), _warehouses.firstWhere((w) => w['id'].toString() == _selectedWarehouseId, orElse: () => {'name': '-'})['name']),
+                  const Divider(height: 24),
+                  _buildSummaryRow(context.tr('paymentMethod'), isDebt ? context.tr('debt') : context.tr(_paymentMethod)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(color: AppColors.bg, borderRadius: BorderRadius.circular(16)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(context.tr('taxRate'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(
+                    width: 80,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(suffixText: '%', border: InputBorder.none),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.primary),
+                      onChanged: (v) {
+                        setState(() => _taxRate = double.tryParse(v) ?? 0);
+                      },
+                      controller: TextEditingController(text: _taxRate.toStringAsFixed(0)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(context.tr('subtotal'), style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                    Text(FormatUtils.formatCurrency(total), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(context.tr('total'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(FormatUtils.formatCurrency(total * (1 + _taxRate / 100)), style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppColors.primary)),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _saveSale(isDebt);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: Text(context.tr('confirm'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showQuantityDialog(Map<String, dynamic> item, bool isPurchase) {
+    final ctrl = TextEditingController(text: item['qty'].toString());
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.tr('selectQuantity')),
+        content: TextField(
+          controller: ctrl,
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          decoration: InputDecoration(hintText: context.tr('qty')),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.tr('cancel'))),
+          ElevatedButton(
+            onPressed: () {
+              final val = int.tryParse(_normalizeNumbers(ctrl.text)) ?? 0;
+              if (val > 0) {
+                setState(() => item['qty'] = val);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(context.tr('confirm')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPurchaseCheckout() {
+    final total = _purchaseCart.fold<double>(0.0, (s, i) => s + (i['purchasePrice'] ?? 0) * (i['qty'] as int));
+    final supplier = _suppliers.firstWhere((s) => s['id'].toString() == _selectedSupplierId, orElse: () => null);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2)))),
+            const SizedBox(height: 24),
+            Text(context.tr('purchaseCheckout'), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: AppColors.bg, borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                children: [
+                  _buildSummaryRow(context.tr('supplier_label'), supplier?['name'] ?? '-'),
+                  const Divider(height: 24),
+                  _buildSummaryRow(context.tr('warehouse'), _warehouses.firstWhere((w) => w['id'].toString() == _selectedWarehouseId, orElse: () => {'name': '-'})['name']),
+                  const Divider(height: 24),
+                  _buildSummaryRow(context.tr('date'), FormatUtils.formatDate(_manualDate)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(context.tr('total'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(FormatUtils.formatCurrency(total), style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppColors.primary)),
+              ],
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _savePurchase();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: Text(context.tr('confirmPurchase'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+        Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
+      ],
+    );
+  }
+
   Future<void> _saveSale(bool isDebt) async {
     if (isDebt && _selectedCustomerId.isEmpty) {
       ScaffoldMessenger.of(context)
@@ -795,12 +1012,17 @@ class _InvoicesScreenState extends State<InvoicesScreen>
     try {
       final total = _salesCart.fold<double>(
           0.0, (s, i) => s + (i['sellPrice'] ?? 0) * (i['qty'] as int));
+      final taxAmt = total * (_taxRate / 100);
+      final finalAmt = total + taxAmt;
+
       await SaleService.create({
         'customerName':
             _selectedCustomerName.isEmpty ? context.tr('cashCustomer') : _selectedCustomerName,
         'isDebt': isDebt,
         'totalAmount': total,
-        'finalAmount': total,
+        'taxRate': _taxRate,
+        'taxAmount': taxAmt,
+        'finalAmount': finalAmt,
         'discount': 0,
         'paymentMethod': isDebt ? 'debt' : _paymentMethod,
         'cart': _salesCart,

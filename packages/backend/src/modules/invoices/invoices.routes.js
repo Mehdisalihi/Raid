@@ -143,14 +143,12 @@ router.delete('/:id', async (req, res) => {
             // 1. Restore/Reverse Stock and Balances based on type
             for (const item of invoice.items) {
                 if (invoice.type === 'SALE' || invoice.type === 'QUOTATION') {
-                    // Only SALE affects stock (QUOTATION doesn't unless converted, but safety check)
                     if (invoice.type === 'SALE') {
                         await tx.product.update({
                             where: { id: item.productId },
                             data: { stockQty: { increment: item.qty } }
                         });
                         
-                        // Try to find and reverse warehouse stock
                         const movement = await tx.stockMovement.findFirst({
                             where: { productId: item.productId, type: 'SALE', notes: { contains: invoice.invoiceNo } }
                         });
@@ -177,17 +175,11 @@ router.delete('/:id', async (req, res) => {
                             data: { qty: { decrement: item.qty } }
                         });
                     }
-                } else if (invoice.type === 'RETURN') {
-                    await tx.product.update({
-                        where: { id: item.productId },
-                        data: { stockQty: { decrement: item.qty } }
-                    });
-                    // Returns usually don't have complex warehouse tracking in current simplified version
                 }
             }
 
             // 2. Reverse Balances
-            if (invoice.isDebt || invoice.type === 'PURCHASE' || invoice.type === 'RETURN') {
+            if (invoice.isDebt || invoice.type === 'PURCHASE') {
                 if (invoice.type === 'SALE' && invoice.customerId) {
                     await tx.customer.update({
                         where: { id: invoice.customerId },
@@ -205,27 +197,148 @@ router.delete('/:id', async (req, res) => {
                             data: { balance: { increment: invoice.finalAmount } }
                         });
                     }
-                } else if (invoice.type === 'RETURN' && invoice.customerId) {
-                    await tx.customer.update({
-                        where: { id: invoice.customerId },
-                        data: { balance: { increment: invoice.finalAmount } }
-                    });
                 }
             }
 
-            // 3. Delete Stock Movements associated with this invoice
-            await tx.stockMovement.deleteMany({
-                where: { notes: { contains: invoice.invoiceNo } }
-            });
-
-            // 4. Delete items and invoice
+            // 3. Delete items, movements and invoice
+            await tx.stockMovement.deleteMany({ where: { notes: { contains: invoice.invoiceNo } } });
             await tx.saleItem.deleteMany({ where: { invoiceId: id } });
             await tx.invoice.delete({ where: { id } });
         });
         res.json({ message: 'Invoice deleted successfully' });
     } catch (error) {
-        console.error('Delete invoice error:', error);
         res.status(500).json({ error: 'error deleting invoice: ' + error.message });
+    }
+});
+
+// Update Invoice (Universal)
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { customerName, customerId, supplierId, items, cart, totalAmount, discount, taxRate, taxAmount, finalAmount, isDebt, paymentMethod, type, warehouseId } = req.body;
+    
+    const cleanCart = cart || items || [];
+
+    try {
+        const result = await prisma.$transaction(async (tx) => {
+            // 1. Get Old Invoice
+            const oldInv = await tx.invoice.findUnique({
+                where: { id },
+                include: { items: true }
+            });
+            if (!oldInv) throw new Error('Invoice not found');
+
+            // 2. REVERSE OLD EFFECTS
+            for (const item of oldInv.items) {
+                if (oldInv.type === 'SALE') {
+                    await tx.product.update({ where: { id: item.productId }, data: { stockQty: { increment: item.qty } } });
+                    const mov = await tx.stockMovement.findFirst({ where: { productId: item.productId, type: 'SALE', notes: { contains: oldInv.invoiceNo } } });
+                    if (mov?.sourceId) {
+                        await tx.warehouseInventory.update({
+                            where: { productId_warehouseId: { productId: item.productId, warehouseId: mov.sourceId } },
+                            data: { qty: { increment: item.qty } }
+                        });
+                    }
+                } else if (oldInv.type === 'PURCHASE') {
+                    await tx.product.update({ where: { id: item.productId }, data: { stockQty: { decrement: item.qty } } });
+                    const mov = await tx.stockMovement.findFirst({ where: { productId: item.productId, type: 'PURCHASE', notes: { contains: oldInv.invoiceNo } } });
+                    if (mov?.destinationId) {
+                        await tx.warehouseInventory.update({
+                            where: { productId_warehouseId: { productId: item.productId, warehouseId: mov.destinationId } },
+                            data: { qty: { decrement: item.qty } }
+                        });
+                    }
+                }
+            }
+            if (oldInv.type === 'SALE' && oldInv.isDebt && oldInv.customerId) {
+                await tx.customer.update({ where: { id: oldInv.customerId }, data: { balance: { decrement: oldInv.finalAmount } } });
+            } else if (oldInv.type === 'PURCHASE') {
+                if (oldInv.supplierId) await tx.supplier.update({ where: { id: oldInv.supplierId }, data: { balance: { increment: oldInv.finalAmount } } });
+                else if (oldInv.customerId) await tx.customer.update({ where: { id: oldInv.customerId }, data: { balance: { increment: oldInv.finalAmount } } });
+            }
+
+            await tx.saleItem.deleteMany({ where: { invoiceId: id } });
+            await tx.stockMovement.deleteMany({ where: { notes: { contains: oldInv.invoiceNo } } });
+
+            // 3. APPLY NEW EFFECTS
+            // Use provided warehouse or default
+            let targetWH = warehouseId;
+            if (!targetWH) {
+                const def = await tx.warehouse.findFirst({ where: { isActive: true } });
+                targetWH = def?.id;
+            }
+
+            // Update Invoice Header
+            const updated = await tx.invoice.update({
+                where: { id },
+                data: {
+                    customerId: customerId || oldInv.customerId,
+                    supplierId: supplierId || oldInv.supplierId,
+                    totalAmount: parseFloat(totalAmount || 0),
+                    discount: parseFloat(discount || 0),
+                    taxRate: parseFloat(taxRate || 0),
+                    taxAmount: parseFloat(taxAmount || 0),
+                    finalAmount: parseFloat(finalAmount || 0),
+                    isDebt: !!isDebt,
+                    paymentMethod: paymentMethod || 'cash',
+                    type: type || oldInv.type,
+                    items: {
+                        create: cleanCart.map(item => ({
+                            productId: item.id || item.productId,
+                            qty: parseInt(item.qty || 0),
+                            price: parseFloat(item.sellPrice || item.buyPrice || item.price || 0),
+                            total: parseFloat((item.sellPrice || item.buyPrice || item.price || 0) * (item.qty || 0))
+                        }))
+                    }
+                }
+            });
+
+            // Update Stock for new items
+            for (const item of cleanCart) {
+                const pid = item.id || item.productId;
+                const qty = parseInt(item.qty || 0);
+                const price = parseFloat(item.sellPrice || item.buyPrice || item.price || 0);
+
+                if (updated.type === 'SALE') {
+                    await tx.product.update({ where: { id: pid }, data: { stockQty: { decrement: qty } } });
+                    if (targetWH) {
+                        await tx.warehouseInventory.upsert({
+                            where: { productId_warehouseId: { productId: pid, warehouseId: targetWH } },
+                            update: { qty: { decrement: qty } },
+                            create: { productId: pid, warehouseId: targetWH, qty: -qty }
+                        });
+                        await tx.stockMovement.create({
+                            data: { productId: pid, sourceId: targetWH, qty, type: 'SALE', notes: `Updated Invoice: ${updated.invoiceNo}` }
+                        });
+                    }
+                } else if (updated.type === 'PURCHASE') {
+                    await tx.product.update({ where: { id: pid }, data: { stockQty: { increment: qty }, buyPrice: price } });
+                    if (targetWH) {
+                        await tx.warehouseInventory.upsert({
+                            where: { productId_warehouseId: { productId: pid, warehouseId: targetWH } },
+                            update: { qty: { increment: qty } },
+                            create: { productId: pid, warehouseId: targetWH, qty }
+                        });
+                        await tx.stockMovement.create({
+                            data: { productId: pid, destinationId: targetWH, qty, type: 'PURCHASE', notes: `Updated Invoice: ${updated.invoiceNo}` }
+                        });
+                    }
+                }
+            }
+
+            // Update Balance for new state
+            if (updated.type === 'SALE' && updated.isDebt && updated.customerId) {
+                await tx.customer.update({ where: { id: updated.customerId }, data: { balance: { increment: updated.finalAmount } } });
+            } else if (updated.type === 'PURCHASE') {
+                if (updated.supplierId) await tx.supplier.update({ where: { id: updated.supplierId }, data: { balance: { decrement: updated.finalAmount } } });
+                else if (updated.customerId) await tx.customer.update({ where: { id: updated.customerId }, data: { balance: { decrement: updated.finalAmount } } });
+            }
+
+            return updated;
+        });
+        res.json(result);
+    } catch (error) {
+        console.error('Update invoice error:', error);
+        res.status(500).json({ error: 'error updating invoice: ' + error.message });
     }
 });
 

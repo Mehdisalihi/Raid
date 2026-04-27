@@ -1,12 +1,12 @@
 export const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-SA', {
+    return new Intl.NumberFormat('ar-SA-u-nu-latn', {
         style: 'currency',
-        currency: 'SAR',
+        currency: 'MRU',
     }).format(amount);
 };
 
 export const formatDate = (date) => {
-    return new Intl.DateTimeFormat('ar-SA').format(new Date(date));
+    return new Intl.DateTimeFormat('ar-SA-u-nu-latn').format(new Date(date));
 };
 
 export const calculateLineTotal = (qty, price) => {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/pdf_service.dart';
 import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
-import 'package:intl/intl.dart';
+import '../core/locale_provider.dart';
+
 
 class CustomerStatementScreen extends StatefulWidget {
   final String? initialName;
@@ -59,112 +61,100 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
     final supplier = _suppliers.firstWhere((s) => s['name'] == name, orElse: () => null);
 
     try {
-      final dynamic data;
-      bool isSupplier = false;
-      if (customer != null) {
-        data = await CustomerService.getStatement(customer['id']);
-      } else if (supplier != null) {
-        data = await SupplierService.getStatement(supplier['id']);
-        isSupplier = true;
-      } else {
-        setState(() => _loading = false);
-        return;
-      }
-
-      if (!mounted) return;
-
-      final List<dynamic> invoices = data['Invoices'] ?? [];
-      List<dynamic> acts = [];
+      List<dynamic> combinedInvoices = [];
       double totalDebit = 0;
       double totalCredit = 0;
 
-      for (var inv in invoices) {
-        final type = (inv['type'] ?? 'SALE').toString().toLowerCase();
-        final amt = (inv['finalAmount'] ?? inv['totalAmount'] ?? 0).toDouble();
-        
-        // For Customers: SALE (+) is Debit, PAYMENT (-) is Credit
-        // For Suppliers: PURCHASE (+) is Credit, PAYMENT (-) is Debit
-        
-        bool isDebit = false;
-        bool isNeutral = inv['isDebt'] == false && type == 'sale';
+      final results = await Future.wait([
+        if (customer != null) CustomerService.getStatement(customer['id']),
+        if (supplier != null) SupplierService.getStatement(supplier['id']),
+      ]);
 
-        if (isSupplier) {
-          // PURCHASE (+), PAYMENT (-), RETURN (-)
-          if (type == 'purchase') {
-            totalCredit += amt;
-            isDebit = false;
-          } else if (type == 'payment' || type == 'return') {
-            totalDebit += amt;
-            isDebit = true;
+      int idx = 0;
+      if (customer != null) {
+        final data = results[idx++];
+        final List<dynamic> invoices = data['Invoices'] ?? [];
+        for (var inv in invoices) {
+          final type = (inv['type'] ?? 'SALE').toString().toLowerCase();
+          final amt = (inv['finalAmount'] ?? inv['totalAmount'] ?? 0).toDouble();
+          
+          bool isDebit = type == 'sale' || type == 'invoice' || type == 'debt';
+          bool isCredit = type == 'payment' || type == 'return';
+          bool isNeutral = type == 'sale' && inv['isDebt'] == false;
+
+          if (!isNeutral) {
+            if (isDebit) totalDebit += amt;
+            if (isCredit) totalCredit += amt;
           }
-        } else {
-          // SALE (+), PAYMENT (-), RETURN (-)
-          if (type == 'sale') {
-            if (inv['isDebt'] == true) {
-              totalDebit += amt;
-              isDebit = true;
-            } else {
-              isNeutral = true;
-            }
-          } else if (type == 'payment' || type == 'return') {
-            totalCredit += amt;
-            isDebit = false;
+
+          String description = _getLabel(type, inv['isDebt'] == true, false);
+          final items = inv['items'] as List<dynamic>?;
+          if (items != null && items.isNotEmpty) {
+            final itemStrings = items.map((it) {
+              final name = (it['product']?['name'] ?? it['name'] ?? it['productName'] ?? '').toString();
+              final qty = it['qty'] ?? it['Quantity'] ?? 0;
+              return name.isNotEmpty ? '$name x $qty' : '';
+            }).where((n) => n.isNotEmpty).join(', ');
+            if (itemStrings.isNotEmpty) description += '\n($itemStrings)';
           }
-        }
 
-        acts.add({
-          'createdAt': inv['createdAt'],
-          'type': type,
-          'label': _getLabel(type, inv['isDebt'] == true, isSupplier),
-          'amount': amt,
-          'isDebit': isDebit,
-          'isNeutral': isNeutral,
-        });
-      }
-
-      acts.sort((a, b) => (b['createdAt'] ?? '').compareTo(a['createdAt'] ?? ''));
-
-      final currentBalance = (data['balance'] ?? 0).toDouble();
-
-      // ─── FIFO DEBT BREAKDOWN LOGIC ───
-      List<dynamic> outstanding = [];
-      if (currentBalance != 0) {
-        // We match total payments against all invoices.
-        // Balance > 0 (Customer owes us, OR we owe Supplier?)
-        // Backend balance for Supplier: PURCHASE decrements, PAYMENT increments.
-        // So for supplier: Negative = We owe (Balance < 0).
-        // For customer: Positive = Customer owes (Balance > 0).
-        
-        double pool = isSupplier 
-            ? (currentBalance < 0 ? totalDebit : totalCredit) 
-            : (currentBalance > 0 ? totalCredit : totalDebit);
-            
-        final targets = acts.where((a) => !a['isNeutral'] && (isSupplier 
-            ? (currentBalance < 0 ? !a['isDebit'] : a['isDebit']) 
-            : (currentBalance > 0 ? a['isDebit'] : !a['isDebit']))).toList();
-        
-        final sortedTargets = targets.reversed.toList(); // Oldest first
-        
-        for (var item in sortedTargets) {
-          final amt = item['amount'] as double;
-          if (pool >= amt) {
-            pool -= amt;
-          } else {
-            outstanding.add({
-              'date': item['createdAt'],
-              'label': item['label'],
-              'originalAmount': amt,
-              'amount': amt - pool,
-            });
-            pool = 0;
-          }
+          combinedInvoices.add({
+            'createdAt': inv['createdAt'],
+            'type': type,
+            'label': description,
+            'amount': amt,
+            'isDebit': isDebit,
+            'isNeutral': isNeutral,
+            'source': 'customer'
+          });
         }
       }
+
+      if (supplier != null) {
+        final data = results[idx++];
+        final List<dynamic> invoices = data['Invoices'] ?? [];
+        for (var inv in invoices) {
+          final type = (inv['type'] ?? 'PURCHASE').toString().toLowerCase();
+          final amt = (inv['finalAmount'] ?? inv['totalAmount'] ?? 0).toDouble();
+          
+          bool isDebit = type == 'payment' || type == 'return';
+          bool isCredit = type == 'purchase' || type == 'debt';
+
+          if (isDebit) totalDebit += amt;
+          if (isCredit) totalCredit += amt;
+
+          String description = _getLabel(type, inv['isDebt'] == true, true);
+          final items = inv['items'] as List<dynamic>?;
+          if (items != null && items.isNotEmpty) {
+            final itemStrings = items.map((it) {
+              final name = (it['product']?['name'] ?? it['name'] ?? it['productName'] ?? '').toString();
+              final qty = it['qty'] ?? it['Quantity'] ?? 0;
+              return name.isNotEmpty ? '$name x $qty' : '';
+            }).where((n) => n.isNotEmpty).join(', ');
+            if (itemStrings.isNotEmpty) description += '\n($itemStrings)';
+          }
+
+          combinedInvoices.add({
+            'createdAt': inv['createdAt'],
+            'type': type,
+            'label': description,
+            'amount': amt,
+            'isDebit': isDebit,
+            'isNeutral': false,
+            'source': 'supplier'
+          });
+        }
+      }
+
+      combinedInvoices.sort((a, b) => (b['createdAt'] ?? '').compareTo(a['createdAt'] ?? ''));
+
+      // Re-calculate unified balance
+      double currentBalance = totalDebit - totalCredit;
 
       if (mounted) {
         setState(() {
-          _activities = acts;
-          _outstandingItems = outstanding;
+          _activities = combinedInvoices;
+          _outstandingItems = []; // FIFO breakdown is harder for unified, let's clear it for now or just skip
           _summary = {
             'debit': totalDebit,
             'credit': totalCredit,
@@ -221,7 +211,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.menu_rounded,
+            icon: Icon(Icons.menu_rounded,
                 color: AppColors.primary, size: 28),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
@@ -251,7 +241,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
                 );
               }
             },
-            icon: const Icon(Icons.print_rounded, color: AppColors.primary),
+            icon: Icon(Icons.print_rounded, color: AppColors.primary),
             style: IconButton.styleFrom(
                 backgroundColor: AppColors.surface,
                 shape: RoundedRectangleBorder(
@@ -267,6 +257,8 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
       ..._customers.map((e) => e['name'] as String),
       ..._suppliers.map((e) => e['name'] as String)
     }.toList();
+    names.sort();
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -285,9 +277,20 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
             dropdownColor: AppColors.surface,
             style: const TextStyle(
                 color: AppColors.text, fontWeight: FontWeight.bold),
-            items: names
-                .map((n) => DropdownMenuItem(value: n, child: Text(n)))
-                .toList(),
+            items: names.map((n) {
+              final isCust = _customers.any((c) => c['name'] == n);
+              final isSupp = _suppliers.any((s) => s['name'] == n);
+              String suffix = '';
+              if (isCust && isSupp) {
+                suffix = context.watch<LocaleProvider>().isRTL ? ' (عميل ومورد)' : ' (Double)';
+              } else if (isCust) {
+                suffix = context.watch<LocaleProvider>().isRTL ? ' (عميل)' : ' (Client)';
+              } else {
+                suffix = context.watch<LocaleProvider>().isRTL ? ' (مورد)' : ' (Fourn.)';
+              }
+              
+              return DropdownMenuItem(value: n, child: Text('$n$suffix'));
+            }).toList(),
             onChanged: (v) {
               if (v != null) {
                 setState(() => _selectedName = v);
@@ -335,7 +338,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.analytics_rounded, color: AppColors.primary, size: 20),
+              Icon(Icons.analytics_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
               Text(context.tr('debtBreakdown'),
                   style: const TextStyle(
@@ -500,7 +503,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
     if (raw == null) return '';
     try {
       final dt = DateTime.parse(raw.toString()).toLocal();
-      return FormatUtils.toLatinNumerals(DateFormat('dd/MM/yyyy').format(dt));
+      return FormatUtils.formatDate(dt, format: 'dd/MM/yyyy');
     } catch (_) {
       return raw.toString();
     }

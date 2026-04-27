@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  // Sophisticated Premium Palette (Deep Blue focus)
-  static const primary = Color(0xFF1E40AF); // Deeper Royal Blue
+  // Sophisticated Premium Palette (Default is Deep Blue)
+  static Color primary = const Color(0xFF1E40AF); 
   static const secondary = Color(0xFF3B82F6); // Bright Blue
   static const accent = Color(0xFF60A5FA); // Light Blue
   static const success = Color(0xFF059669); // Emerald Green
@@ -30,15 +30,15 @@ class AppColors {
   static const darkText = Color(0xFFF8FAFC); // Slate 50
   static const darkTextMuted = Color(0xFF94A3B8); // Slate 400
 
-  // Reusable Premium Gradients
-  static const primaryGradient = LinearGradient(
-    colors: [Color(0xFF1E40AF), Color(0xFF3B82F6)],
+  // Reusable Premium Gradients (Dynamic)
+  static Gradient get primaryGradient => LinearGradient(
+    colors: [primary, secondary],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const accentGradient = LinearGradient(
-    colors: [Color(0xFF60A5FA), Color(0xFF3B82F6)],
+  static Gradient get accentGradient => const LinearGradient(
+    colors: [accent, secondary],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -62,6 +62,7 @@ class AppColors {
 
 class AppTheme {
   static ThemeData light(Color primary) {
+    AppColors.primary = primary;
     final secondary = Color.lerp(primary, Colors.white, 0.2)!;
 
     return ThemeData(
@@ -133,9 +134,9 @@ class AppTheme {
           ),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: primary,
         unselectedItemColor: AppColors.textLight,
         showSelectedLabels: true,
         showUnselectedLabels: true,
@@ -146,6 +147,7 @@ class AppTheme {
   }
 
   static ThemeData dark(Color primary) {
+    AppColors.primary = primary;
     final secondary = Color.lerp(primary, Colors.black, 0.2)!;
 
     return ThemeData(
@@ -226,9 +228,9 @@ class AppTheme {
           ),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkSurface,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: primary,
         unselectedItemColor: AppColors.darkTextMuted,
         showSelectedLabels: true,
         showUnselectedLabels: true,

@@ -127,13 +127,14 @@ class _RootNavigator extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              const CircularProgressIndicator(color: AppColors.primary),
+              CircularProgressIndicator(color: AppColors.primary),
             ],
           ),
         ),
       );
     }
 
-    return auth.isLoggedIn ? const MainNav() : const LoginScreen();
+    // ignore: prefer_const_constructors
+    return auth.isLoggedIn ? MainNav() : LoginScreen();
   }
 }

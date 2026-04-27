@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
@@ -69,10 +69,10 @@ class _DashboardScreenState extends State<DashboardScreen>
 
     // Force Latin numerals for date (1, 2, 3...)
     final pattern = locale == 'ar' ? 'EEEE، d MMMM y' : 'EEEE d MMMM y';
-    final dateStr = FormatUtils.toLatinNumerals(DateFormat(pattern, locale).format(now));
+    final dateStr = FormatUtils.formatDate(now, format: pattern);
 
     if (_loading) {
-      return const Center(
+      return Center(
           child: CircularProgressIndicator(color: AppColors.primary));
     }
 
@@ -156,16 +156,16 @@ class _DashboardScreenState extends State<DashboardScreen>
                           AppColors.primary, () => widget.onNavigate(1)),
                     if (canAccess('canCreateInvoices'))
                       _buildAction(context, Icons.receipt_long_rounded, context.tr('invoices'),
-                          AppColors.accent, () => widget.onNavigate(2)),
+                          AppColors.primary, () => widget.onNavigate(2)),
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.shopping_bag_rounded, context.tr('totalPurchases'),
-                          AppColors.success, () => widget.onNavigate(3)),
+                          AppColors.primary, () => widget.onNavigate(3)),
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.inventory_rounded, context.tr('inventory'),
-                          AppColors.secondary, () => widget.onNavigate(13)),
+                          AppColors.primary, () => widget.onNavigate(13)),
                     if (canAccess('canAccessSales'))
                       _buildAction(context, Icons.assignment_return_rounded, context.tr('returns'),
-                          AppColors.danger, () => widget.onNavigate(4)),
+                          AppColors.primary, () => widget.onNavigate(4)),
                   ]),
                 ],
               ),
@@ -179,19 +179,19 @@ class _DashboardScreenState extends State<DashboardScreen>
                   _buildGridSection([
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.category_rounded, context.tr('products'),
-                          const Color(0xFF8B5CF6), () => widget.onNavigate(8)),
+                          AppColors.primary, () => widget.onNavigate(8)),
                     if (canAccess('canManageCustomers'))
                       _buildAction(context, Icons.people_rounded, context.tr('customers'),
-                          const Color(0xFFEC4899), () => widget.onNavigate(9)),
+                          AppColors.primary, () => widget.onNavigate(9)),
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.local_shipping_rounded, context.tr('creditors'), 
-                          const Color(0xFFF59E0B), () => widget.onNavigate(10)),
+                          AppColors.primary, () => widget.onNavigate(10)),
                     if (canAccess('canManageExpenses'))
                       _buildAction(context, Icons.payments_rounded, context.tr('expenses'),
-                          const Color(0xFF10B981), () => widget.onNavigate(11)),
+                          AppColors.primary, () => widget.onNavigate(11)),
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.warehouse_rounded, context.tr('warehouses'),
-                          const Color(0xFF6366F1), () => widget.onNavigate(14)),
+                          AppColors.primary, () => widget.onNavigate(14)),
                   ]),
                 ],
               ),
@@ -205,13 +205,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                   _buildGridSection([
                     if (canAccess('canAccessSales'))
                       _buildAction(context, Icons.money_off_rounded, context.tr('debtors'),
-                          const Color(0xFFEF4444), () => widget.onNavigate(5)),
+                          AppColors.primary, () => widget.onNavigate(5)),
                     if (canAccess('canViewReports'))
                       _buildAction(context, Icons.description_rounded, context.tr('statement'),
-                          const Color(0xFF3B82F6), () => widget.onNavigate(6)),
+                          AppColors.primary, () => widget.onNavigate(6)),
                     if (canAccess('canViewReports'))
                       _buildAction(context, Icons.bar_chart_rounded, context.tr('reportsSummary'), 
-                          const Color(0xFF2563EB), () => widget.onNavigate(12)),
+                          AppColors.primary, () => widget.onNavigate(12)),
                   ]),
                 ],
               ),
@@ -233,7 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(context.tr('search'), // Or view all, fallback to search key
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w700,
                             fontSize: 12,
@@ -276,15 +276,15 @@ class _DashboardScreenState extends State<DashboardScreen>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E40AF), Color(0xFF6366F1)],
+        gradient: LinearGradient(
+          colors: [AppColors.primary, Color.lerp(AppColors.primary, Colors.black, 0.2)!],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1E40AF).withValues(alpha: 0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 25,
             offset: const Offset(0, 12),
           )

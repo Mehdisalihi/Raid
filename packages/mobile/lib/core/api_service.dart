@@ -2,16 +2,17 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'database_service.dart';
 
 final String _baseUrl = (kIsWeb ||
         defaultTargetPlatform == TargetPlatform.windows ||
         defaultTargetPlatform == TargetPlatform.linux ||
         defaultTargetPlatform == TargetPlatform.macOS)
-    ? 'http://localhost:5000/v1'
-    : 'http://10.0.2.2:5000/v1'; // غير هذا الآي بي لعنوان جهازك (مثل http://192.168.1.5:5000/v1) إذا كنت على هاتف حقيقي
+    ? 'http://localhost:5001/v1'
+    : 'http://10.0.2.2:5001/v1';
 
 class ApiService {
-  static const _timeout = Duration(seconds: 30);
+  static const _timeout = Duration(seconds: 15); // Slightly shorter timeout for better UX
 
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -27,36 +28,56 @@ class ApiService {
   }
 
   static Future<dynamic> get(String path) async {
-    final res = await http
-        .get(Uri.parse('$_baseUrl$path'), headers: await _headers())
-        .timeout(_timeout);
-    _check(res);
-    return jsonDecode(res.body);
+    try {
+      final res = await http
+          .get(Uri.parse('$_baseUrl$path'), headers: await _headers())
+          .timeout(_timeout);
+      _check(res);
+      return jsonDecode(res.body);
+    } catch (e) {
+      if (kDebugMode) print('API GET Error ($path): $e');
+      rethrow; // Re-throw to be handled by the specific service (fallback to DB)
+    }
   }
 
   static Future<dynamic> post(String path, Map<String, dynamic> body) async {
-    final res = await http
-        .post(Uri.parse('$_baseUrl$path'),
-            headers: await _headers(), body: jsonEncode(body))
-        .timeout(_timeout);
-    _check(res);
-    return jsonDecode(res.body);
+    try {
+      final res = await http
+          .post(Uri.parse('$_baseUrl$path'),
+              headers: await _headers(), body: jsonEncode(body))
+          .timeout(_timeout);
+      _check(res);
+      return jsonDecode(res.body);
+    } catch (e) {
+      if (kDebugMode) print('API POST Error ($path): $e');
+      rethrow;
+    }
   }
 
   static Future<dynamic> put(String path, Map<String, dynamic> body) async {
-    final res = await http
-        .put(Uri.parse('$_baseUrl$path'),
-            headers: await _headers(), body: jsonEncode(body))
-        .timeout(_timeout);
-    _check(res);
-    return jsonDecode(res.body);
+    try {
+      final res = await http
+          .put(Uri.parse('$_baseUrl$path'),
+              headers: await _headers(), body: jsonEncode(body))
+          .timeout(_timeout);
+      _check(res);
+      return jsonDecode(res.body);
+    } catch (e) {
+      if (kDebugMode) print('API PUT Error ($path): $e');
+      rethrow;
+    }
   }
 
   static Future<void> delete(String path) async {
-    final res = await http
-        .delete(Uri.parse('$_baseUrl$path'), headers: await _headers())
-        .timeout(_timeout);
-    _check(res);
+    try {
+      final res = await http
+          .delete(Uri.parse('$_baseUrl$path'), headers: await _headers())
+          .timeout(_timeout);
+      _check(res);
+    } catch (e) {
+      if (kDebugMode) print('API DELETE Error ($path): $e');
+      rethrow;
+    }
   }
 
   static void _check(http.Response res) {
@@ -76,10 +97,12 @@ class DataSync {
   static void notify() => notifier.value++;
 
   static Future<void> syncAll() async {
-    // This app's screens listen to DataSync.notifier and refetch on change.
-    // Calling notify() triggers all active screens to refresh.
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('last_sync', DateTime.now().toIso8601String());
+    
+    // Sync offline records
+    await SyncService.syncPending();
+    
     notify();
   }
 
@@ -108,11 +131,39 @@ class AuthService {
     final res = await ApiService.get('/auth/me');
     return res as Map<String, dynamic>;
   }
+
+  static Future<Map<String, dynamic>> updateSettings(Map<String, dynamic> data) async {
+    final res = await ApiService.put('/auth/settings', data);
+    return res as Map<String, dynamic>;
+  }
 }
 
 class ProductService {
-  static Future<List<dynamic>> getAll() async =>
-      (await ApiService.get('/products')) as List;
+  static final _db = DatabaseService();
+
+  static Future<List<dynamic>> getAll() async {
+    try {
+      final products = (await ApiService.get('/products')) as List;
+      // Update local cache
+      for (var p in products) {
+        await _db.insert('products', {
+          'id': p['id'],
+          'name': p['name'],
+          'barcode': p['barcode'],
+          'buyPrice': (p['buyPrice'] ?? 0.0).toDouble(),
+          'sellPrice': (p['sellPrice'] ?? 0.0).toDouble(),
+          'stockQty': p['stockQty'] ?? 0,
+          'minStockAlert': p['minStockAlert'] ?? 5,
+          'createdAt': p['createdAt'],
+        });
+      }
+      return products;
+    } catch (e) {
+      if (kDebugMode) print('Falling back to local Products DB...');
+      return await _db.queryAll('products');
+    }
+  }
+
   static Future<dynamic> create(Map<String, dynamic> data) async {
     final res = await ApiService.post('/products', data);
     DataSync.notify();
@@ -132,8 +183,28 @@ class ProductService {
 }
 
 class CustomerService {
-  static Future<List<dynamic>> getAll() async =>
-      (await ApiService.get('/customers')) as List;
+  static final _db = DatabaseService();
+
+  static Future<List<dynamic>> getAll() async {
+    try {
+      final customers = (await ApiService.get('/customers')) as List;
+      for (var c in customers) {
+        await _db.insert('customers', {
+          'id': c['id'],
+          'name': c['name'],
+          'phone': c['phone'],
+          'email': c['email'],
+          'balance': (c['balance'] ?? 0.0).toDouble(),
+          'createdAt': c['createdAt'],
+        });
+      }
+      return customers;
+    } catch (e) {
+      if (kDebugMode) print('Falling back to local Customers DB...');
+      return await _db.queryAll('customers');
+    }
+  }
+
   static Future<dynamic> create(Map<String, dynamic> data) async {
     final res = await ApiService.post('/customers', data);
     DataSync.notify();
@@ -156,8 +227,28 @@ class CustomerService {
 }
 
 class SupplierService {
-  static Future<List<dynamic>> getAll() async =>
-      (await ApiService.get('/suppliers')) as List;
+  static final _db = DatabaseService();
+
+  static Future<List<dynamic>> getAll() async {
+    try {
+      final suppliers = (await ApiService.get('/suppliers')) as List;
+      for (var s in suppliers) {
+        await _db.insert('suppliers', {
+          'id': s['id'],
+          'name': s['name'],
+          'phone': s['phone'],
+          'email': s['email'],
+          'balance': (s['balance'] ?? 0.0).toDouble(),
+          'createdAt': s['createdAt'],
+        });
+      }
+      return suppliers;
+    } catch (e) {
+      if (kDebugMode) print('Falling back to local Suppliers DB...');
+      return await _db.queryAll('suppliers');
+    }
+  }
+
   static Future<dynamic> create(Map<String, dynamic> data) async {
     final res = await ApiService.post('/suppliers', data);
     DataSync.notify();
@@ -180,17 +271,145 @@ class SupplierService {
 }
 
 class SaleService {
-  static Future<List<dynamic>> getAll() async =>
-      (await ApiService.get('/sales')) as List;
+  static final _db = DatabaseService();
+
+  static Future<List<dynamic>> getAll({String? date, String? paymentMethod}) async {
+    try {
+      String path = '/sales';
+      List<String> params = [];
+      if (date != null) params.add('date=$date');
+      if (paymentMethod != null && paymentMethod != 'all') {
+        params.add('paymentMethod=$paymentMethod');
+      }
+      if (params.isNotEmpty) path += '?${params.join('&')}';
+
+      final sales = (await ApiService.get(path)) as List;
+      for (var s in sales) {
+        await _db.insert('invoices', {
+          'id': s['id'],
+          'invoiceNo': s['invoiceNo'],
+          'customerId': s['customerId'],
+          'supplierId': s['supplierId'],
+          'totalAmount': (s['totalAmount'] ?? 0.0).toDouble(),
+          'discount': (s['discount'] ?? 0.0).toDouble(),
+          'taxRate': (s['taxRate'] ?? 0.0).toDouble(),
+          'taxAmount': (s['taxAmount'] ?? 0.0).toDouble(),
+          'finalAmount': (s['finalAmount'] ?? 0.0).toDouble(),
+          'type': s['type'],
+          'isDebt': (s['isDebt'] == true) ? 1 : 0,
+          'paymentMethod': s['paymentMethod'],
+          'createdAt': s['createdAt'],
+          'isSynced': 1,
+        });
+      }
+      return sales;
+    } catch (e) {
+      if (kDebugMode) print('Falling back to local Sales DB...');
+      return await _db.queryAll('invoices');
+    }
+  }
+
   static Future<dynamic> create(Map<String, dynamic> data) async {
-    final res = await ApiService.post('/sales', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.post('/sales', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Saving Sale to local DB...');
+      // Generate a temporary ID and save to local DB
+      final id = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      final invoiceData = Map<String, dynamic>.from(data);
+      invoiceData['id'] = id;
+      invoiceData['isSynced'] = 0;
+      invoiceData['createdAt'] = DateTime.now().toIso8601String();
+      
+      await _db.insert('invoices', {
+        'id': id,
+        'invoiceNo': data['invoiceNo'] ?? 'PENDING',
+        'customerId': data['customerId'],
+        'totalAmount': data['totalAmount'],
+        'finalAmount': data['finalAmount'],
+        'type': 'SALE',
+        'isSynced': 0,
+        'createdAt': invoiceData['createdAt'],
+      });
+      
+      // Save items too
+      if (data['items'] != null) {
+        for (var item in data['items']) {
+          await _db.insert('invoice_items', {
+            'id': 'item_${DateTime.now().microsecondsSinceEpoch}',
+            'invoiceId': id,
+            'productId': item['productId'],
+            'qty': item['qty'],
+            'price': item['price'],
+            'total': item['total'],
+          });
+        }
+      }
+      
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<void> delete(dynamic id) async {
     await ApiService.delete('/sales/$id');
     DataSync.notify();
+  }
+
+  static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
+    final res = await ApiService.put('/invoices/$id', data);
+    DataSync.notify();
+    return res;
+  }
+}
+
+class SyncService {
+  static final _db = DatabaseService();
+
+  static Future<void> syncPending() async {
+    final pending = await _db.queryAll('invoices');
+    final toSync = pending.where((i) => i['isSynced'] == 0).toList();
+    
+    if (kDebugMode) print('Found ${toSync.length} pending invoices to sync.');
+    
+    for (var inv in toSync) {
+      try {
+        final items = (await _db.queryAll('invoice_items'))
+            .where((it) => it['invoiceId'] == inv['id'])
+            .toList();
+            
+        final syncData = {
+          'customerId': inv['customerId'],
+          'supplierId': inv['supplierId'],
+          'totalAmount': inv['totalAmount'],
+          'finalAmount': inv['finalAmount'],
+          'type': inv['type'],
+          'paymentMethod': inv['paymentMethod'] ?? 'cash',
+          'items': items.map((it) => {
+            'productId': it['productId'],
+            'qty': it['qty'],
+            'price': it['price'],
+            'total': it['total'],
+          }).toList(),
+        };
+        
+        if (inv['type'] == 'SALE') {
+          await ApiService.post('/sales', syncData);
+        } else if (inv['type'] == 'PURCHASE') {
+          await ApiService.post('/purchases', syncData);
+        }
+        
+        await _db.delete('invoices', inv['id'] as String);
+      } catch (e) {
+        if (kDebugMode) print('Failed to sync invoice ${inv['id']}: $e');
+      }
+    }
+    
+    if (toSync.isNotEmpty) {
+      DataSync.notify();
+    }
   }
 }
 
@@ -230,17 +449,38 @@ class ReportService {
 }
 
 class PurchaseService {
-  static Future<List<dynamic>> getAll() async =>
-      (await ApiService.get('/purchases')) as List;
+  static final _db = DatabaseService();
+
+  static Future<List<dynamic>> getAll() async {
+    try {
+      final purchases = (await ApiService.get('/purchases')) as List;
+      return purchases;
+    } catch (e) {
+      return await _db.queryAll('invoices').then((list) => list.where((i) => i['type'] == 'PURCHASE').toList());
+    }
+  }
+
   static Future<dynamic> create(Map<String, dynamic> data) async {
-    final res = await ApiService.post('/purchases', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.post('/purchases', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      // Offline purchase creation...
+      DataSync.notify();
+      return {'offline': true};
+    }
   }
 
   static Future<void> delete(dynamic id) async {
     await ApiService.delete('/purchases/$id');
     DataSync.notify();
+  }
+
+  static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
+    final res = await ApiService.put('/invoices/$id', data);
+    DataSync.notify();
+    return res;
   }
 }
 

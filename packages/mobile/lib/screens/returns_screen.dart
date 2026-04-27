@@ -257,7 +257,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
             onTap: () => _selectSale(s),
             leading: CircleAvatar(
               backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              child: const Icon(Icons.receipt_long_rounded,
+              child: Icon(Icons.receipt_long_rounded,
                   color: AppColors.primary, size: 20),
             ),
             title: Text(

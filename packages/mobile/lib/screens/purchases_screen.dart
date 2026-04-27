@@ -5,7 +5,8 @@ import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
 
 class PurchasesScreen extends StatefulWidget {
-  const PurchasesScreen({super.key});
+  final Map<String, dynamic>? invoiceToEdit;
+  const PurchasesScreen({super.key, this.invoiceToEdit});
   @override
   State<PurchasesScreen> createState() => _PurchasesScreenState();
 }
@@ -21,12 +22,34 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
   bool _loading = true;
   bool _saving = false;
   bool _showCart = false;
+  String? _selectedWarehouseId;
+  String? _editingInvoiceId;
   int _tabIndex = 0; // 0: Buy, 1: History
 
   @override
   void initState() {
     super.initState();
+    if (widget.invoiceToEdit != null) {
+      _loadInvoiceForEdit(widget.invoiceToEdit!);
+    }
     _fetch();
+    DataSync.notifier.addListener(_fetch);
+  }
+
+  void _loadInvoiceForEdit(Map<String, dynamic> inv) {
+    _editingInvoiceId = inv['id'];
+    _supplierName = inv['supplier']?['name'] ?? '';
+    _supplierId = inv['supplierId'] ?? '';
+    _selectedWarehouseId = inv['warehouseId'];
+    
+    _cart = ((inv['items'] as List?) ?? []).map((item) {
+      return {
+        'id': item['productId'],
+        'name': item['product']?['name'] ?? '',
+        'buyPrice': (item['price'] ?? 0.0).toDouble(),
+        'qty': item['qty'] ?? 1,
+      };
+    }).toList();
   }
 
   Future<void> _fetch() async {
@@ -91,27 +114,33 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
     if (_cart.isEmpty) return;
     setState(() => _saving = true);
     try {
-      await PurchaseService.create({
+      final payload = {
         'supplierId': _supplierId.isEmpty ? null : _supplierId,
         'supplierName': _supplierName,
         'items': _cart,
         'total': _total,
+        'warehouseId': _selectedWarehouseId,
         'date': DateTime.now().toIso8601String().split('T')[0],
-      });
+      };
+
+      if (_editingInvoiceId != null) {
+        await PurchaseService.update(_editingInvoiceId, payload);
+      } else {
+        await PurchaseService.create(payload);
+      }
+      
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ ${context.tr('purchaseSuccess')}'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('✅ ${context.tr(_editingInvoiceId != null ? 'invoiceUpdated' : 'invoiceSaved')}'),
+            backgroundColor: AppColors.success));
         setState(() {
-          _cart.clear();
-          _showCart = false;
+          _cart = [];
+          _saving = false;
+          _editingInvoiceId = null;
         });
         _fetch();
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

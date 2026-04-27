@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
-import 'package:intl/intl.dart';
+
 import '../core/format_utils.dart';
 import '../core/pdf_service.dart';
 import '../core/app_localizations.dart';
+import 'sales_screen.dart';
+import 'purchases_screen.dart';
 
 class InvoiceDetailScreen extends StatelessWidget {
   final Map<String, dynamic> sale;
@@ -14,7 +16,7 @@ class InvoiceDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final date =
         DateTime.parse(sale['createdAt'] ?? DateTime.now().toIso8601String());
-    final dateStr = FormatUtils.toLatinNumerals(DateFormat('yyyy/MM/dd HH:mm', 'ar').format(date));
+    final dateStr = FormatUtils.formatDate(date, format: 'yyyy/MM/dd HH:mm');
     final items = (sale['items'] as List?) ?? [];
     final customer = sale['customer'];
 
@@ -33,7 +35,23 @@ class InvoiceDetailScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.file_download_rounded,
+            icon: Icon(Icons.edit_note_rounded, color: AppColors.primary),
+            onPressed: () {
+              if (sale['type'] == 'SALE' || sale['type'] == 'QUOTATION') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SalesScreen(invoiceToEdit: sale)),
+                );
+              } else if (sale['type'] == 'PURCHASE') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PurchasesScreen(invoiceToEdit: sale)),
+                );
+              }
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.file_download_rounded,
                 color: AppColors.primary),
             onPressed: () => PdfService.generateInvoice(sale),
           ),
@@ -136,8 +154,8 @@ class InvoiceDetailScreen extends StatelessWidget {
 
             // Summary
             _buildInfoCard([
-              _infoRow(context.tr('subtotal'), FormatUtils.formatCurrency(sale['total'])),
-              _infoRow('${context.tr('tax')} (0%)', '${FormatUtils.toLatinNumerals('0.00')} MRU'),
+              _infoRow(context.tr('subtotal'), FormatUtils.formatCurrency(sale['totalAmount'] ?? sale['total'] ?? 0)),
+              _infoRow('${context.tr('tax')} (${sale['taxRate'] ?? 0}%)', FormatUtils.formatCurrency(sale['taxAmount'] ?? 0)),
               const Divider(color: AppColors.border),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,8 +165,8 @@ class InvoiceDetailScreen extends StatelessWidget {
                           color: AppColors.text,
                           fontWeight: FontWeight.w900,
                           fontSize: 18)),
-                  Text(FormatUtils.formatCurrency(sale['total']),
-                      style: const TextStyle(
+                  Text(FormatUtils.formatCurrency(sale['finalAmount'] ?? sale['totalAmount'] ?? sale['total'] ?? 0),
+                      style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w900,
                           fontSize: 24)),

@@ -276,7 +276,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Icon(Icons.inventory_2_rounded,
+            child: Icon(Icons.inventory_2_rounded,
                 color: AppColors.primary, size: 28),
           ),
         ],
@@ -428,9 +428,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
           hintText: context.tr('search'),
           hintStyle: const TextStyle(color: AppColors.textLight),
           prefixIcon:
-              const Icon(Icons.search_rounded, color: AppColors.primary),
+              Icon(Icons.search_rounded, color: AppColors.primary),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.qr_code_scanner_rounded,
+            icon: Icon(Icons.qr_code_scanner_rounded,
                 color: AppColors.primary),
             onPressed: () {
               Navigator.push(
@@ -454,7 +454,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
           ),
         ),
       ),
@@ -774,7 +774,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.primary),
+                borderSide: BorderSide(color: AppColors.primary),
               ),
             ),
           ),

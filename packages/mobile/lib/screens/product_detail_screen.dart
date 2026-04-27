@@ -126,7 +126,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit_rounded, color: AppColors.primary),
+            icon: Icon(Icons.edit_rounded, color: AppColors.primary),
             onPressed: () {
               _openEditModal();
             },
@@ -173,7 +173,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   blurRadius: 40)
             ],
           ),
-          child: const Icon(Icons.inventory_2_rounded,
+          child: Icon(Icons.inventory_2_rounded,
               color: AppColors.primary, size: 48),
         ),
         const SizedBox(height: 24),
@@ -507,7 +507,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.primary),
+                borderSide: BorderSide(color: AppColors.primary),
               ),
             ),
           ),

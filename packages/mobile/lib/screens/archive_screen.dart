@@ -109,7 +109,7 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Icon(Icons.inventory_2_rounded,
+            child: Icon(Icons.inventory_2_rounded,
                 color: AppColors.primary, size: 28),
           ),
         ],
@@ -175,7 +175,7 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
         decoration: InputDecoration(
           hintText: context.tr('archiveSearchHint'), // Need to add this key
           prefixIcon:
-              const Icon(Icons.search_rounded, color: AppColors.primary),
+              Icon(Icons.search_rounded, color: AppColors.primary),
           filled: true,
           fillColor: AppColors.surface,
           enabledBorder: OutlineInputBorder(

@@ -171,7 +171,7 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
             child: Container(
               width: width * 0.9,
               height: 2,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary,

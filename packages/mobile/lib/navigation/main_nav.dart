@@ -101,7 +101,7 @@ class _MainNavState extends State<MainNav> {
               elevation: 0,
               iconTheme: IconThemeData(color: Theme.of(context).textTheme.bodyLarge?.color),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_rounded,
+                icon: Icon(Icons.arrow_back_rounded,
                     color: AppColors.primary),
                 onPressed: _goHome,
               ),
@@ -125,14 +125,14 @@ class _MainNavState extends State<MainNav> {
       height: 64,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
+        gradient: LinearGradient(
+          colors: [AppColors.primary.withValues(alpha: 0.8), AppColors.primary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+            color: AppColors.primary.withValues(alpha: 0.4),
             blurRadius: 15,
             offset: const Offset(0, 8),
           )
@@ -205,7 +205,7 @@ class _MainNavState extends State<MainNav> {
                         context,
                         Icons.shopping_cart_rounded,
                         context.tr('sales'),
-                        const Color(0xFF6366F1),
+                        AppColors.primary,
                         () => _handleQuickAction(1),
                       ),
                     if (canAccess('canManageInventory'))
@@ -213,7 +213,7 @@ class _MainNavState extends State<MainNav> {
                         context,
                         Icons.inventory_2_rounded,
                         context.tr('products'),
-                        const Color(0xFFF59E0B),
+                        AppColors.primary,
                         () => _handleQuickAction(8),
                       ),
                     if (canAccess('canManageCustomers'))
@@ -221,7 +221,7 @@ class _MainNavState extends State<MainNav> {
                         context,
                         Icons.people_rounded,
                         context.tr('customers'),
-                        const Color(0xFFEC4899),
+                        AppColors.primary,
                         () => _handleQuickAction(9),
                       ),
                     if (canAccess('canManageExpenses'))
@@ -229,7 +229,7 @@ class _MainNavState extends State<MainNav> {
                         context,
                         Icons.payments_rounded,
                         context.tr('expenses'),
-                        const Color(0xFF10B981),
+                        AppColors.primary,
                         () => _handleQuickAction(11),
                       ),
                   ],

@@ -107,7 +107,7 @@ router.get('/top-products', async (req, res) => {
             const product = products.find(p => p.id === item.productId);
             return {
                 name: product ? product.name : 'منتج محذوف',
-                rev: `${(item._sum.total || 0).toLocaleString()} MRU`,
+                rev: `${(item._sum.total || 0).toFixed(2)} MRU`,
                 sales: `${item._sum.qty || 0} قطعة`
             };
         });

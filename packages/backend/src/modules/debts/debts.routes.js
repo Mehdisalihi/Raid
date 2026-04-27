@@ -19,7 +19,7 @@ router.get('/debtors', async (req, res) => {
             id: c.id,
             customerName: c.name,
             remaining: c.balance,
-            date: new Date(c.createdAt).toLocaleDateString('ar-EG'),
+            date: new Date(c.createdAt).toISOString().split('T')[0],
         }));
 
         res.json(debtors);
@@ -44,7 +44,7 @@ router.get('/creditors', async (req, res) => {
             id: s.id,
             supplierName: s.name,
             remaining: Math.abs(s.balance),
-            date: new Date(s.createdAt).toLocaleDateString('ar-EG'),
+            date: new Date(s.createdAt).toISOString().split('T')[0],
         }));
 
         res.json(creditors);

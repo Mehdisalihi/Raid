@@ -200,7 +200,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Icon(Icons.people_alt_rounded,
+            child: Icon(Icons.people_alt_rounded,
                 color: AppColors.primary, size: 28),
           ),
         ],
@@ -302,7 +302,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
           hintText: context.tr('search'),
           hintStyle: const TextStyle(color: AppColors.textLight),
           prefixIcon:
-              const Icon(Icons.search_rounded, color: AppColors.primary),
+              Icon(Icons.search_rounded, color: AppColors.primary),
           filled: true,
           fillColor: AppColors.surface,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -312,7 +312,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
           ),
         ),
       ),
@@ -357,7 +357,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
               backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               child: Text(
                 (c['name']?[0] ?? '?').toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: 18),
@@ -414,7 +414,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                           CustomerStatementScreen(initialName: c['name']),
                     ),
                   ),
-                  icon: const Icon(Icons.description_rounded,
+                  icon: Icon(Icons.description_rounded,
                       color: AppColors.primary),
                   tooltip: context.tr('statement'),
                 ),
@@ -523,7 +523,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.primary),
+                borderSide: BorderSide(color: AppColors.primary),
               ),
             ),
           ),

@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class FormatUtils {
   static String formatDate(dynamic date,
-      {String format = 'yyyy/MM/dd', String locale = 'ar'}) {
+      {String format = 'yyyy/MM/dd'}) {
     if (date == null) return '';
     DateTime? dt;
     if (date is DateTime) {
@@ -11,18 +11,26 @@ class FormatUtils {
       dt = DateTime.tryParse(date);
     }
     if (dt == null) return toLatinNumerals(date.toString());
-    final result = DateFormat(format, locale).format(dt);
+    
+    // Use default locale but force Latin numerals via toLatinNumerals
+    final result = DateFormat(format).format(dt);
     return toLatinNumerals(result);
   }
 
   static String toLatinNumerals(String input) {
-    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    const latinDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const Map<String, String> digitsMap = {
+      // Arabic digits
+      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+      // Persian/Urdu digits
+      '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
+      '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
+    };
 
     String output = input;
-    for (int i = 0; i < 10; i++) {
-      output = output.replaceAll(arabicDigits[i], latinDigits[i]);
-    }
+    digitsMap.forEach((nonLat, lat) {
+      output = output.replaceAll(nonLat, lat);
+    });
     return output;
   }
 

@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Container(
           width: 80,
           height: 80,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
               gradient: AppColors.primaryGradient, shape: BoxShape.circle),
           child: const Icon(Icons.account_balance_wallet_rounded,
               color: Colors.white, size: 40),
@@ -215,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
         minimumSize: const Size(0, 54),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
-            side: const BorderSide(color: AppColors.primary, width: 1)),
+            side: BorderSide(color: AppColors.primary, width: 1)),
       ),
       child: Text(context.tr('guestLogin'),
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
@@ -237,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
         minimumSize: const Size(0, 54),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
-            side: const BorderSide(color: AppColors.primary, width: 1)),
+            side: BorderSide(color: AppColors.primary, width: 1)),
       ),
       child: Text(context.tr('newAccount'),
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),

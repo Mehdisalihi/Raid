@@ -128,6 +128,11 @@ class AppLocalizations {
       'subtotal': 'المجموع الفرعي',
       'discount': 'الخصم',
       'tax': 'الضريبة',
+      'taxRate': 'نسبة الضريبة (%)',
+      'confirmPurchase': 'تأكيد الشراء',
+      'purchaseCheckout': 'إتمام عملية الشراء',
+      'selectQuantity': 'تحديد الكمية',
+      'invoiceSummary': 'ملخص الفاتورة',
       
       // Products
       'productCode': 'كود المنتج',
@@ -318,6 +323,8 @@ class AppLocalizations {
       'confirmInput': 'تأكيد الإدخال',
       'confirmInvoice': 'تأكيد الفاتورة',
       'invoiceSaved': 'تم حفظ الفاتورة بنجاح',
+      'invoiceUpdated': 'تم تحديث الفاتورة بنجاح ✨',
+      'edit_invoice': 'تعديل الفاتورة',
       'quotation': 'عرض سعر',
       'creditInvoice': 'فاتورة شراء',
       'emailHint': 'يرجى إدخال البريد الإلكتروني وكلمة المرور',
@@ -569,6 +576,11 @@ class AppLocalizations {
       'subtotal': 'Sous-total',
       'discount': 'Remise',
       'tax': 'TVA',
+      'taxRate': 'Taux de taxe (%)',
+      'confirmPurchase': 'Confirmer l\'achat',
+      'purchaseCheckout': 'Finaliser l\'achat',
+      'selectQuantity': 'Choisir la quantité',
+      'invoiceSummary': 'Résumé de la facture',
       
       // Products
       'productCode': 'Code Produit',
@@ -759,6 +771,8 @@ class AppLocalizations {
       'confirmInput': 'Confirmer l\'entrée',
       'confirmInvoice': 'Confirmer la facture',
       'invoiceSaved': 'Facture enregistrée',
+      'invoiceUpdated': 'Facture mise à jour ✨',
+      'edit_invoice': 'Modifier la facture',
       'quotation': 'Devis',
       'creditInvoice': 'Facture d\'achat',
 

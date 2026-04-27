@@ -59,7 +59,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         foregroundColor: AppColors.text,
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? Center(child: CircularProgressIndicator(color: AppColors.primary))
           : RefreshIndicator(
               onRefresh: _fetch,
               child: ListView.builder(
@@ -92,7 +92,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
           backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-          child: Text(user['name'][0].toUpperCase(), style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          child: Text(user['name'][0].toUpperCase(), style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
         ),
         title: Text(user['name'], style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.text)),
         subtitle: Column(

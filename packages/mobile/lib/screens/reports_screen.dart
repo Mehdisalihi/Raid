@@ -63,7 +63,7 @@ class _ReportsScreenState extends State<ReportsScreen>
     if (_loading) {
       return Container(
         color: AppColors.bg,
-        child: const Center(
+        child: Center(
           child: CircularProgressIndicator(color: AppColors.primary),
         ),
       );
@@ -88,7 +88,7 @@ class _ReportsScreenState extends State<ReportsScreen>
               children: [
                 Builder(
                     builder: (ctx) => IconButton(
-                          icon: const Icon(Icons.menu_rounded,
+                          icon: Icon(Icons.menu_rounded,
                               color: AppColors.primary, size: 28),
                           onPressed: () => Scaffold.of(ctx).openDrawer(),
                         )),
@@ -422,7 +422,7 @@ class _ReportsScreenState extends State<ReportsScreen>
                   ),
                   child: Text(
                     context.tr('viewAll'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,

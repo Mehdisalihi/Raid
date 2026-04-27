@@ -94,4 +94,11 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('Error refreshing user: $e');
     }
   }
+
+  Future<void> updateUser(Map<String, dynamic> updatedUser) async {
+    _user = updatedUser;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_json', jsonEncode(updatedUser));
+    notifyListeners();
+  }
 }
