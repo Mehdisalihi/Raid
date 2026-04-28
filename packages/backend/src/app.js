@@ -24,15 +24,17 @@ const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({
-    origin: [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3003',
-        'https://web-smoky-iota-94.vercel.app',
-        /\.vercel\.app$/,
-    ],
+    origin: '*',
     credentials: true,
 }));
+
+// Specific header for Private Network Access (PNA)
+app.use((req, res, next) => {
+    if (req.headers['access-control-request-private-network']) {
+        res.setHeader('Access-Control-Allow-Private-Network', 'true');
+    }
+    next();
+});
 app.use(express.json({ limit: '50mb' }));
 
 app.use('/v1/auth', authRoutes);

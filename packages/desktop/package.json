@@ -28,7 +28,7 @@
         "nsis",
         "zip"
       ],
-      "icon": "icon.ico"
+      "icon": "build/icon.png"
     },
     "nsis": {
       "oneClick": true,

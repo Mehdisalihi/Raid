@@ -78,10 +78,32 @@ function startBackend() {
   const envPath    = path.join(baseDir, 'backend', '.env');
   const envVars    = loadEnv(envPath);
 
+  // Set database path to userData to ensure persistence across updates
+  const userDataPath = app.getPath('userData');
+  const dbPath = path.join(userDataPath, 'mohassibe.db');
+  
+  // Copy initial DB if it exists in resources and not in userData
+  if (isPackaged) {
+    const packagedDbPath = path.join(baseDir, 'backend', 'prisma', 'mohassibe.db');
+    if (fs.existsSync(packagedDbPath) && !fs.existsSync(dbPath)) {
+      try {
+        fs.copyFileSync(packagedDbPath, dbPath);
+        console.log('Initial database copied to userData');
+      } catch (err) {
+        console.error('Failed to copy initial database:', err);
+      }
+    }
+  }
+
   const nodeBin = isPackaged ? path.join(process.resourcesPath, 'bin', 'node.exe') : NODE_BIN;
   backendProcess = spawn(nodeBin, [backendPath], {
-    env: { ...process.env, ...envVars, PORT: '5000' },
-    shell: false,   // shell:false avoids a second PATH lookup
+    env: { 
+      ...process.env, 
+      ...envVars, 
+      PORT: '5001',
+      DATABASE_URL: `file:${dbPath}` 
+    },
+    shell: false,
   });
 
   backendProcess.stdout.on('data', d => console.log(`Backend: ${d}`));

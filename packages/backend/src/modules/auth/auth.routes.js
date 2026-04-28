@@ -86,30 +86,33 @@ router.post('/register', async (req, res) => {
     }
 
     try {
+        console.log('Registering new user locally:', email);
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
-            return res.status(400).json({ error: 'البريد الإلكتروني مستخدم بالفعل' });
+            return res.status(400).json({ error: 'هذا البريد الإلكتروني مسجل بالفعل، يرجى تسجيل الدخول بدلاً من ذلك' });
         }
 
-        // 1. Try to create user in Supabase Auth (Optional for now to avoid blocking)
-        let sbId = `temp_${Date.now()}`;
-        try {
-            console.log('Attempting Supabase signUp for:', email);
-            const { data: sbData, error: sbError } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: { full_name: name, phone: phone },
-                    emailRedirectTo: `${process.env.FRONTEND_URL}/verify-direct`
-                }
-            });
-            if (sbData?.user) sbId = sbData.user.id;
-            if (sbError) console.warn('Supabase Auth Error (continuing...):', sbError);
-        } catch (sbCatchError) {
-            console.warn('Supabase Catch Error (continuing...):', sbCatchError);
+        // 1. Skip Supabase Auth in local/offline mode to avoid errors
+        let sbId = `local_${Date.now()}`;
+        
+        // Only attempt Supabase if we have a URL and potentially internet (not recommended for pure offline)
+        if (process.env.SUPABASE_URL && process.env.NODE_ENV !== 'development') {
+            try {
+                const { data: sbData, error: sbError } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { full_name: name, phone: phone },
+                        emailRedirectTo: `${process.env.FRONTEND_URL}/verify-direct`
+                    }
+                });
+                if (sbData?.user) sbId = sbData.user.id;
+            } catch (err) {
+                console.warn('Skipping Supabase Auth due to connection issues');
+            }
         }
 
-        // 2. Create user in our Prisma database
+        // 2. Create user in our Local SQLite database
         const passwordHash = await bcrypt.hash(password, 12);
         const user = await prisma.user.create({
             data: {
@@ -118,18 +121,19 @@ router.post('/register', async (req, res) => {
                 email,
                 passwordHash,
                 phone,
-                isVerified: true, 
+                isVerified: true, // Auto-verify in local mode
                 role: 'USER',
             }
         });
 
+        console.log('User registered successfully in local DB:', user.id);
         res.status(201).json({
             message: 'تم التسجيل بنجاح! يمكنك تسجيل الدخول الآن.',
             user: { id: user.id, email: user.email }
         });
     } catch (error) {
         console.error('Registration Error:', error);
-        res.status(500).json({ error: error.message || 'حدث خطأ في الخادم' });
+        res.status(500).json({ error: 'حدث خطأ في الخادم أثناء إنشاء الحساب: ' + (error.message || '') });
     }
 });
 

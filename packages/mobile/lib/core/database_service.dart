@@ -20,12 +20,26 @@ class DatabaseService {
     String path = join(await getDatabasesPath(), 'mohassibe_local.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Upgraded to v2 for offline-first support
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createV2Tables(db);
+    }
+  }
+
   Future _onCreate(Database db, int version) async {
+    await _createV1Tables(db);
+    if (version >= 2) {
+      await _createV2Tables(db);
+    }
+  }
+
+  Future _createV1Tables(Database db) async {
     // Products Table
     await db.execute('''
       CREATE TABLE products (
@@ -94,6 +108,99 @@ class DatabaseService {
         price REAL,
         total REAL,
         FOREIGN KEY (invoiceId) REFERENCES invoices (id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
+  Future _createV2Tables(Database db) async {
+    // Expenses Table
+    await db.execute('''
+      CREATE TABLE expenses (
+        id TEXT PRIMARY KEY,
+        description TEXT,
+        amount REAL,
+        categoryId TEXT,
+        date TEXT,
+        isSynced INTEGER DEFAULT 0
+      )
+    ''');
+
+    // Expense Categories Table
+    await db.execute('''
+      CREATE TABLE expense_categories (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      )
+    ''');
+
+    // Returns Table
+    await db.execute('''
+      CREATE TABLE returns (
+        id TEXT PRIMARY KEY,
+        saleId TEXT,
+        total REAL,
+        date TEXT,
+        isSynced INTEGER DEFAULT 0
+      )
+    ''');
+
+    // Return Items Table
+    await db.execute('''
+      CREATE TABLE return_items (
+        id TEXT PRIMARY KEY,
+        returnId TEXT NOT NULL,
+        productId TEXT NOT NULL,
+        quantity INTEGER,
+        price REAL,
+        FOREIGN KEY (returnId) REFERENCES returns (id) ON DELETE CASCADE
+      )
+    ''');
+
+    // Debts Table
+    await db.execute('''
+      CREATE TABLE debts (
+        id TEXT PRIMARY KEY,
+        entityId TEXT,
+        entityType TEXT, -- 'customer' or 'supplier'
+        amount REAL,
+        remaining REAL,
+        type TEXT,
+        invoiceId TEXT,
+        date TEXT,
+        isSynced INTEGER DEFAULT 0
+      )
+    ''');
+
+    // Warehouses Table
+    await db.execute('''
+      CREATE TABLE warehouses (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        location TEXT,
+        isSynced INTEGER DEFAULT 0
+      )
+    ''');
+
+    // Local Users Table (for offline auth)
+    await db.execute('''
+      CREATE TABLE local_users (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        email TEXT UNIQUE,
+        passwordHash TEXT,
+        role TEXT,
+        storeName TEXT
+      )
+    ''');
+
+    // Pending Sync Table (Generic queue for offline actions)
+    await db.execute('''
+      CREATE TABLE pending_sync (
+        id TEXT PRIMARY KEY,
+        tableName TEXT,
+        operation TEXT, -- 'INSERT', 'UPDATE', 'DELETE'
+        data TEXT, -- JSON payload
+        createdAt TEXT
       )
     ''');
   }
