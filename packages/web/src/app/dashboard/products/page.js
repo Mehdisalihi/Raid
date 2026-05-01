@@ -341,7 +341,22 @@ export default function ProductsPage() {
             setImportRows([]);
             fetchProducts();
         } catch (err) {
-            const detail = err.response?.data?.details || err.response?.data?.error || '';
+            console.error('Import error full details:', err);
+            
+            let detail = '';
+            if (err.response) {
+                detail = err.response.data?.details || err.response.data?.error || '';
+                if (!detail) {
+                    detail = typeof err.response.data === 'string' 
+                        ? err.response.data.substring(0, 50) 
+                        : `Status ${err.response.status}`;
+                }
+            } else if (err.request) {
+                detail = 'Network Error (الخادم لا يستجيب)';
+            } else {
+                detail = err.message;
+            }
+
             triggerDialog(
                 isRTL ? 'فشل الاستيراد' : 'Échec de l\'import', 
                 isRTL ? `خطأ: ${detail}` : `Erreur: ${detail}`, 
