@@ -327,14 +327,29 @@ export default function ProductsPage() {
     };
 
 
+    const [importProgress, setImportProgress] = useState(0);
+
     const handleImportSubmit = async () => {
         setImporting(true);
+        setImportProgress(0);
+        let totalCreated = 0;
+        let totalUpdated = 0;
+        const CHUNK_SIZE = 50;
+
         try {
-            const { data } = await api.post('/products/import', { products: importRows });
-            const { created, updated } = data;
+            for (let i = 0; i < importRows.length; i += CHUNK_SIZE) {
+                const chunk = importRows.slice(i, i + CHUNK_SIZE);
+                const { data } = await api.post('/products/import', { products: chunk });
+                totalCreated += (data.created || 0);
+                totalUpdated += (data.updated || 0);
+                
+                const progress = Math.min(Math.round(((i + chunk.length) / importRows.length) * 100), 100);
+                setImportProgress(progress);
+            }
+
             triggerDialog(
                 isRTL ? 'تم الاستيراد بنجاح! 🎉' : 'Importation réussie! 🎉', 
-                isRTL ? `تم إضافة: ${created}\nتم تحديث: ${updated}` : `Créés: ${created}\nMis à jour: ${updated}`, 
+                isRTL ? `تم إضافة: ${totalCreated}\nتم تحديث: ${totalUpdated}` : `Créés: ${totalCreated}\nMis à jour: ${totalUpdated}`, 
                 'success'
             );
             setIsImportModalOpen(false);
@@ -348,22 +363,23 @@ export default function ProductsPage() {
                 detail = err.response.data?.details || err.response.data?.error || '';
                 if (!detail) {
                     detail = typeof err.response.data === 'string' 
-                        ? err.response.data.substring(0, 50) 
+                        ? err.response.data.substring(0, 100) 
                         : `Status ${err.response.status}`;
                 }
             } else if (err.request) {
-                detail = 'Network Error (الخادم لا يستجيب)';
+                detail = 'Network Error (الخادم لا يستجيب - تأكد من اتصالك)';
             } else {
                 detail = err.message;
             }
 
             triggerDialog(
                 isRTL ? 'فشل الاستيراد' : 'Échec de l\'import', 
-                isRTL ? `خطأ: ${detail}` : `Erreur: ${detail}`, 
+                isRTL ? `خطأ في العملية: ${detail}` : `Erreur: ${detail}`, 
                 'danger'
             );
         } finally {
             setImporting(false);
+            setImportProgress(0);
         }
     };
 
@@ -767,19 +783,34 @@ export default function ProductsPage() {
                             </table>
                         </div>
 
-                        <div className={`p-6 border-t border-[var(--glass-border)] flex flex-wrap gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <button
-                                onClick={handleImportSubmit}
-                                disabled={importing}
-                                className="btn-primary flex-1 min-w-[160px] h-12 flex items-center justify-center gap-2 font-black disabled:opacity-60"
-                            >
-                                {importing ? (
-                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                ) : (
-                                    <Upload size={18} />
-                                )}
-                                {importing ? (isRTL ? 'جاري الاستيراد...' : 'Importation...') : (isRTL ? `استيراد ${importRows.length} منتج` : `Importer ${importRows.length} produits`)}
-                            </button>
+                        <div className="p-6 border-t border-[var(--glass-border)] flex flex-col gap-4">
+                            {importing && (
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
+                                        <span className="text-[var(--text-muted)]">{isRTL ? 'جاري معالجة البيانات...' : 'Importation...'}</span>
+                                        <span className="text-primary">{importProgress}%</span>
+                                    </div>
+                                    <div className="w-full h-1.5 bg-[var(--surface-2)] rounded-full overflow-hidden border border-[var(--glass-border)]">
+                                        <div 
+                                            className="h-full bg-primary transition-all duration-300" 
+                                            style={{ width: `${importProgress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            <div className={`flex flex-wrap gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                <button
+                                    onClick={handleImportSubmit}
+                                    disabled={importing}
+                                    className="btn-primary flex-1 min-w-[160px] h-12 flex items-center justify-center gap-2 font-black disabled:opacity-60"
+                                >
+                                    {importing ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <Upload size={18} />
+                                    )}
+                                    {importing ? (isRTL ? 'جاري الاستيراد...' : 'Importation...') : (isRTL ? `استيراد ${importRows.length} منتج` : `Importer ${importRows.length} produits`)}
+                                </button>
                             <button
                                 onClick={downloadTemplate}
                                 className="px-5 h-12 rounded-2xl border border-green-500/20 bg-green-500/10 text-green-500 font-bold hover:bg-green-500/20 transition-colors flex items-center gap-2"

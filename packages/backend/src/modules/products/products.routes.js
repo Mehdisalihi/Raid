@@ -199,37 +199,41 @@ router.post('/import', async (req, res) => {
                 }
             }
 
-            // Sequential (but in tx) Updates - Prisma doesn't have updateMany by individual ID in one call
+            // Sequential (but in tx) Updates
             for (const p of toUpdate) {
-                const { id, ...updateData } = p;
-                await tx.product.update({
-                    where: { id },
-                    data: updateData
-                });
-                
-                if (defaultWarehouse && updateData.stockQty !== undefined) {
-                    const existingInv = await tx.warehouseInventory.findUnique({
-                        where: { productId_warehouseId: { productId: id, warehouseId: defaultWarehouse.id } }
+                try {
+                    const { id, ...updateData } = p;
+                    await tx.product.update({
+                        where: { id },
+                        data: updateData
                     });
                     
-                    if (existingInv) {
-                        await tx.warehouseInventory.update({
-                            where: { id: existingInv.id },
-                            data: { qty: updateData.stockQty }
-                        });
-                    } else {
-                        await tx.warehouseInventory.create({
-                            data: {
+                    if (defaultWarehouse && updateData.stockQty !== undefined) {
+                        // Use upsert to handle both create and update for inventory
+                        await tx.warehouseInventory.upsert({
+                            where: { 
+                                productId_warehouseId: { 
+                                    productId: id, 
+                                    warehouseId: defaultWarehouse.id 
+                                } 
+                            },
+                            update: { qty: updateData.stockQty },
+                            create: {
                                 productId: id,
                                 warehouseId: defaultWarehouse.id,
                                 qty: updateData.stockQty
                             }
                         });
                     }
+                    updatedCount++;
+                } catch (err) {
+                    console.error(`Failed to update product ${p.barcode || p.name}:`, err);
+                    // Continue with other products instead of crashing the whole transaction if one fails?
+                    // Actually, it's in a transaction, so it will roll back.
+                    throw err; 
                 }
-                updatedCount++;
             }
-        }, { timeout: 30000 }); // Increase timeout for large updates
+        }, { timeout: 60000 }); // 60 seconds timeout for large imports
 
         console.log(`POST /import - SUCCESS: ${createdCount} created, ${updatedCount} updated`);
         res.json({ created: createdCount, updated: updatedCount });
