@@ -264,7 +264,7 @@ export default function ProductsPage() {
                     return parseFloat(s) || 0;
                 };
 
-                const normalized = json.map(row => {
+                let normalized = json.map(row => {
                     const name = findCol(row, ['name','nom','اسم','منتج','produit','designation','article','title','item','صنف','بيان','وصف','مادة','سلعة']) || '';
                     const barcode = findCol(row, ['barcode','code','باركود','barre','رمز','sku','ref','upc','رقم']) || '';
                     const buyPriceRaw = findCol(row, ['buyprice','buy','شراء','achat','تكلفة','cost','cout','coût','prixachat','pa','p.a','سعرالشراء','ثمنالشراء','التكلفة','شرا']);
@@ -282,11 +282,26 @@ export default function ProductsPage() {
                     };
                 }).filter(r => r.name.length > 0);
 
+                // Fallback: If fuzzy matching failed completely, try mapping by column index (assuming they didn't use headers or used weird ones)
+                if (normalized.length === 0 && json.length > 0) {
+                    normalized = json.map(row => {
+                        const values = Object.values(row);
+                        return {
+                            name: values[0] ? String(values[0]).trim() : '',
+                            barcode: values[1] ? String(values[1]).trim() : null,
+                            buyPrice: cleanNum(values[2]),
+                            sellPrice: cleanNum(values[3]),
+                            stockQty: Math.round(cleanNum(values[4])),
+                            minStockAlert: Math.round(cleanNum(values[5])) || 5,
+                        };
+                    }).filter(r => r.name.length > 0);
+                }
+
                 if (normalized.length === 0) {
                     const foundHeaders = Object.keys(json[0] || {}).join(' ، ');
                     triggerDialog(
                         isRTL ? 'تنبيه' : 'Attention', 
-                        isRTL ? `لم يتم العثور على بيانات صالحة. الأعمدة الموجودة في ملفك هي: (${foundHeaders}). يرجى التأكد من وجود عمود لاسم المنتج.` : `Aucune ligne valide trouvée. Colonnes trouvées: (${foundHeaders}). Vérifiez vos colonnes.`, 
+                        isRTL ? `الملف لا يحتوي على بيانات صالحة. الأعمدة الموجودة هي: (${foundHeaders}). استخدم النموذج المرفق.` : `Aucune ligne valide trouvée. Colonnes: (${foundHeaders}). Utilisez le modèle.`, 
                         'warning'
                     );
                     e.target.value = '';
