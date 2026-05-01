@@ -26,13 +26,13 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({
     origin: '*',
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
 }));
 
 // Specific header for Private Network Access (PNA)
 app.use((req, res, next) => {
-    if (req.headers['access-control-request-private-network']) {
-        res.setHeader('Access-Control-Allow-Private-Network', 'true');
-    }
+    res.setHeader('Access-Control-Allow-Private-Network', 'true');
     next();
 });
 app.use(express.json({ limit: '50mb' }));
@@ -57,7 +57,7 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', service: 'mohassibe-backend' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`🚀 mohassibe API running on port ${PORT}`);
 });
