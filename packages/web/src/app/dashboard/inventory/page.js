@@ -16,6 +16,7 @@ export default function InventoryPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [filterType, setFilterType] = useState('ALL');
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
     const [transferData, setTransferData] = useState({
         productId: '',
