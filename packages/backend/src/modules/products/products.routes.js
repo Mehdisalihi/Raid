@@ -168,14 +168,34 @@ router.post('/import', async (req, res) => {
         let updatedCount = 0;
 
         await prisma.$transaction(async (tx) => {
+            // Find default warehouse
+            const defaultWarehouse = await tx.warehouse.findFirst({ orderBy: { createdAt: 'asc' } });
+            
             // Bulk Create
             if (toCreate.length > 0) {
-                // Chunk creations to stay under SQLite variable limits
-                const CREATE_CHUNK = 100;
-                for (let i = 0; i < toCreate.length; i += CREATE_CHUNK) {
-                    const chunk = toCreate.slice(i, i + CREATE_CHUNK);
-                    const res = await tx.product.createMany({ data: chunk });
-                    createdCount += res.count;
+                for (const p of toCreate) {
+                    const newProduct = await tx.product.create({ data: p });
+                    createdCount++;
+                    
+                    if (defaultWarehouse && p.stockQty > 0) {
+                        await tx.warehouseInventory.create({
+                            data: {
+                                productId: newProduct.id,
+                                warehouseId: defaultWarehouse.id,
+                                qty: p.stockQty
+                            }
+                        });
+                        
+                        await tx.stockMovement.create({
+                            data: {
+                                productId: newProduct.id,
+                                destinationId: defaultWarehouse.id,
+                                qty: p.stockQty,
+                                type: 'IMPORT',
+                                notes: 'Excel Import'
+                            }
+                        });
+                    }
                 }
             }
 
@@ -186,6 +206,27 @@ router.post('/import', async (req, res) => {
                     where: { id },
                     data: updateData
                 });
+                
+                if (defaultWarehouse && updateData.stockQty !== undefined) {
+                    const existingInv = await tx.warehouseInventory.findUnique({
+                        where: { productId_warehouseId: { productId: id, warehouseId: defaultWarehouse.id } }
+                    });
+                    
+                    if (existingInv) {
+                        await tx.warehouseInventory.update({
+                            where: { id: existingInv.id },
+                            data: { qty: updateData.stockQty }
+                        });
+                    } else {
+                        await tx.warehouseInventory.create({
+                            data: {
+                                productId: id,
+                                warehouseId: defaultWarehouse.id,
+                                qty: updateData.stockQty
+                            }
+                        });
+                    }
+                }
                 updatedCount++;
             }
         }, { timeout: 30000 }); // Increase timeout for large updates
