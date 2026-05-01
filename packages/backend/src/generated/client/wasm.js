@@ -116,6 +116,9 @@ Prisma.NullTypes = {
  */
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -134,6 +137,17 @@ exports.Prisma.UserScalarFieldEnum = {
   canManageCustomers: 'canManageCustomers',
   canManageExpenses: 'canManageExpenses',
   canAccessSettings: 'canAccessSettings',
+  language: 'language',
+  theme: 'theme',
+  primaryColor: 'primaryColor',
+  storeName: 'storeName',
+  storeTaxId: 'storeTaxId',
+  storeAddress: 'storeAddress',
+  storePhone: 'storePhone',
+  storeEmail: 'storeEmail',
+  currency: 'currency',
+  isVerified: 'isVerified',
+  verificationCode: 'verificationCode',
   createdAt: 'createdAt'
 };
 
@@ -217,6 +231,8 @@ exports.Prisma.InvoiceScalarFieldEnum = {
   supplierId: 'supplierId',
   totalAmount: 'totalAmount',
   discount: 'discount',
+  taxRate: 'taxRate',
+  taxAmount: 'taxAmount',
   finalAmount: 'finalAmount',
   type: 'type',
   isDebt: 'isDebt',
@@ -233,9 +249,36 @@ exports.Prisma.SaleItemScalarFieldEnum = {
   total: 'total'
 };
 
+exports.Prisma.StaffScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  role: 'role',
+  baseSalary: 'baseSalary',
+  balance: 'balance',
+  isActive: 'isActive',
+  joinedAt: 'joinedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SalaryTransactionScalarFieldEnum = {
+  id: 'id',
+  staffId: 'staffId',
+  type: 'type',
+  amount: 'amount',
+  balanceAfter: 'balanceAfter',
+  date: 'date',
+  description: 'description'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
 };
 
 exports.Prisma.NullsOrder = {
@@ -255,7 +298,9 @@ exports.Prisma.ModelName = {
   Expense: 'Expense',
   ExpenseCategory: 'ExpenseCategory',
   Invoice: 'Invoice',
-  SaleItem: 'SaleItem'
+  SaleItem: 'SaleItem',
+  Staff: 'Staff',
+  SalaryTransaction: 'SalaryTransaction'
 };
 
 /**

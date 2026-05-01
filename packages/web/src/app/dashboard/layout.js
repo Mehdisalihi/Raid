@@ -83,7 +83,8 @@ function DashboardContent({ children }) {
             }
         } catch (e) {
             console.error("Failed to parse user data", e);
-            localStorage.clear();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             router.push('/login');
             return;
         }
@@ -122,7 +123,8 @@ function DashboardContent({ children }) {
     };
 
     const handleLogout = () => {
-        localStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         router.push('/login');
     };
 

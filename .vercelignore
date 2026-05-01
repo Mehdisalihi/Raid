@@ -1,0 +1,8 @@
+node_modules
+packages/mobile
+packages/desktop
+legacy
+.git
+.next
+*.apk
+*.exe

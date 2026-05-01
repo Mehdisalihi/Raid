@@ -68,6 +68,16 @@ export type Invoice = $Result.DefaultSelection<Prisma.$InvoicePayload>
  * 
  */
 export type SaleItem = $Result.DefaultSelection<Prisma.$SaleItemPayload>
+/**
+ * Model Staff
+ * 
+ */
+export type Staff = $Result.DefaultSelection<Prisma.$StaffPayload>
+/**
+ * Model SalaryTransaction
+ * 
+ */
+export type SalaryTransaction = $Result.DefaultSelection<Prisma.$SalaryTransactionPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -301,6 +311,26 @@ export class PrismaClient<
     * ```
     */
   get saleItem(): Prisma.SaleItemDelegate<ExtArgs>;
+
+  /**
+   * `prisma.staff`: Exposes CRUD operations for the **Staff** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Staff
+    * const staff = await prisma.staff.findMany()
+    * ```
+    */
+  get staff(): Prisma.StaffDelegate<ExtArgs>;
+
+  /**
+   * `prisma.salaryTransaction`: Exposes CRUD operations for the **SalaryTransaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SalaryTransactions
+    * const salaryTransactions = await prisma.salaryTransaction.findMany()
+    * ```
+    */
+  get salaryTransaction(): Prisma.SalaryTransactionDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -752,7 +782,9 @@ export namespace Prisma {
     Expense: 'Expense',
     ExpenseCategory: 'ExpenseCategory',
     Invoice: 'Invoice',
-    SaleItem: 'SaleItem'
+    SaleItem: 'SaleItem',
+    Staff: 'Staff',
+    SalaryTransaction: 'SalaryTransaction'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -768,7 +800,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "product" | "warehouse" | "warehouseInventory" | "stockMovement" | "customer" | "supplier" | "expense" | "expenseCategory" | "invoice" | "saleItem"
+      modelProps: "user" | "product" | "warehouse" | "warehouseInventory" | "stockMovement" | "customer" | "supplier" | "expense" | "expenseCategory" | "invoice" | "saleItem" | "staff" | "salaryTransaction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1542,6 +1574,146 @@ export namespace Prisma {
           }
         }
       }
+      Staff: {
+        payload: Prisma.$StaffPayload<ExtArgs>
+        fields: Prisma.StaffFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StaffFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StaffFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>
+          }
+          findFirst: {
+            args: Prisma.StaffFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StaffFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>
+          }
+          findMany: {
+            args: Prisma.StaffFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>[]
+          }
+          create: {
+            args: Prisma.StaffCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>
+          }
+          createMany: {
+            args: Prisma.StaffCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StaffCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>[]
+          }
+          delete: {
+            args: Prisma.StaffDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>
+          }
+          update: {
+            args: Prisma.StaffUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>
+          }
+          deleteMany: {
+            args: Prisma.StaffDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StaffUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.StaffUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffPayload>
+          }
+          aggregate: {
+            args: Prisma.StaffAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStaff>
+          }
+          groupBy: {
+            args: Prisma.StaffGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StaffGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StaffCountArgs<ExtArgs>
+            result: $Utils.Optional<StaffCountAggregateOutputType> | number
+          }
+        }
+      }
+      SalaryTransaction: {
+        payload: Prisma.$SalaryTransactionPayload<ExtArgs>
+        fields: Prisma.SalaryTransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SalaryTransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SalaryTransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.SalaryTransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SalaryTransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>
+          }
+          findMany: {
+            args: Prisma.SalaryTransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>[]
+          }
+          create: {
+            args: Prisma.SalaryTransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>
+          }
+          createMany: {
+            args: Prisma.SalaryTransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SalaryTransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.SalaryTransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>
+          }
+          update: {
+            args: Prisma.SalaryTransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.SalaryTransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SalaryTransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SalaryTransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SalaryTransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.SalaryTransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSalaryTransaction>
+          }
+          groupBy: {
+            args: Prisma.SalaryTransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SalaryTransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SalaryTransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<SalaryTransactionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1890,6 +2062,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type StaffCountOutputType
+   */
+
+  export type StaffCountOutputType = {
+    Transactions: number
+  }
+
+  export type StaffCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Transactions?: boolean | StaffCountOutputTypeCountTransactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * StaffCountOutputType without action
+   */
+  export type StaffCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffCountOutputType
+     */
+    select?: StaffCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * StaffCountOutputType without action
+   */
+  export type StaffCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SalaryTransactionWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -1918,6 +2121,17 @@ export namespace Prisma {
     canManageCustomers: boolean | null
     canManageExpenses: boolean | null
     canAccessSettings: boolean | null
+    language: string | null
+    theme: string | null
+    primaryColor: string | null
+    storeName: string | null
+    storeTaxId: string | null
+    storeAddress: string | null
+    storePhone: string | null
+    storeEmail: string | null
+    currency: string | null
+    isVerified: boolean | null
+    verificationCode: string | null
     createdAt: Date | null
   }
 
@@ -1936,6 +2150,17 @@ export namespace Prisma {
     canManageCustomers: boolean | null
     canManageExpenses: boolean | null
     canAccessSettings: boolean | null
+    language: string | null
+    theme: string | null
+    primaryColor: string | null
+    storeName: string | null
+    storeTaxId: string | null
+    storeAddress: string | null
+    storePhone: string | null
+    storeEmail: string | null
+    currency: string | null
+    isVerified: boolean | null
+    verificationCode: string | null
     createdAt: Date | null
   }
 
@@ -1954,6 +2179,17 @@ export namespace Prisma {
     canManageCustomers: number
     canManageExpenses: number
     canAccessSettings: number
+    language: number
+    theme: number
+    primaryColor: number
+    storeName: number
+    storeTaxId: number
+    storeAddress: number
+    storePhone: number
+    storeEmail: number
+    currency: number
+    isVerified: number
+    verificationCode: number
     createdAt: number
     _all: number
   }
@@ -1974,6 +2210,17 @@ export namespace Prisma {
     canManageCustomers?: true
     canManageExpenses?: true
     canAccessSettings?: true
+    language?: true
+    theme?: true
+    primaryColor?: true
+    storeName?: true
+    storeTaxId?: true
+    storeAddress?: true
+    storePhone?: true
+    storeEmail?: true
+    currency?: true
+    isVerified?: true
+    verificationCode?: true
     createdAt?: true
   }
 
@@ -1992,6 +2239,17 @@ export namespace Prisma {
     canManageCustomers?: true
     canManageExpenses?: true
     canAccessSettings?: true
+    language?: true
+    theme?: true
+    primaryColor?: true
+    storeName?: true
+    storeTaxId?: true
+    storeAddress?: true
+    storePhone?: true
+    storeEmail?: true
+    currency?: true
+    isVerified?: true
+    verificationCode?: true
     createdAt?: true
   }
 
@@ -2010,6 +2268,17 @@ export namespace Prisma {
     canManageCustomers?: true
     canManageExpenses?: true
     canAccessSettings?: true
+    language?: true
+    theme?: true
+    primaryColor?: true
+    storeName?: true
+    storeTaxId?: true
+    storeAddress?: true
+    storePhone?: true
+    storeEmail?: true
+    currency?: true
+    isVerified?: true
+    verificationCode?: true
     createdAt?: true
     _all?: true
   }
@@ -2101,6 +2370,17 @@ export namespace Prisma {
     canManageCustomers: boolean
     canManageExpenses: boolean
     canAccessSettings: boolean
+    language: string
+    theme: string
+    primaryColor: string
+    storeName: string
+    storeTaxId: string | null
+    storeAddress: string | null
+    storePhone: string | null
+    storeEmail: string | null
+    currency: string
+    isVerified: boolean
+    verificationCode: string | null
     createdAt: Date
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
@@ -2136,6 +2416,17 @@ export namespace Prisma {
     canManageCustomers?: boolean
     canManageExpenses?: boolean
     canAccessSettings?: boolean
+    language?: boolean
+    theme?: boolean
+    primaryColor?: boolean
+    storeName?: boolean
+    storeTaxId?: boolean
+    storeAddress?: boolean
+    storePhone?: boolean
+    storeEmail?: boolean
+    currency?: boolean
+    isVerified?: boolean
+    verificationCode?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -2154,6 +2445,17 @@ export namespace Prisma {
     canManageCustomers?: boolean
     canManageExpenses?: boolean
     canAccessSettings?: boolean
+    language?: boolean
+    theme?: boolean
+    primaryColor?: boolean
+    storeName?: boolean
+    storeTaxId?: boolean
+    storeAddress?: boolean
+    storePhone?: boolean
+    storeEmail?: boolean
+    currency?: boolean
+    isVerified?: boolean
+    verificationCode?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -2172,6 +2474,17 @@ export namespace Prisma {
     canManageCustomers?: boolean
     canManageExpenses?: boolean
     canAccessSettings?: boolean
+    language?: boolean
+    theme?: boolean
+    primaryColor?: boolean
+    storeName?: boolean
+    storeTaxId?: boolean
+    storeAddress?: boolean
+    storePhone?: boolean
+    storeEmail?: boolean
+    currency?: boolean
+    isVerified?: boolean
+    verificationCode?: boolean
     createdAt?: boolean
   }
 
@@ -2194,6 +2507,17 @@ export namespace Prisma {
       canManageCustomers: boolean
       canManageExpenses: boolean
       canAccessSettings: boolean
+      language: string
+      theme: string
+      primaryColor: string
+      storeName: string
+      storeTaxId: string | null
+      storeAddress: string | null
+      storePhone: string | null
+      storeEmail: string | null
+      currency: string
+      isVerified: boolean
+      verificationCode: string | null
       createdAt: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -2602,6 +2926,17 @@ export namespace Prisma {
     readonly canManageCustomers: FieldRef<"User", 'Boolean'>
     readonly canManageExpenses: FieldRef<"User", 'Boolean'>
     readonly canAccessSettings: FieldRef<"User", 'Boolean'>
+    readonly language: FieldRef<"User", 'String'>
+    readonly theme: FieldRef<"User", 'String'>
+    readonly primaryColor: FieldRef<"User", 'String'>
+    readonly storeName: FieldRef<"User", 'String'>
+    readonly storeTaxId: FieldRef<"User", 'String'>
+    readonly storeAddress: FieldRef<"User", 'String'>
+    readonly storePhone: FieldRef<"User", 'String'>
+    readonly storeEmail: FieldRef<"User", 'String'>
+    readonly currency: FieldRef<"User", 'String'>
+    readonly isVerified: FieldRef<"User", 'Boolean'>
+    readonly verificationCode: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
   }
     
@@ -2784,6 +3119,7 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -2798,6 +3134,7 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -3784,6 +4121,7 @@ export namespace Prisma {
      * The data used to create many Products.
      */
     data: ProductCreateManyInput | ProductCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -3798,6 +4136,7 @@ export namespace Prisma {
      * The data used to create many Products.
      */
     data: ProductCreateManyInput | ProductCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -4790,6 +5129,7 @@ export namespace Prisma {
      * The data used to create many Warehouses.
      */
     data: WarehouseCreateManyInput | WarehouseCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -4804,6 +5144,7 @@ export namespace Prisma {
      * The data used to create many Warehouses.
      */
     data: WarehouseCreateManyInput | WarehouseCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -5805,6 +6146,7 @@ export namespace Prisma {
      * The data used to create many WarehouseInventories.
      */
     data: WarehouseInventoryCreateManyInput | WarehouseInventoryCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -5819,6 +6161,7 @@ export namespace Prisma {
      * The data used to create many WarehouseInventories.
      */
     data: WarehouseInventoryCreateManyInput | WarehouseInventoryCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6830,6 +7173,7 @@ export namespace Prisma {
      * The data used to create many StockMovements.
      */
     data: StockMovementCreateManyInput | StockMovementCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -6844,6 +7188,7 @@ export namespace Prisma {
      * The data used to create many StockMovements.
      */
     data: StockMovementCreateManyInput | StockMovementCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7836,6 +8181,7 @@ export namespace Prisma {
      * The data used to create many Customers.
      */
     data: CustomerCreateManyInput | CustomerCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -7850,6 +8196,7 @@ export namespace Prisma {
      * The data used to create many Customers.
      */
     data: CustomerCreateManyInput | CustomerCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -8840,6 +9187,7 @@ export namespace Prisma {
      * The data used to create many Suppliers.
      */
     data: SupplierCreateManyInput | SupplierCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -8854,6 +9202,7 @@ export namespace Prisma {
      * The data used to create many Suppliers.
      */
     data: SupplierCreateManyInput | SupplierCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -9798,6 +10147,7 @@ export namespace Prisma {
      * The data used to create many Expenses.
      */
     data: ExpenseCreateManyInput | ExpenseCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -9812,6 +10162,7 @@ export namespace Prisma {
      * The data used to create many Expenses.
      */
     data: ExpenseCreateManyInput | ExpenseCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -10650,6 +11001,7 @@ export namespace Prisma {
      * The data used to create many ExpenseCategories.
      */
     data: ExpenseCategoryCreateManyInput | ExpenseCategoryCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -10664,6 +11016,7 @@ export namespace Prisma {
      * The data used to create many ExpenseCategories.
      */
     data: ExpenseCategoryCreateManyInput | ExpenseCategoryCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -10770,12 +11123,16 @@ export namespace Prisma {
   export type InvoiceAvgAggregateOutputType = {
     totalAmount: number | null
     discount: number | null
+    taxRate: number | null
+    taxAmount: number | null
     finalAmount: number | null
   }
 
   export type InvoiceSumAggregateOutputType = {
     totalAmount: number | null
     discount: number | null
+    taxRate: number | null
+    taxAmount: number | null
     finalAmount: number | null
   }
 
@@ -10786,6 +11143,8 @@ export namespace Prisma {
     supplierId: string | null
     totalAmount: number | null
     discount: number | null
+    taxRate: number | null
+    taxAmount: number | null
     finalAmount: number | null
     type: string | null
     isDebt: boolean | null
@@ -10800,6 +11159,8 @@ export namespace Prisma {
     supplierId: string | null
     totalAmount: number | null
     discount: number | null
+    taxRate: number | null
+    taxAmount: number | null
     finalAmount: number | null
     type: string | null
     isDebt: boolean | null
@@ -10814,6 +11175,8 @@ export namespace Prisma {
     supplierId: number
     totalAmount: number
     discount: number
+    taxRate: number
+    taxAmount: number
     finalAmount: number
     type: number
     isDebt: number
@@ -10826,12 +11189,16 @@ export namespace Prisma {
   export type InvoiceAvgAggregateInputType = {
     totalAmount?: true
     discount?: true
+    taxRate?: true
+    taxAmount?: true
     finalAmount?: true
   }
 
   export type InvoiceSumAggregateInputType = {
     totalAmount?: true
     discount?: true
+    taxRate?: true
+    taxAmount?: true
     finalAmount?: true
   }
 
@@ -10842,6 +11209,8 @@ export namespace Prisma {
     supplierId?: true
     totalAmount?: true
     discount?: true
+    taxRate?: true
+    taxAmount?: true
     finalAmount?: true
     type?: true
     isDebt?: true
@@ -10856,6 +11225,8 @@ export namespace Prisma {
     supplierId?: true
     totalAmount?: true
     discount?: true
+    taxRate?: true
+    taxAmount?: true
     finalAmount?: true
     type?: true
     isDebt?: true
@@ -10870,6 +11241,8 @@ export namespace Prisma {
     supplierId?: true
     totalAmount?: true
     discount?: true
+    taxRate?: true
+    taxAmount?: true
     finalAmount?: true
     type?: true
     isDebt?: true
@@ -10971,6 +11344,8 @@ export namespace Prisma {
     supplierId: string | null
     totalAmount: number
     discount: number
+    taxRate: number
+    taxAmount: number
     finalAmount: number
     type: string
     isDebt: boolean
@@ -11004,6 +11379,8 @@ export namespace Prisma {
     supplierId?: boolean
     totalAmount?: boolean
     discount?: boolean
+    taxRate?: boolean
+    taxAmount?: boolean
     finalAmount?: boolean
     type?: boolean
     isDebt?: boolean
@@ -11022,6 +11399,8 @@ export namespace Prisma {
     supplierId?: boolean
     totalAmount?: boolean
     discount?: boolean
+    taxRate?: boolean
+    taxAmount?: boolean
     finalAmount?: boolean
     type?: boolean
     isDebt?: boolean
@@ -11038,6 +11417,8 @@ export namespace Prisma {
     supplierId?: boolean
     totalAmount?: boolean
     discount?: boolean
+    taxRate?: boolean
+    taxAmount?: boolean
     finalAmount?: boolean
     type?: boolean
     isDebt?: boolean
@@ -11070,6 +11451,8 @@ export namespace Prisma {
       supplierId: string | null
       totalAmount: number
       discount: number
+      taxRate: number
+      taxAmount: number
       finalAmount: number
       type: string
       isDebt: boolean
@@ -11477,6 +11860,8 @@ export namespace Prisma {
     readonly supplierId: FieldRef<"Invoice", 'String'>
     readonly totalAmount: FieldRef<"Invoice", 'Float'>
     readonly discount: FieldRef<"Invoice", 'Float'>
+    readonly taxRate: FieldRef<"Invoice", 'Float'>
+    readonly taxAmount: FieldRef<"Invoice", 'Float'>
     readonly finalAmount: FieldRef<"Invoice", 'Float'>
     readonly type: FieldRef<"Invoice", 'String'>
     readonly isDebt: FieldRef<"Invoice", 'Boolean'>
@@ -11687,6 +12072,7 @@ export namespace Prisma {
      * The data used to create many Invoices.
      */
     data: InvoiceCreateManyInput | InvoiceCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -11701,6 +12087,7 @@ export namespace Prisma {
      * The data used to create many Invoices.
      */
     data: InvoiceCreateManyInput | InvoiceCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12728,6 +13115,7 @@ export namespace Prisma {
      * The data used to create many SaleItems.
      */
     data: SaleItemCreateManyInput | SaleItemCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -12742,6 +13130,7 @@ export namespace Prisma {
      * The data used to create many SaleItems.
      */
     data: SaleItemCreateManyInput | SaleItemCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12854,10 +13243,2042 @@ export namespace Prisma {
 
 
   /**
+   * Model Staff
+   */
+
+  export type AggregateStaff = {
+    _count: StaffCountAggregateOutputType | null
+    _avg: StaffAvgAggregateOutputType | null
+    _sum: StaffSumAggregateOutputType | null
+    _min: StaffMinAggregateOutputType | null
+    _max: StaffMaxAggregateOutputType | null
+  }
+
+  export type StaffAvgAggregateOutputType = {
+    baseSalary: number | null
+    balance: number | null
+  }
+
+  export type StaffSumAggregateOutputType = {
+    baseSalary: number | null
+    balance: number | null
+  }
+
+  export type StaffMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    phone: string | null
+    role: string | null
+    baseSalary: number | null
+    balance: number | null
+    isActive: boolean | null
+    joinedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type StaffMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    phone: string | null
+    role: string | null
+    baseSalary: number | null
+    balance: number | null
+    isActive: boolean | null
+    joinedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type StaffCountAggregateOutputType = {
+    id: number
+    name: number
+    phone: number
+    role: number
+    baseSalary: number
+    balance: number
+    isActive: number
+    joinedAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type StaffAvgAggregateInputType = {
+    baseSalary?: true
+    balance?: true
+  }
+
+  export type StaffSumAggregateInputType = {
+    baseSalary?: true
+    balance?: true
+  }
+
+  export type StaffMinAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    role?: true
+    baseSalary?: true
+    balance?: true
+    isActive?: true
+    joinedAt?: true
+    createdAt?: true
+  }
+
+  export type StaffMaxAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    role?: true
+    baseSalary?: true
+    balance?: true
+    isActive?: true
+    joinedAt?: true
+    createdAt?: true
+  }
+
+  export type StaffCountAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    role?: true
+    baseSalary?: true
+    balance?: true
+    isActive?: true
+    joinedAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type StaffAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Staff to aggregate.
+     */
+    where?: StaffWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Staff to fetch.
+     */
+    orderBy?: StaffOrderByWithRelationInput | StaffOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StaffWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Staff from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Staff.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Staff
+    **/
+    _count?: true | StaffCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: StaffAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: StaffSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StaffMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StaffMaxAggregateInputType
+  }
+
+  export type GetStaffAggregateType<T extends StaffAggregateArgs> = {
+        [P in keyof T & keyof AggregateStaff]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStaff[P]>
+      : GetScalarType<T[P], AggregateStaff[P]>
+  }
+
+
+
+
+  export type StaffGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StaffWhereInput
+    orderBy?: StaffOrderByWithAggregationInput | StaffOrderByWithAggregationInput[]
+    by: StaffScalarFieldEnum[] | StaffScalarFieldEnum
+    having?: StaffScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StaffCountAggregateInputType | true
+    _avg?: StaffAvgAggregateInputType
+    _sum?: StaffSumAggregateInputType
+    _min?: StaffMinAggregateInputType
+    _max?: StaffMaxAggregateInputType
+  }
+
+  export type StaffGroupByOutputType = {
+    id: string
+    name: string
+    phone: string | null
+    role: string | null
+    baseSalary: number
+    balance: number
+    isActive: boolean
+    joinedAt: Date
+    createdAt: Date
+    _count: StaffCountAggregateOutputType | null
+    _avg: StaffAvgAggregateOutputType | null
+    _sum: StaffSumAggregateOutputType | null
+    _min: StaffMinAggregateOutputType | null
+    _max: StaffMaxAggregateOutputType | null
+  }
+
+  type GetStaffGroupByPayload<T extends StaffGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StaffGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StaffGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StaffGroupByOutputType[P]>
+            : GetScalarType<T[P], StaffGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StaffSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    role?: boolean
+    baseSalary?: boolean
+    balance?: boolean
+    isActive?: boolean
+    joinedAt?: boolean
+    createdAt?: boolean
+    Transactions?: boolean | Staff$TransactionsArgs<ExtArgs>
+    _count?: boolean | StaffCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["staff"]>
+
+  export type StaffSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    role?: boolean
+    baseSalary?: boolean
+    balance?: boolean
+    isActive?: boolean
+    joinedAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["staff"]>
+
+  export type StaffSelectScalar = {
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    role?: boolean
+    baseSalary?: boolean
+    balance?: boolean
+    isActive?: boolean
+    joinedAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type StaffInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Transactions?: boolean | Staff$TransactionsArgs<ExtArgs>
+    _count?: boolean | StaffCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type StaffIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $StaffPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Staff"
+    objects: {
+      Transactions: Prisma.$SalaryTransactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      phone: string | null
+      role: string | null
+      baseSalary: number
+      balance: number
+      isActive: boolean
+      joinedAt: Date
+      createdAt: Date
+    }, ExtArgs["result"]["staff"]>
+    composites: {}
+  }
+
+  type StaffGetPayload<S extends boolean | null | undefined | StaffDefaultArgs> = $Result.GetResult<Prisma.$StaffPayload, S>
+
+  type StaffCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<StaffFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: StaffCountAggregateInputType | true
+    }
+
+  export interface StaffDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Staff'], meta: { name: 'Staff' } }
+    /**
+     * Find zero or one Staff that matches the filter.
+     * @param {StaffFindUniqueArgs} args - Arguments to find a Staff
+     * @example
+     * // Get one Staff
+     * const staff = await prisma.staff.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StaffFindUniqueArgs>(args: SelectSubset<T, StaffFindUniqueArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Staff that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {StaffFindUniqueOrThrowArgs} args - Arguments to find a Staff
+     * @example
+     * // Get one Staff
+     * const staff = await prisma.staff.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StaffFindUniqueOrThrowArgs>(args: SelectSubset<T, StaffFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Staff that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffFindFirstArgs} args - Arguments to find a Staff
+     * @example
+     * // Get one Staff
+     * const staff = await prisma.staff.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StaffFindFirstArgs>(args?: SelectSubset<T, StaffFindFirstArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Staff that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffFindFirstOrThrowArgs} args - Arguments to find a Staff
+     * @example
+     * // Get one Staff
+     * const staff = await prisma.staff.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StaffFindFirstOrThrowArgs>(args?: SelectSubset<T, StaffFindFirstOrThrowArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Staff that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Staff
+     * const staff = await prisma.staff.findMany()
+     * 
+     * // Get first 10 Staff
+     * const staff = await prisma.staff.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const staffWithIdOnly = await prisma.staff.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StaffFindManyArgs>(args?: SelectSubset<T, StaffFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Staff.
+     * @param {StaffCreateArgs} args - Arguments to create a Staff.
+     * @example
+     * // Create one Staff
+     * const Staff = await prisma.staff.create({
+     *   data: {
+     *     // ... data to create a Staff
+     *   }
+     * })
+     * 
+     */
+    create<T extends StaffCreateArgs>(args: SelectSubset<T, StaffCreateArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Staff.
+     * @param {StaffCreateManyArgs} args - Arguments to create many Staff.
+     * @example
+     * // Create many Staff
+     * const staff = await prisma.staff.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StaffCreateManyArgs>(args?: SelectSubset<T, StaffCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Staff and returns the data saved in the database.
+     * @param {StaffCreateManyAndReturnArgs} args - Arguments to create many Staff.
+     * @example
+     * // Create many Staff
+     * const staff = await prisma.staff.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Staff and only return the `id`
+     * const staffWithIdOnly = await prisma.staff.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StaffCreateManyAndReturnArgs>(args?: SelectSubset<T, StaffCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Staff.
+     * @param {StaffDeleteArgs} args - Arguments to delete one Staff.
+     * @example
+     * // Delete one Staff
+     * const Staff = await prisma.staff.delete({
+     *   where: {
+     *     // ... filter to delete one Staff
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StaffDeleteArgs>(args: SelectSubset<T, StaffDeleteArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Staff.
+     * @param {StaffUpdateArgs} args - Arguments to update one Staff.
+     * @example
+     * // Update one Staff
+     * const staff = await prisma.staff.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StaffUpdateArgs>(args: SelectSubset<T, StaffUpdateArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Staff.
+     * @param {StaffDeleteManyArgs} args - Arguments to filter Staff to delete.
+     * @example
+     * // Delete a few Staff
+     * const { count } = await prisma.staff.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StaffDeleteManyArgs>(args?: SelectSubset<T, StaffDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Staff.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Staff
+     * const staff = await prisma.staff.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StaffUpdateManyArgs>(args: SelectSubset<T, StaffUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Staff.
+     * @param {StaffUpsertArgs} args - Arguments to update or create a Staff.
+     * @example
+     * // Update or create a Staff
+     * const staff = await prisma.staff.upsert({
+     *   create: {
+     *     // ... data to create a Staff
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Staff we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StaffUpsertArgs>(args: SelectSubset<T, StaffUpsertArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Staff.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffCountArgs} args - Arguments to filter Staff to count.
+     * @example
+     * // Count the number of Staff
+     * const count = await prisma.staff.count({
+     *   where: {
+     *     // ... the filter for the Staff we want to count
+     *   }
+     * })
+    **/
+    count<T extends StaffCountArgs>(
+      args?: Subset<T, StaffCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StaffCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Staff.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StaffAggregateArgs>(args: Subset<T, StaffAggregateArgs>): Prisma.PrismaPromise<GetStaffAggregateType<T>>
+
+    /**
+     * Group by Staff.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StaffGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StaffGroupByArgs['orderBy'] }
+        : { orderBy?: StaffGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StaffGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStaffGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Staff model
+   */
+  readonly fields: StaffFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Staff.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StaffClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    Transactions<T extends Staff$TransactionsArgs<ExtArgs> = {}>(args?: Subset<T, Staff$TransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Staff model
+   */ 
+  interface StaffFieldRefs {
+    readonly id: FieldRef<"Staff", 'String'>
+    readonly name: FieldRef<"Staff", 'String'>
+    readonly phone: FieldRef<"Staff", 'String'>
+    readonly role: FieldRef<"Staff", 'String'>
+    readonly baseSalary: FieldRef<"Staff", 'Float'>
+    readonly balance: FieldRef<"Staff", 'Float'>
+    readonly isActive: FieldRef<"Staff", 'Boolean'>
+    readonly joinedAt: FieldRef<"Staff", 'DateTime'>
+    readonly createdAt: FieldRef<"Staff", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Staff findUnique
+   */
+  export type StaffFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * Filter, which Staff to fetch.
+     */
+    where: StaffWhereUniqueInput
+  }
+
+  /**
+   * Staff findUniqueOrThrow
+   */
+  export type StaffFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * Filter, which Staff to fetch.
+     */
+    where: StaffWhereUniqueInput
+  }
+
+  /**
+   * Staff findFirst
+   */
+  export type StaffFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * Filter, which Staff to fetch.
+     */
+    where?: StaffWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Staff to fetch.
+     */
+    orderBy?: StaffOrderByWithRelationInput | StaffOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Staff.
+     */
+    cursor?: StaffWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Staff from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Staff.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Staff.
+     */
+    distinct?: StaffScalarFieldEnum | StaffScalarFieldEnum[]
+  }
+
+  /**
+   * Staff findFirstOrThrow
+   */
+  export type StaffFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * Filter, which Staff to fetch.
+     */
+    where?: StaffWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Staff to fetch.
+     */
+    orderBy?: StaffOrderByWithRelationInput | StaffOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Staff.
+     */
+    cursor?: StaffWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Staff from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Staff.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Staff.
+     */
+    distinct?: StaffScalarFieldEnum | StaffScalarFieldEnum[]
+  }
+
+  /**
+   * Staff findMany
+   */
+  export type StaffFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * Filter, which Staff to fetch.
+     */
+    where?: StaffWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Staff to fetch.
+     */
+    orderBy?: StaffOrderByWithRelationInput | StaffOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Staff.
+     */
+    cursor?: StaffWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Staff from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Staff.
+     */
+    skip?: number
+    distinct?: StaffScalarFieldEnum | StaffScalarFieldEnum[]
+  }
+
+  /**
+   * Staff create
+   */
+  export type StaffCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Staff.
+     */
+    data: XOR<StaffCreateInput, StaffUncheckedCreateInput>
+  }
+
+  /**
+   * Staff createMany
+   */
+  export type StaffCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Staff.
+     */
+    data: StaffCreateManyInput | StaffCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Staff createManyAndReturn
+   */
+  export type StaffCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Staff.
+     */
+    data: StaffCreateManyInput | StaffCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Staff update
+   */
+  export type StaffUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Staff.
+     */
+    data: XOR<StaffUpdateInput, StaffUncheckedUpdateInput>
+    /**
+     * Choose, which Staff to update.
+     */
+    where: StaffWhereUniqueInput
+  }
+
+  /**
+   * Staff updateMany
+   */
+  export type StaffUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Staff.
+     */
+    data: XOR<StaffUpdateManyMutationInput, StaffUncheckedUpdateManyInput>
+    /**
+     * Filter which Staff to update
+     */
+    where?: StaffWhereInput
+  }
+
+  /**
+   * Staff upsert
+   */
+  export type StaffUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Staff to update in case it exists.
+     */
+    where: StaffWhereUniqueInput
+    /**
+     * In case the Staff found by the `where` argument doesn't exist, create a new Staff with this data.
+     */
+    create: XOR<StaffCreateInput, StaffUncheckedCreateInput>
+    /**
+     * In case the Staff was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StaffUpdateInput, StaffUncheckedUpdateInput>
+  }
+
+  /**
+   * Staff delete
+   */
+  export type StaffDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    /**
+     * Filter which Staff to delete.
+     */
+    where: StaffWhereUniqueInput
+  }
+
+  /**
+   * Staff deleteMany
+   */
+  export type StaffDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Staff to delete
+     */
+    where?: StaffWhereInput
+  }
+
+  /**
+   * Staff.Transactions
+   */
+  export type Staff$TransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    where?: SalaryTransactionWhereInput
+    orderBy?: SalaryTransactionOrderByWithRelationInput | SalaryTransactionOrderByWithRelationInput[]
+    cursor?: SalaryTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SalaryTransactionScalarFieldEnum | SalaryTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Staff without action
+   */
+  export type StaffDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SalaryTransaction
+   */
+
+  export type AggregateSalaryTransaction = {
+    _count: SalaryTransactionCountAggregateOutputType | null
+    _avg: SalaryTransactionAvgAggregateOutputType | null
+    _sum: SalaryTransactionSumAggregateOutputType | null
+    _min: SalaryTransactionMinAggregateOutputType | null
+    _max: SalaryTransactionMaxAggregateOutputType | null
+  }
+
+  export type SalaryTransactionAvgAggregateOutputType = {
+    amount: number | null
+    balanceAfter: number | null
+  }
+
+  export type SalaryTransactionSumAggregateOutputType = {
+    amount: number | null
+    balanceAfter: number | null
+  }
+
+  export type SalaryTransactionMinAggregateOutputType = {
+    id: string | null
+    staffId: string | null
+    type: string | null
+    amount: number | null
+    balanceAfter: number | null
+    date: Date | null
+    description: string | null
+  }
+
+  export type SalaryTransactionMaxAggregateOutputType = {
+    id: string | null
+    staffId: string | null
+    type: string | null
+    amount: number | null
+    balanceAfter: number | null
+    date: Date | null
+    description: string | null
+  }
+
+  export type SalaryTransactionCountAggregateOutputType = {
+    id: number
+    staffId: number
+    type: number
+    amount: number
+    balanceAfter: number
+    date: number
+    description: number
+    _all: number
+  }
+
+
+  export type SalaryTransactionAvgAggregateInputType = {
+    amount?: true
+    balanceAfter?: true
+  }
+
+  export type SalaryTransactionSumAggregateInputType = {
+    amount?: true
+    balanceAfter?: true
+  }
+
+  export type SalaryTransactionMinAggregateInputType = {
+    id?: true
+    staffId?: true
+    type?: true
+    amount?: true
+    balanceAfter?: true
+    date?: true
+    description?: true
+  }
+
+  export type SalaryTransactionMaxAggregateInputType = {
+    id?: true
+    staffId?: true
+    type?: true
+    amount?: true
+    balanceAfter?: true
+    date?: true
+    description?: true
+  }
+
+  export type SalaryTransactionCountAggregateInputType = {
+    id?: true
+    staffId?: true
+    type?: true
+    amount?: true
+    balanceAfter?: true
+    date?: true
+    description?: true
+    _all?: true
+  }
+
+  export type SalaryTransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SalaryTransaction to aggregate.
+     */
+    where?: SalaryTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SalaryTransactions to fetch.
+     */
+    orderBy?: SalaryTransactionOrderByWithRelationInput | SalaryTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SalaryTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SalaryTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SalaryTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SalaryTransactions
+    **/
+    _count?: true | SalaryTransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SalaryTransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SalaryTransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SalaryTransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SalaryTransactionMaxAggregateInputType
+  }
+
+  export type GetSalaryTransactionAggregateType<T extends SalaryTransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateSalaryTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSalaryTransaction[P]>
+      : GetScalarType<T[P], AggregateSalaryTransaction[P]>
+  }
+
+
+
+
+  export type SalaryTransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SalaryTransactionWhereInput
+    orderBy?: SalaryTransactionOrderByWithAggregationInput | SalaryTransactionOrderByWithAggregationInput[]
+    by: SalaryTransactionScalarFieldEnum[] | SalaryTransactionScalarFieldEnum
+    having?: SalaryTransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SalaryTransactionCountAggregateInputType | true
+    _avg?: SalaryTransactionAvgAggregateInputType
+    _sum?: SalaryTransactionSumAggregateInputType
+    _min?: SalaryTransactionMinAggregateInputType
+    _max?: SalaryTransactionMaxAggregateInputType
+  }
+
+  export type SalaryTransactionGroupByOutputType = {
+    id: string
+    staffId: string
+    type: string
+    amount: number
+    balanceAfter: number
+    date: Date
+    description: string | null
+    _count: SalaryTransactionCountAggregateOutputType | null
+    _avg: SalaryTransactionAvgAggregateOutputType | null
+    _sum: SalaryTransactionSumAggregateOutputType | null
+    _min: SalaryTransactionMinAggregateOutputType | null
+    _max: SalaryTransactionMaxAggregateOutputType | null
+  }
+
+  type GetSalaryTransactionGroupByPayload<T extends SalaryTransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SalaryTransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SalaryTransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SalaryTransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], SalaryTransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SalaryTransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    staffId?: boolean
+    type?: boolean
+    amount?: boolean
+    balanceAfter?: boolean
+    date?: boolean
+    description?: boolean
+    staff?: boolean | StaffDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["salaryTransaction"]>
+
+  export type SalaryTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    staffId?: boolean
+    type?: boolean
+    amount?: boolean
+    balanceAfter?: boolean
+    date?: boolean
+    description?: boolean
+    staff?: boolean | StaffDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["salaryTransaction"]>
+
+  export type SalaryTransactionSelectScalar = {
+    id?: boolean
+    staffId?: boolean
+    type?: boolean
+    amount?: boolean
+    balanceAfter?: boolean
+    date?: boolean
+    description?: boolean
+  }
+
+  export type SalaryTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    staff?: boolean | StaffDefaultArgs<ExtArgs>
+  }
+  export type SalaryTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    staff?: boolean | StaffDefaultArgs<ExtArgs>
+  }
+
+  export type $SalaryTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SalaryTransaction"
+    objects: {
+      staff: Prisma.$StaffPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      staffId: string
+      type: string
+      amount: number
+      balanceAfter: number
+      date: Date
+      description: string | null
+    }, ExtArgs["result"]["salaryTransaction"]>
+    composites: {}
+  }
+
+  type SalaryTransactionGetPayload<S extends boolean | null | undefined | SalaryTransactionDefaultArgs> = $Result.GetResult<Prisma.$SalaryTransactionPayload, S>
+
+  type SalaryTransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SalaryTransactionFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SalaryTransactionCountAggregateInputType | true
+    }
+
+  export interface SalaryTransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SalaryTransaction'], meta: { name: 'SalaryTransaction' } }
+    /**
+     * Find zero or one SalaryTransaction that matches the filter.
+     * @param {SalaryTransactionFindUniqueArgs} args - Arguments to find a SalaryTransaction
+     * @example
+     * // Get one SalaryTransaction
+     * const salaryTransaction = await prisma.salaryTransaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SalaryTransactionFindUniqueArgs>(args: SelectSubset<T, SalaryTransactionFindUniqueArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one SalaryTransaction that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SalaryTransactionFindUniqueOrThrowArgs} args - Arguments to find a SalaryTransaction
+     * @example
+     * // Get one SalaryTransaction
+     * const salaryTransaction = await prisma.salaryTransaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SalaryTransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, SalaryTransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first SalaryTransaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionFindFirstArgs} args - Arguments to find a SalaryTransaction
+     * @example
+     * // Get one SalaryTransaction
+     * const salaryTransaction = await prisma.salaryTransaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SalaryTransactionFindFirstArgs>(args?: SelectSubset<T, SalaryTransactionFindFirstArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first SalaryTransaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionFindFirstOrThrowArgs} args - Arguments to find a SalaryTransaction
+     * @example
+     * // Get one SalaryTransaction
+     * const salaryTransaction = await prisma.salaryTransaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SalaryTransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, SalaryTransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more SalaryTransactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SalaryTransactions
+     * const salaryTransactions = await prisma.salaryTransaction.findMany()
+     * 
+     * // Get first 10 SalaryTransactions
+     * const salaryTransactions = await prisma.salaryTransaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const salaryTransactionWithIdOnly = await prisma.salaryTransaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SalaryTransactionFindManyArgs>(args?: SelectSubset<T, SalaryTransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a SalaryTransaction.
+     * @param {SalaryTransactionCreateArgs} args - Arguments to create a SalaryTransaction.
+     * @example
+     * // Create one SalaryTransaction
+     * const SalaryTransaction = await prisma.salaryTransaction.create({
+     *   data: {
+     *     // ... data to create a SalaryTransaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends SalaryTransactionCreateArgs>(args: SelectSubset<T, SalaryTransactionCreateArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many SalaryTransactions.
+     * @param {SalaryTransactionCreateManyArgs} args - Arguments to create many SalaryTransactions.
+     * @example
+     * // Create many SalaryTransactions
+     * const salaryTransaction = await prisma.salaryTransaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SalaryTransactionCreateManyArgs>(args?: SelectSubset<T, SalaryTransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SalaryTransactions and returns the data saved in the database.
+     * @param {SalaryTransactionCreateManyAndReturnArgs} args - Arguments to create many SalaryTransactions.
+     * @example
+     * // Create many SalaryTransactions
+     * const salaryTransaction = await prisma.salaryTransaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SalaryTransactions and only return the `id`
+     * const salaryTransactionWithIdOnly = await prisma.salaryTransaction.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SalaryTransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, SalaryTransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a SalaryTransaction.
+     * @param {SalaryTransactionDeleteArgs} args - Arguments to delete one SalaryTransaction.
+     * @example
+     * // Delete one SalaryTransaction
+     * const SalaryTransaction = await prisma.salaryTransaction.delete({
+     *   where: {
+     *     // ... filter to delete one SalaryTransaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SalaryTransactionDeleteArgs>(args: SelectSubset<T, SalaryTransactionDeleteArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one SalaryTransaction.
+     * @param {SalaryTransactionUpdateArgs} args - Arguments to update one SalaryTransaction.
+     * @example
+     * // Update one SalaryTransaction
+     * const salaryTransaction = await prisma.salaryTransaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SalaryTransactionUpdateArgs>(args: SelectSubset<T, SalaryTransactionUpdateArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more SalaryTransactions.
+     * @param {SalaryTransactionDeleteManyArgs} args - Arguments to filter SalaryTransactions to delete.
+     * @example
+     * // Delete a few SalaryTransactions
+     * const { count } = await prisma.salaryTransaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SalaryTransactionDeleteManyArgs>(args?: SelectSubset<T, SalaryTransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SalaryTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SalaryTransactions
+     * const salaryTransaction = await prisma.salaryTransaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SalaryTransactionUpdateManyArgs>(args: SelectSubset<T, SalaryTransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one SalaryTransaction.
+     * @param {SalaryTransactionUpsertArgs} args - Arguments to update or create a SalaryTransaction.
+     * @example
+     * // Update or create a SalaryTransaction
+     * const salaryTransaction = await prisma.salaryTransaction.upsert({
+     *   create: {
+     *     // ... data to create a SalaryTransaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SalaryTransaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SalaryTransactionUpsertArgs>(args: SelectSubset<T, SalaryTransactionUpsertArgs<ExtArgs>>): Prisma__SalaryTransactionClient<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of SalaryTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionCountArgs} args - Arguments to filter SalaryTransactions to count.
+     * @example
+     * // Count the number of SalaryTransactions
+     * const count = await prisma.salaryTransaction.count({
+     *   where: {
+     *     // ... the filter for the SalaryTransactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends SalaryTransactionCountArgs>(
+      args?: Subset<T, SalaryTransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SalaryTransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SalaryTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SalaryTransactionAggregateArgs>(args: Subset<T, SalaryTransactionAggregateArgs>): Prisma.PrismaPromise<GetSalaryTransactionAggregateType<T>>
+
+    /**
+     * Group by SalaryTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SalaryTransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SalaryTransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SalaryTransactionGroupByArgs['orderBy'] }
+        : { orderBy?: SalaryTransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SalaryTransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSalaryTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SalaryTransaction model
+   */
+  readonly fields: SalaryTransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SalaryTransaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SalaryTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    staff<T extends StaffDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StaffDefaultArgs<ExtArgs>>): Prisma__StaffClient<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SalaryTransaction model
+   */ 
+  interface SalaryTransactionFieldRefs {
+    readonly id: FieldRef<"SalaryTransaction", 'String'>
+    readonly staffId: FieldRef<"SalaryTransaction", 'String'>
+    readonly type: FieldRef<"SalaryTransaction", 'String'>
+    readonly amount: FieldRef<"SalaryTransaction", 'Float'>
+    readonly balanceAfter: FieldRef<"SalaryTransaction", 'Float'>
+    readonly date: FieldRef<"SalaryTransaction", 'DateTime'>
+    readonly description: FieldRef<"SalaryTransaction", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SalaryTransaction findUnique
+   */
+  export type SalaryTransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SalaryTransaction to fetch.
+     */
+    where: SalaryTransactionWhereUniqueInput
+  }
+
+  /**
+   * SalaryTransaction findUniqueOrThrow
+   */
+  export type SalaryTransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SalaryTransaction to fetch.
+     */
+    where: SalaryTransactionWhereUniqueInput
+  }
+
+  /**
+   * SalaryTransaction findFirst
+   */
+  export type SalaryTransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SalaryTransaction to fetch.
+     */
+    where?: SalaryTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SalaryTransactions to fetch.
+     */
+    orderBy?: SalaryTransactionOrderByWithRelationInput | SalaryTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SalaryTransactions.
+     */
+    cursor?: SalaryTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SalaryTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SalaryTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SalaryTransactions.
+     */
+    distinct?: SalaryTransactionScalarFieldEnum | SalaryTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * SalaryTransaction findFirstOrThrow
+   */
+  export type SalaryTransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SalaryTransaction to fetch.
+     */
+    where?: SalaryTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SalaryTransactions to fetch.
+     */
+    orderBy?: SalaryTransactionOrderByWithRelationInput | SalaryTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SalaryTransactions.
+     */
+    cursor?: SalaryTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SalaryTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SalaryTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SalaryTransactions.
+     */
+    distinct?: SalaryTransactionScalarFieldEnum | SalaryTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * SalaryTransaction findMany
+   */
+  export type SalaryTransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SalaryTransactions to fetch.
+     */
+    where?: SalaryTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SalaryTransactions to fetch.
+     */
+    orderBy?: SalaryTransactionOrderByWithRelationInput | SalaryTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SalaryTransactions.
+     */
+    cursor?: SalaryTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SalaryTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SalaryTransactions.
+     */
+    skip?: number
+    distinct?: SalaryTransactionScalarFieldEnum | SalaryTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * SalaryTransaction create
+   */
+  export type SalaryTransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SalaryTransaction.
+     */
+    data: XOR<SalaryTransactionCreateInput, SalaryTransactionUncheckedCreateInput>
+  }
+
+  /**
+   * SalaryTransaction createMany
+   */
+  export type SalaryTransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SalaryTransactions.
+     */
+    data: SalaryTransactionCreateManyInput | SalaryTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SalaryTransaction createManyAndReturn
+   */
+  export type SalaryTransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many SalaryTransactions.
+     */
+    data: SalaryTransactionCreateManyInput | SalaryTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SalaryTransaction update
+   */
+  export type SalaryTransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SalaryTransaction.
+     */
+    data: XOR<SalaryTransactionUpdateInput, SalaryTransactionUncheckedUpdateInput>
+    /**
+     * Choose, which SalaryTransaction to update.
+     */
+    where: SalaryTransactionWhereUniqueInput
+  }
+
+  /**
+   * SalaryTransaction updateMany
+   */
+  export type SalaryTransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SalaryTransactions.
+     */
+    data: XOR<SalaryTransactionUpdateManyMutationInput, SalaryTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which SalaryTransactions to update
+     */
+    where?: SalaryTransactionWhereInput
+  }
+
+  /**
+   * SalaryTransaction upsert
+   */
+  export type SalaryTransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SalaryTransaction to update in case it exists.
+     */
+    where: SalaryTransactionWhereUniqueInput
+    /**
+     * In case the SalaryTransaction found by the `where` argument doesn't exist, create a new SalaryTransaction with this data.
+     */
+    create: XOR<SalaryTransactionCreateInput, SalaryTransactionUncheckedCreateInput>
+    /**
+     * In case the SalaryTransaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SalaryTransactionUpdateInput, SalaryTransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * SalaryTransaction delete
+   */
+  export type SalaryTransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+    /**
+     * Filter which SalaryTransaction to delete.
+     */
+    where: SalaryTransactionWhereUniqueInput
+  }
+
+  /**
+   * SalaryTransaction deleteMany
+   */
+  export type SalaryTransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SalaryTransactions to delete
+     */
+    where?: SalaryTransactionWhereInput
+  }
+
+  /**
+   * SalaryTransaction without action
+   */
+  export type SalaryTransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SalaryTransaction
+     */
+    select?: SalaryTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SalaryTransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
   export const TransactionIsolationLevel: {
+    ReadUncommitted: 'ReadUncommitted',
+    ReadCommitted: 'ReadCommitted',
+    RepeatableRead: 'RepeatableRead',
     Serializable: 'Serializable'
   };
 
@@ -12879,6 +15300,17 @@ export namespace Prisma {
     canManageCustomers: 'canManageCustomers',
     canManageExpenses: 'canManageExpenses',
     canAccessSettings: 'canAccessSettings',
+    language: 'language',
+    theme: 'theme',
+    primaryColor: 'primaryColor',
+    storeName: 'storeName',
+    storeTaxId: 'storeTaxId',
+    storeAddress: 'storeAddress',
+    storePhone: 'storePhone',
+    storeEmail: 'storeEmail',
+    currency: 'currency',
+    isVerified: 'isVerified',
+    verificationCode: 'verificationCode',
     createdAt: 'createdAt'
   };
 
@@ -12989,6 +15421,8 @@ export namespace Prisma {
     supplierId: 'supplierId',
     totalAmount: 'totalAmount',
     discount: 'discount',
+    taxRate: 'taxRate',
+    taxAmount: 'taxAmount',
     finalAmount: 'finalAmount',
     type: 'type',
     isDebt: 'isDebt',
@@ -13011,12 +15445,48 @@ export namespace Prisma {
   export type SaleItemScalarFieldEnum = (typeof SaleItemScalarFieldEnum)[keyof typeof SaleItemScalarFieldEnum]
 
 
+  export const StaffScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    phone: 'phone',
+    role: 'role',
+    baseSalary: 'baseSalary',
+    balance: 'balance',
+    isActive: 'isActive',
+    joinedAt: 'joinedAt',
+    createdAt: 'createdAt'
+  };
+
+  export type StaffScalarFieldEnum = (typeof StaffScalarFieldEnum)[keyof typeof StaffScalarFieldEnum]
+
+
+  export const SalaryTransactionScalarFieldEnum: {
+    id: 'id',
+    staffId: 'staffId',
+    type: 'type',
+    amount: 'amount',
+    balanceAfter: 'balanceAfter',
+    date: 'date',
+    description: 'description'
+  };
+
+  export type SalaryTransactionScalarFieldEnum = (typeof SalaryTransactionScalarFieldEnum)[keyof typeof SalaryTransactionScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
   export const NullsOrder: {
@@ -13040,6 +15510,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'String[]'
+   */
+  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -13054,6 +15531,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -13061,9 +15545,23 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
   /**
    * Deep Input Types
@@ -13088,6 +15586,17 @@ export namespace Prisma {
     canManageCustomers?: BoolFilter<"User"> | boolean
     canManageExpenses?: BoolFilter<"User"> | boolean
     canAccessSettings?: BoolFilter<"User"> | boolean
+    language?: StringFilter<"User"> | string
+    theme?: StringFilter<"User"> | string
+    primaryColor?: StringFilter<"User"> | string
+    storeName?: StringFilter<"User"> | string
+    storeTaxId?: StringNullableFilter<"User"> | string | null
+    storeAddress?: StringNullableFilter<"User"> | string | null
+    storePhone?: StringNullableFilter<"User"> | string | null
+    storeEmail?: StringNullableFilter<"User"> | string | null
+    currency?: StringFilter<"User"> | string
+    isVerified?: BoolFilter<"User"> | boolean
+    verificationCode?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
   }
 
@@ -13106,6 +15615,17 @@ export namespace Prisma {
     canManageCustomers?: SortOrder
     canManageExpenses?: SortOrder
     canAccessSettings?: SortOrder
+    language?: SortOrder
+    theme?: SortOrder
+    primaryColor?: SortOrder
+    storeName?: SortOrder
+    storeTaxId?: SortOrderInput | SortOrder
+    storeAddress?: SortOrderInput | SortOrder
+    storePhone?: SortOrderInput | SortOrder
+    storeEmail?: SortOrderInput | SortOrder
+    currency?: SortOrder
+    isVerified?: SortOrder
+    verificationCode?: SortOrderInput | SortOrder
     createdAt?: SortOrder
   }
 
@@ -13127,6 +15647,17 @@ export namespace Prisma {
     canManageCustomers?: BoolFilter<"User"> | boolean
     canManageExpenses?: BoolFilter<"User"> | boolean
     canAccessSettings?: BoolFilter<"User"> | boolean
+    language?: StringFilter<"User"> | string
+    theme?: StringFilter<"User"> | string
+    primaryColor?: StringFilter<"User"> | string
+    storeName?: StringFilter<"User"> | string
+    storeTaxId?: StringNullableFilter<"User"> | string | null
+    storeAddress?: StringNullableFilter<"User"> | string | null
+    storePhone?: StringNullableFilter<"User"> | string | null
+    storeEmail?: StringNullableFilter<"User"> | string | null
+    currency?: StringFilter<"User"> | string
+    isVerified?: BoolFilter<"User"> | boolean
+    verificationCode?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
   }, "id" | "email">
 
@@ -13145,6 +15676,17 @@ export namespace Prisma {
     canManageCustomers?: SortOrder
     canManageExpenses?: SortOrder
     canAccessSettings?: SortOrder
+    language?: SortOrder
+    theme?: SortOrder
+    primaryColor?: SortOrder
+    storeName?: SortOrder
+    storeTaxId?: SortOrderInput | SortOrder
+    storeAddress?: SortOrderInput | SortOrder
+    storePhone?: SortOrderInput | SortOrder
+    storeEmail?: SortOrderInput | SortOrder
+    currency?: SortOrder
+    isVerified?: SortOrder
+    verificationCode?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -13169,6 +15711,17 @@ export namespace Prisma {
     canManageCustomers?: BoolWithAggregatesFilter<"User"> | boolean
     canManageExpenses?: BoolWithAggregatesFilter<"User"> | boolean
     canAccessSettings?: BoolWithAggregatesFilter<"User"> | boolean
+    language?: StringWithAggregatesFilter<"User"> | string
+    theme?: StringWithAggregatesFilter<"User"> | string
+    primaryColor?: StringWithAggregatesFilter<"User"> | string
+    storeName?: StringWithAggregatesFilter<"User"> | string
+    storeTaxId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    storeAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
+    storePhone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    storeEmail?: StringNullableWithAggregatesFilter<"User"> | string | null
+    currency?: StringWithAggregatesFilter<"User"> | string
+    isVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    verificationCode?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
@@ -13695,6 +16248,8 @@ export namespace Prisma {
     supplierId?: StringNullableFilter<"Invoice"> | string | null
     totalAmount?: FloatFilter<"Invoice"> | number
     discount?: FloatFilter<"Invoice"> | number
+    taxRate?: FloatFilter<"Invoice"> | number
+    taxAmount?: FloatFilter<"Invoice"> | number
     finalAmount?: FloatFilter<"Invoice"> | number
     type?: StringFilter<"Invoice"> | string
     isDebt?: BoolFilter<"Invoice"> | boolean
@@ -13712,6 +16267,8 @@ export namespace Prisma {
     supplierId?: SortOrderInput | SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
     type?: SortOrder
     isDebt?: SortOrder
@@ -13732,6 +16289,8 @@ export namespace Prisma {
     supplierId?: StringNullableFilter<"Invoice"> | string | null
     totalAmount?: FloatFilter<"Invoice"> | number
     discount?: FloatFilter<"Invoice"> | number
+    taxRate?: FloatFilter<"Invoice"> | number
+    taxAmount?: FloatFilter<"Invoice"> | number
     finalAmount?: FloatFilter<"Invoice"> | number
     type?: StringFilter<"Invoice"> | string
     isDebt?: BoolFilter<"Invoice"> | boolean
@@ -13749,6 +16308,8 @@ export namespace Prisma {
     supplierId?: SortOrderInput | SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
     type?: SortOrder
     isDebt?: SortOrder
@@ -13771,6 +16332,8 @@ export namespace Prisma {
     supplierId?: StringNullableWithAggregatesFilter<"Invoice"> | string | null
     totalAmount?: FloatWithAggregatesFilter<"Invoice"> | number
     discount?: FloatWithAggregatesFilter<"Invoice"> | number
+    taxRate?: FloatWithAggregatesFilter<"Invoice"> | number
+    taxAmount?: FloatWithAggregatesFilter<"Invoice"> | number
     finalAmount?: FloatWithAggregatesFilter<"Invoice"> | number
     type?: StringWithAggregatesFilter<"Invoice"> | string
     isDebt?: BoolWithAggregatesFilter<"Invoice"> | boolean
@@ -13843,6 +16406,150 @@ export namespace Prisma {
     total?: FloatWithAggregatesFilter<"SaleItem"> | number
   }
 
+  export type StaffWhereInput = {
+    AND?: StaffWhereInput | StaffWhereInput[]
+    OR?: StaffWhereInput[]
+    NOT?: StaffWhereInput | StaffWhereInput[]
+    id?: StringFilter<"Staff"> | string
+    name?: StringFilter<"Staff"> | string
+    phone?: StringNullableFilter<"Staff"> | string | null
+    role?: StringNullableFilter<"Staff"> | string | null
+    baseSalary?: FloatFilter<"Staff"> | number
+    balance?: FloatFilter<"Staff"> | number
+    isActive?: BoolFilter<"Staff"> | boolean
+    joinedAt?: DateTimeFilter<"Staff"> | Date | string
+    createdAt?: DateTimeFilter<"Staff"> | Date | string
+    Transactions?: SalaryTransactionListRelationFilter
+  }
+
+  export type StaffOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    role?: SortOrderInput | SortOrder
+    baseSalary?: SortOrder
+    balance?: SortOrder
+    isActive?: SortOrder
+    joinedAt?: SortOrder
+    createdAt?: SortOrder
+    Transactions?: SalaryTransactionOrderByRelationAggregateInput
+  }
+
+  export type StaffWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StaffWhereInput | StaffWhereInput[]
+    OR?: StaffWhereInput[]
+    NOT?: StaffWhereInput | StaffWhereInput[]
+    name?: StringFilter<"Staff"> | string
+    phone?: StringNullableFilter<"Staff"> | string | null
+    role?: StringNullableFilter<"Staff"> | string | null
+    baseSalary?: FloatFilter<"Staff"> | number
+    balance?: FloatFilter<"Staff"> | number
+    isActive?: BoolFilter<"Staff"> | boolean
+    joinedAt?: DateTimeFilter<"Staff"> | Date | string
+    createdAt?: DateTimeFilter<"Staff"> | Date | string
+    Transactions?: SalaryTransactionListRelationFilter
+  }, "id">
+
+  export type StaffOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    role?: SortOrderInput | SortOrder
+    baseSalary?: SortOrder
+    balance?: SortOrder
+    isActive?: SortOrder
+    joinedAt?: SortOrder
+    createdAt?: SortOrder
+    _count?: StaffCountOrderByAggregateInput
+    _avg?: StaffAvgOrderByAggregateInput
+    _max?: StaffMaxOrderByAggregateInput
+    _min?: StaffMinOrderByAggregateInput
+    _sum?: StaffSumOrderByAggregateInput
+  }
+
+  export type StaffScalarWhereWithAggregatesInput = {
+    AND?: StaffScalarWhereWithAggregatesInput | StaffScalarWhereWithAggregatesInput[]
+    OR?: StaffScalarWhereWithAggregatesInput[]
+    NOT?: StaffScalarWhereWithAggregatesInput | StaffScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Staff"> | string
+    name?: StringWithAggregatesFilter<"Staff"> | string
+    phone?: StringNullableWithAggregatesFilter<"Staff"> | string | null
+    role?: StringNullableWithAggregatesFilter<"Staff"> | string | null
+    baseSalary?: FloatWithAggregatesFilter<"Staff"> | number
+    balance?: FloatWithAggregatesFilter<"Staff"> | number
+    isActive?: BoolWithAggregatesFilter<"Staff"> | boolean
+    joinedAt?: DateTimeWithAggregatesFilter<"Staff"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"Staff"> | Date | string
+  }
+
+  export type SalaryTransactionWhereInput = {
+    AND?: SalaryTransactionWhereInput | SalaryTransactionWhereInput[]
+    OR?: SalaryTransactionWhereInput[]
+    NOT?: SalaryTransactionWhereInput | SalaryTransactionWhereInput[]
+    id?: StringFilter<"SalaryTransaction"> | string
+    staffId?: StringFilter<"SalaryTransaction"> | string
+    type?: StringFilter<"SalaryTransaction"> | string
+    amount?: FloatFilter<"SalaryTransaction"> | number
+    balanceAfter?: FloatFilter<"SalaryTransaction"> | number
+    date?: DateTimeFilter<"SalaryTransaction"> | Date | string
+    description?: StringNullableFilter<"SalaryTransaction"> | string | null
+    staff?: XOR<StaffRelationFilter, StaffWhereInput>
+  }
+
+  export type SalaryTransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    staffId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    balanceAfter?: SortOrder
+    date?: SortOrder
+    description?: SortOrderInput | SortOrder
+    staff?: StaffOrderByWithRelationInput
+  }
+
+  export type SalaryTransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SalaryTransactionWhereInput | SalaryTransactionWhereInput[]
+    OR?: SalaryTransactionWhereInput[]
+    NOT?: SalaryTransactionWhereInput | SalaryTransactionWhereInput[]
+    staffId?: StringFilter<"SalaryTransaction"> | string
+    type?: StringFilter<"SalaryTransaction"> | string
+    amount?: FloatFilter<"SalaryTransaction"> | number
+    balanceAfter?: FloatFilter<"SalaryTransaction"> | number
+    date?: DateTimeFilter<"SalaryTransaction"> | Date | string
+    description?: StringNullableFilter<"SalaryTransaction"> | string | null
+    staff?: XOR<StaffRelationFilter, StaffWhereInput>
+  }, "id">
+
+  export type SalaryTransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    staffId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    balanceAfter?: SortOrder
+    date?: SortOrder
+    description?: SortOrderInput | SortOrder
+    _count?: SalaryTransactionCountOrderByAggregateInput
+    _avg?: SalaryTransactionAvgOrderByAggregateInput
+    _max?: SalaryTransactionMaxOrderByAggregateInput
+    _min?: SalaryTransactionMinOrderByAggregateInput
+    _sum?: SalaryTransactionSumOrderByAggregateInput
+  }
+
+  export type SalaryTransactionScalarWhereWithAggregatesInput = {
+    AND?: SalaryTransactionScalarWhereWithAggregatesInput | SalaryTransactionScalarWhereWithAggregatesInput[]
+    OR?: SalaryTransactionScalarWhereWithAggregatesInput[]
+    NOT?: SalaryTransactionScalarWhereWithAggregatesInput | SalaryTransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SalaryTransaction"> | string
+    staffId?: StringWithAggregatesFilter<"SalaryTransaction"> | string
+    type?: StringWithAggregatesFilter<"SalaryTransaction"> | string
+    amount?: FloatWithAggregatesFilter<"SalaryTransaction"> | number
+    balanceAfter?: FloatWithAggregatesFilter<"SalaryTransaction"> | number
+    date?: DateTimeWithAggregatesFilter<"SalaryTransaction"> | Date | string
+    description?: StringNullableWithAggregatesFilter<"SalaryTransaction"> | string | null
+  }
+
   export type UserCreateInput = {
     id?: string
     name: string
@@ -13858,6 +16565,17 @@ export namespace Prisma {
     canManageCustomers?: boolean
     canManageExpenses?: boolean
     canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    isVerified?: boolean
+    verificationCode?: string | null
     createdAt?: Date | string
   }
 
@@ -13876,6 +16594,17 @@ export namespace Prisma {
     canManageCustomers?: boolean
     canManageExpenses?: boolean
     canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    isVerified?: boolean
+    verificationCode?: string | null
     createdAt?: Date | string
   }
 
@@ -13894,6 +16623,17 @@ export namespace Prisma {
     canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
     canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
     canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13912,6 +16652,17 @@ export namespace Prisma {
     canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
     canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
     canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13930,6 +16681,17 @@ export namespace Prisma {
     canManageCustomers?: boolean
     canManageExpenses?: boolean
     canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    isVerified?: boolean
+    verificationCode?: string | null
     createdAt?: Date | string
   }
 
@@ -13948,6 +16710,17 @@ export namespace Prisma {
     canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
     canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
     canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13966,6 +16739,17 @@ export namespace Prisma {
     canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
     canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
     canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -14512,6 +17296,8 @@ export namespace Prisma {
     invoiceNo: string
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -14529,6 +17315,8 @@ export namespace Prisma {
     supplierId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -14542,6 +17330,8 @@ export namespace Prisma {
     invoiceNo?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -14559,6 +17349,8 @@ export namespace Prisma {
     supplierId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -14574,6 +17366,8 @@ export namespace Prisma {
     supplierId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -14586,6 +17380,8 @@ export namespace Prisma {
     invoiceNo?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -14600,6 +17396,8 @@ export namespace Prisma {
     supplierId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -14668,10 +17466,167 @@ export namespace Prisma {
     total?: FloatFieldUpdateOperationsInput | number
   }
 
+  export type StaffCreateInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+    Transactions?: SalaryTransactionCreateNestedManyWithoutStaffInput
+  }
+
+  export type StaffUncheckedCreateInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+    Transactions?: SalaryTransactionUncheckedCreateNestedManyWithoutStaffInput
+  }
+
+  export type StaffUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Transactions?: SalaryTransactionUpdateManyWithoutStaffNestedInput
+  }
+
+  export type StaffUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Transactions?: SalaryTransactionUncheckedUpdateManyWithoutStaffNestedInput
+  }
+
+  export type StaffCreateManyInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type StaffUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SalaryTransactionCreateInput = {
+    id?: string
+    type: string
+    amount: number
+    balanceAfter?: number
+    date?: Date | string
+    description?: string | null
+    staff: StaffCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type SalaryTransactionUncheckedCreateInput = {
+    id?: string
+    staffId: string
+    type: string
+    amount: number
+    balanceAfter?: number
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type SalaryTransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    staff?: StaffUpdateOneRequiredWithoutTransactionsNestedInput
+  }
+
+  export type SalaryTransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    staffId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SalaryTransactionCreateManyInput = {
+    id?: string
+    staffId: string
+    type: string
+    amount: number
+    balanceAfter?: number
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type SalaryTransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SalaryTransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    staffId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -14679,13 +17634,14 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -14693,6 +17649,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
@@ -14703,8 +17660,8 @@ export namespace Prisma {
 
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -14732,6 +17689,17 @@ export namespace Prisma {
     canManageCustomers?: SortOrder
     canManageExpenses?: SortOrder
     canAccessSettings?: SortOrder
+    language?: SortOrder
+    theme?: SortOrder
+    primaryColor?: SortOrder
+    storeName?: SortOrder
+    storeTaxId?: SortOrder
+    storeAddress?: SortOrder
+    storePhone?: SortOrder
+    storeEmail?: SortOrder
+    currency?: SortOrder
+    isVerified?: SortOrder
+    verificationCode?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -14750,6 +17718,17 @@ export namespace Prisma {
     canManageCustomers?: SortOrder
     canManageExpenses?: SortOrder
     canAccessSettings?: SortOrder
+    language?: SortOrder
+    theme?: SortOrder
+    primaryColor?: SortOrder
+    storeName?: SortOrder
+    storeTaxId?: SortOrder
+    storeAddress?: SortOrder
+    storePhone?: SortOrder
+    storeEmail?: SortOrder
+    currency?: SortOrder
+    isVerified?: SortOrder
+    verificationCode?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -14768,13 +17747,24 @@ export namespace Prisma {
     canManageCustomers?: SortOrder
     canManageExpenses?: SortOrder
     canAccessSettings?: SortOrder
+    language?: SortOrder
+    theme?: SortOrder
+    primaryColor?: SortOrder
+    storeName?: SortOrder
+    storeTaxId?: SortOrder
+    storeAddress?: SortOrder
+    storePhone?: SortOrder
+    storeEmail?: SortOrder
+    currency?: SortOrder
+    isVerified?: SortOrder
+    verificationCode?: SortOrder
     createdAt?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -14782,6 +17772,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
@@ -14790,8 +17781,8 @@ export namespace Prisma {
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -14799,6 +17790,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
@@ -14815,8 +17807,8 @@ export namespace Prisma {
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -14829,8 +17821,8 @@ export namespace Prisma {
 
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -14840,8 +17832,8 @@ export namespace Prisma {
 
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -14928,8 +17920,8 @@ export namespace Prisma {
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -14944,8 +17936,8 @@ export namespace Prisma {
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -15231,6 +18223,8 @@ export namespace Prisma {
     supplierId?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
     type?: SortOrder
     isDebt?: SortOrder
@@ -15241,6 +18235,8 @@ export namespace Prisma {
   export type InvoiceAvgOrderByAggregateInput = {
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
   }
 
@@ -15251,6 +18247,8 @@ export namespace Prisma {
     supplierId?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
     type?: SortOrder
     isDebt?: SortOrder
@@ -15265,6 +18263,8 @@ export namespace Prisma {
     supplierId?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
     type?: SortOrder
     isDebt?: SortOrder
@@ -15275,6 +18275,8 @@ export namespace Prisma {
   export type InvoiceSumOrderByAggregateInput = {
     totalAmount?: SortOrder
     discount?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     finalAmount?: SortOrder
   }
 
@@ -15320,6 +18322,107 @@ export namespace Prisma {
     qty?: SortOrder
     price?: SortOrder
     total?: SortOrder
+  }
+
+  export type SalaryTransactionListRelationFilter = {
+    every?: SalaryTransactionWhereInput
+    some?: SalaryTransactionWhereInput
+    none?: SalaryTransactionWhereInput
+  }
+
+  export type SalaryTransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StaffCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    role?: SortOrder
+    baseSalary?: SortOrder
+    balance?: SortOrder
+    isActive?: SortOrder
+    joinedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StaffAvgOrderByAggregateInput = {
+    baseSalary?: SortOrder
+    balance?: SortOrder
+  }
+
+  export type StaffMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    role?: SortOrder
+    baseSalary?: SortOrder
+    balance?: SortOrder
+    isActive?: SortOrder
+    joinedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StaffMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    role?: SortOrder
+    baseSalary?: SortOrder
+    balance?: SortOrder
+    isActive?: SortOrder
+    joinedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StaffSumOrderByAggregateInput = {
+    baseSalary?: SortOrder
+    balance?: SortOrder
+  }
+
+  export type StaffRelationFilter = {
+    is?: StaffWhereInput
+    isNot?: StaffWhereInput
+  }
+
+  export type SalaryTransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    staffId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    balanceAfter?: SortOrder
+    date?: SortOrder
+    description?: SortOrder
+  }
+
+  export type SalaryTransactionAvgOrderByAggregateInput = {
+    amount?: SortOrder
+    balanceAfter?: SortOrder
+  }
+
+  export type SalaryTransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    staffId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    balanceAfter?: SortOrder
+    date?: SortOrder
+    description?: SortOrder
+  }
+
+  export type SalaryTransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    staffId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    balanceAfter?: SortOrder
+    date?: SortOrder
+    description?: SortOrder
+  }
+
+  export type SalaryTransactionSumOrderByAggregateInput = {
+    amount?: SortOrder
+    balanceAfter?: SortOrder
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -15866,10 +18969,66 @@ export namespace Prisma {
     update?: XOR<XOR<InvoiceUpdateToOneWithWhereWithoutItemsInput, InvoiceUpdateWithoutItemsInput>, InvoiceUncheckedUpdateWithoutItemsInput>
   }
 
+  export type SalaryTransactionCreateNestedManyWithoutStaffInput = {
+    create?: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput> | SalaryTransactionCreateWithoutStaffInput[] | SalaryTransactionUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: SalaryTransactionCreateOrConnectWithoutStaffInput | SalaryTransactionCreateOrConnectWithoutStaffInput[]
+    createMany?: SalaryTransactionCreateManyStaffInputEnvelope
+    connect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+  }
+
+  export type SalaryTransactionUncheckedCreateNestedManyWithoutStaffInput = {
+    create?: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput> | SalaryTransactionCreateWithoutStaffInput[] | SalaryTransactionUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: SalaryTransactionCreateOrConnectWithoutStaffInput | SalaryTransactionCreateOrConnectWithoutStaffInput[]
+    createMany?: SalaryTransactionCreateManyStaffInputEnvelope
+    connect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+  }
+
+  export type SalaryTransactionUpdateManyWithoutStaffNestedInput = {
+    create?: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput> | SalaryTransactionCreateWithoutStaffInput[] | SalaryTransactionUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: SalaryTransactionCreateOrConnectWithoutStaffInput | SalaryTransactionCreateOrConnectWithoutStaffInput[]
+    upsert?: SalaryTransactionUpsertWithWhereUniqueWithoutStaffInput | SalaryTransactionUpsertWithWhereUniqueWithoutStaffInput[]
+    createMany?: SalaryTransactionCreateManyStaffInputEnvelope
+    set?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    disconnect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    delete?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    connect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    update?: SalaryTransactionUpdateWithWhereUniqueWithoutStaffInput | SalaryTransactionUpdateWithWhereUniqueWithoutStaffInput[]
+    updateMany?: SalaryTransactionUpdateManyWithWhereWithoutStaffInput | SalaryTransactionUpdateManyWithWhereWithoutStaffInput[]
+    deleteMany?: SalaryTransactionScalarWhereInput | SalaryTransactionScalarWhereInput[]
+  }
+
+  export type SalaryTransactionUncheckedUpdateManyWithoutStaffNestedInput = {
+    create?: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput> | SalaryTransactionCreateWithoutStaffInput[] | SalaryTransactionUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: SalaryTransactionCreateOrConnectWithoutStaffInput | SalaryTransactionCreateOrConnectWithoutStaffInput[]
+    upsert?: SalaryTransactionUpsertWithWhereUniqueWithoutStaffInput | SalaryTransactionUpsertWithWhereUniqueWithoutStaffInput[]
+    createMany?: SalaryTransactionCreateManyStaffInputEnvelope
+    set?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    disconnect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    delete?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    connect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+    update?: SalaryTransactionUpdateWithWhereUniqueWithoutStaffInput | SalaryTransactionUpdateWithWhereUniqueWithoutStaffInput[]
+    updateMany?: SalaryTransactionUpdateManyWithWhereWithoutStaffInput | SalaryTransactionUpdateManyWithWhereWithoutStaffInput[]
+    deleteMany?: SalaryTransactionScalarWhereInput | SalaryTransactionScalarWhereInput[]
+  }
+
+  export type StaffCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<StaffCreateWithoutTransactionsInput, StaffUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: StaffCreateOrConnectWithoutTransactionsInput
+    connect?: StaffWhereUniqueInput
+  }
+
+  export type StaffUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<StaffCreateWithoutTransactionsInput, StaffUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: StaffCreateOrConnectWithoutTransactionsInput
+    upsert?: StaffUpsertWithoutTransactionsInput
+    connect?: StaffWhereUniqueInput
+    update?: XOR<XOR<StaffUpdateToOneWithWhereWithoutTransactionsInput, StaffUpdateWithoutTransactionsInput>, StaffUncheckedUpdateWithoutTransactionsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -15882,8 +19041,8 @@ export namespace Prisma {
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -15901,8 +19060,8 @@ export namespace Prisma {
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -15912,8 +19071,8 @@ export namespace Prisma {
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -15929,8 +19088,8 @@ export namespace Prisma {
 
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -15940,8 +19099,8 @@ export namespace Prisma {
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -15957,8 +19116,8 @@ export namespace Prisma {
 
   export type NestedIntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -15976,8 +19135,8 @@ export namespace Prisma {
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -15990,8 +19149,8 @@ export namespace Prisma {
 
   export type NestedFloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -16001,8 +19160,8 @@ export namespace Prisma {
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -16017,8 +19176,8 @@ export namespace Prisma {
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -16054,6 +19213,7 @@ export namespace Prisma {
 
   export type SaleItemCreateManyProductInputEnvelope = {
     data: SaleItemCreateManyProductInput | SaleItemCreateManyProductInput[]
+    skipDuplicates?: boolean
   }
 
   export type StockMovementCreateWithoutProductInput = {
@@ -16085,6 +19245,7 @@ export namespace Prisma {
 
   export type StockMovementCreateManyProductInputEnvelope = {
     data: StockMovementCreateManyProductInput | StockMovementCreateManyProductInput[]
+    skipDuplicates?: boolean
   }
 
   export type WarehouseInventoryCreateWithoutProductInput = {
@@ -16106,6 +19267,7 @@ export namespace Prisma {
 
   export type WarehouseInventoryCreateManyProductInputEnvelope = {
     data: WarehouseInventoryCreateManyProductInput | WarehouseInventoryCreateManyProductInput[]
+    skipDuplicates?: boolean
   }
 
   export type SaleItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -16222,6 +19384,7 @@ export namespace Prisma {
 
   export type StockMovementCreateManyDestinationInputEnvelope = {
     data: StockMovementCreateManyDestinationInput | StockMovementCreateManyDestinationInput[]
+    skipDuplicates?: boolean
   }
 
   export type StockMovementCreateWithoutSourceInput = {
@@ -16253,6 +19416,7 @@ export namespace Prisma {
 
   export type StockMovementCreateManySourceInputEnvelope = {
     data: StockMovementCreateManySourceInput | StockMovementCreateManySourceInput[]
+    skipDuplicates?: boolean
   }
 
   export type WarehouseInventoryCreateWithoutWarehouseInput = {
@@ -16274,6 +19438,7 @@ export namespace Prisma {
 
   export type WarehouseInventoryCreateManyWarehouseInputEnvelope = {
     data: WarehouseInventoryCreateManyWarehouseInput | WarehouseInventoryCreateManyWarehouseInput[]
+    skipDuplicates?: boolean
   }
 
   export type StockMovementUpsertWithWhereUniqueWithoutDestinationInput = {
@@ -16645,6 +19810,8 @@ export namespace Prisma {
     invoiceNo: string
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -16660,6 +19827,8 @@ export namespace Prisma {
     supplierId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -16675,6 +19844,7 @@ export namespace Prisma {
 
   export type InvoiceCreateManyCustomerInputEnvelope = {
     data: InvoiceCreateManyCustomerInput | InvoiceCreateManyCustomerInput[]
+    skipDuplicates?: boolean
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -16703,6 +19873,8 @@ export namespace Prisma {
     supplierId?: StringNullableFilter<"Invoice"> | string | null
     totalAmount?: FloatFilter<"Invoice"> | number
     discount?: FloatFilter<"Invoice"> | number
+    taxRate?: FloatFilter<"Invoice"> | number
+    taxAmount?: FloatFilter<"Invoice"> | number
     finalAmount?: FloatFilter<"Invoice"> | number
     type?: StringFilter<"Invoice"> | string
     isDebt?: BoolFilter<"Invoice"> | boolean
@@ -16715,6 +19887,8 @@ export namespace Prisma {
     invoiceNo: string
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -16730,6 +19904,8 @@ export namespace Prisma {
     customerId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -16745,6 +19921,7 @@ export namespace Prisma {
 
   export type InvoiceCreateManySupplierInputEnvelope = {
     data: InvoiceCreateManySupplierInput | InvoiceCreateManySupplierInput[]
+    skipDuplicates?: boolean
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutSupplierInput = {
@@ -16834,6 +20011,7 @@ export namespace Prisma {
 
   export type SaleItemCreateManyInvoiceInputEnvelope = {
     data: SaleItemCreateManyInvoiceInput | SaleItemCreateManyInvoiceInput[]
+    skipDuplicates?: boolean
   }
 
   export type SupplierUpsertWithoutInvoicesInput = {
@@ -16948,6 +20126,8 @@ export namespace Prisma {
     invoiceNo: string
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -16964,6 +20144,8 @@ export namespace Prisma {
     supplierId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -17029,6 +20211,8 @@ export namespace Prisma {
     invoiceNo?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17045,10 +20229,133 @@ export namespace Prisma {
     supplierId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SalaryTransactionCreateWithoutStaffInput = {
+    id?: string
+    type: string
+    amount: number
+    balanceAfter?: number
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type SalaryTransactionUncheckedCreateWithoutStaffInput = {
+    id?: string
+    type: string
+    amount: number
+    balanceAfter?: number
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type SalaryTransactionCreateOrConnectWithoutStaffInput = {
+    where: SalaryTransactionWhereUniqueInput
+    create: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput>
+  }
+
+  export type SalaryTransactionCreateManyStaffInputEnvelope = {
+    data: SalaryTransactionCreateManyStaffInput | SalaryTransactionCreateManyStaffInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SalaryTransactionUpsertWithWhereUniqueWithoutStaffInput = {
+    where: SalaryTransactionWhereUniqueInput
+    update: XOR<SalaryTransactionUpdateWithoutStaffInput, SalaryTransactionUncheckedUpdateWithoutStaffInput>
+    create: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput>
+  }
+
+  export type SalaryTransactionUpdateWithWhereUniqueWithoutStaffInput = {
+    where: SalaryTransactionWhereUniqueInput
+    data: XOR<SalaryTransactionUpdateWithoutStaffInput, SalaryTransactionUncheckedUpdateWithoutStaffInput>
+  }
+
+  export type SalaryTransactionUpdateManyWithWhereWithoutStaffInput = {
+    where: SalaryTransactionScalarWhereInput
+    data: XOR<SalaryTransactionUpdateManyMutationInput, SalaryTransactionUncheckedUpdateManyWithoutStaffInput>
+  }
+
+  export type SalaryTransactionScalarWhereInput = {
+    AND?: SalaryTransactionScalarWhereInput | SalaryTransactionScalarWhereInput[]
+    OR?: SalaryTransactionScalarWhereInput[]
+    NOT?: SalaryTransactionScalarWhereInput | SalaryTransactionScalarWhereInput[]
+    id?: StringFilter<"SalaryTransaction"> | string
+    staffId?: StringFilter<"SalaryTransaction"> | string
+    type?: StringFilter<"SalaryTransaction"> | string
+    amount?: FloatFilter<"SalaryTransaction"> | number
+    balanceAfter?: FloatFilter<"SalaryTransaction"> | number
+    date?: DateTimeFilter<"SalaryTransaction"> | Date | string
+    description?: StringNullableFilter<"SalaryTransaction"> | string | null
+  }
+
+  export type StaffCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type StaffUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type StaffCreateOrConnectWithoutTransactionsInput = {
+    where: StaffWhereUniqueInput
+    create: XOR<StaffCreateWithoutTransactionsInput, StaffUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type StaffUpsertWithoutTransactionsInput = {
+    update: XOR<StaffUpdateWithoutTransactionsInput, StaffUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<StaffCreateWithoutTransactionsInput, StaffUncheckedCreateWithoutTransactionsInput>
+    where?: StaffWhereInput
+  }
+
+  export type StaffUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: StaffWhereInput
+    data: XOR<StaffUpdateWithoutTransactionsInput, StaffUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type StaffUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17270,6 +20577,8 @@ export namespace Prisma {
     supplierId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -17282,6 +20591,8 @@ export namespace Prisma {
     invoiceNo?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17297,6 +20608,8 @@ export namespace Prisma {
     supplierId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17311,6 +20624,8 @@ export namespace Prisma {
     supplierId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17324,6 +20639,8 @@ export namespace Prisma {
     customerId?: string | null
     totalAmount: number
     discount?: number
+    taxRate?: number
+    taxAmount?: number
     finalAmount: number
     type?: string
     isDebt?: boolean
@@ -17336,6 +20653,8 @@ export namespace Prisma {
     invoiceNo?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17351,6 +20670,8 @@ export namespace Prisma {
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17365,6 +20686,8 @@ export namespace Prisma {
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
@@ -17404,6 +20727,42 @@ export namespace Prisma {
     total?: FloatFieldUpdateOperationsInput | number
   }
 
+  export type SalaryTransactionCreateManyStaffInput = {
+    id?: string
+    type: string
+    amount: number
+    balanceAfter?: number
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type SalaryTransactionUpdateWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SalaryTransactionUncheckedUpdateWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SalaryTransactionUncheckedUpdateManyWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
 
 
   /**
@@ -17429,6 +20788,10 @@ export namespace Prisma {
      * @deprecated Use InvoiceCountOutputTypeDefaultArgs instead
      */
     export type InvoiceCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = InvoiceCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use StaffCountOutputTypeDefaultArgs instead
+     */
+    export type StaffCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = StaffCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use UserDefaultArgs instead
      */
@@ -17473,6 +20836,14 @@ export namespace Prisma {
      * @deprecated Use SaleItemDefaultArgs instead
      */
     export type SaleItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SaleItemDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use StaffDefaultArgs instead
+     */
+    export type StaffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = StaffDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SalaryTransactionDefaultArgs instead
+     */
+    export type SalaryTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SalaryTransactionDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

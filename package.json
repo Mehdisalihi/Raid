@@ -16,6 +16,7 @@
         "build:apk": "npm run build:apk --workspace=@mohassibe/mobile"
     },
     "dependencies": {
+        "pg": "^8.20.0",
         "puppeteer": "^24.39.0"
     },
     "overrides": {},

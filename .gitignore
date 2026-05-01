@@ -38,3 +38,5 @@ check_suppliers.js
 mai.py
 business_manager.db
 local.properties
+
+.vercel

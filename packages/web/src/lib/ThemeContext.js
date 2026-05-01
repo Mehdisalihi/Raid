@@ -10,23 +10,24 @@ export function ThemeProvider({ children }) {
     const [fontSize, setFontSize] = useState('14px');
 
     useEffect(() => {
+        // Try individual keys first
+        const savedTheme = localStorage.getItem('theme');
+        const savedColor = localStorage.getItem('primaryColor');
+        const savedFontSize = localStorage.getItem('fontSize');
+
         const savedUser = localStorage.getItem('user');
-        let initialTheme = 'light';
-        let initialColor = '#4f46e5';
-        let initialFontSize = '14px';
+        let initialTheme = savedTheme || 'light';
+        let initialColor = savedColor || '#4f46e5';
+        let initialFontSize = savedFontSize || '14px';
 
         if (savedUser) {
             try {
                 const user = JSON.parse(savedUser);
-                if (user.theme) initialTheme = user.theme;
-                if (user.primaryColor) initialColor = user.primaryColor;
+                if (!savedTheme && user.theme) initialTheme = user.theme;
+                if (!savedColor && user.primaryColor) initialColor = user.primaryColor;
             } catch (e) {
                 console.error("ThemeContext: Error parsing user", e);
             }
-        } else {
-            initialTheme = localStorage.getItem('theme') || 'light';
-            initialColor = localStorage.getItem('primaryColor') || '#4f46e5';
-            initialFontSize = localStorage.getItem('fontSize') || '14px';
         }
 
         setTheme(initialTheme);
@@ -42,7 +43,6 @@ export function ThemeProvider({ children }) {
     const applyColor = (color) => {
         document.documentElement.style.setProperty('--primary', color);
         
-        // Convert hex to RGB for variables like --primary-rgb
         const hexToRgb = (hex) => {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? 
@@ -65,16 +65,31 @@ export function ThemeProvider({ children }) {
         document.documentElement.style.setProperty('--primary-dark', darkVariants[color] || color);
     };
 
+    const updateLocalStorageUser = (key, value) => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            try {
+                const user = JSON.parse(savedUser);
+                user[key] = value;
+                localStorage.setItem('user', JSON.stringify(user));
+            } catch (e) {
+                console.error("ThemeContext: Error updating user", e);
+            }
+        }
+    };
+
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
         localStorage.setItem('theme', newTheme);
+        updateLocalStorageUser('theme', newTheme);
         document.documentElement.classList.toggle('dark', newTheme === 'dark');
     };
 
     const updatePrimaryColor = (color) => {
         setPrimaryColor(color);
         localStorage.setItem('primaryColor', color);
+        updateLocalStorageUser('primaryColor', color);
         applyColor(color);
     };
 

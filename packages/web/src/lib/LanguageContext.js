@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api from './api';
 
 const LanguageContext = createContext();
 
@@ -845,33 +846,33 @@ export const translations = {
     }
 };
 
+// Helper: read language from localStorage synchronously (safe for SSR)
+function getInitialLang() {
+    if (typeof window === 'undefined') return 'ar';
+    const saved = localStorage.getItem('lang');
+    if (saved === 'ar' || saved === 'fr') return saved;
+    localStorage.setItem('lang', 'ar');
+    return 'ar';
+}
+
 export const LanguageProvider = ({ children }) => {
-    const [lang, setLang] = useState('ar');
-    const [isLoaded, setIsLoaded] = useState(false);
+    // Read from localStorage synchronously — no flash, no useEffect delay
+    const [lang, setLangState] = useState(getInitialLang);
 
+    // Apply HTML attributes on first render and whenever lang changes
     useEffect(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            try {
-                const user = JSON.parse(savedUser);
-                if (user.language) {
-                    setLang(user.language);
-                    setIsLoaded(true);
-                    return;
-                }
-            } catch (e) {
-                console.error("LanguageContext: Error parsing user", e);
-            }
-        }
-        const savedLang = localStorage.getItem('lang') || 'ar';
-        setLang(savedLang);
-        setIsLoaded(true);
-    }, []);
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    }, [lang]);
 
-    const toggleLang = (newLang) => {
-        setLang(newLang);
+    const toggleLang = useCallback((newLang) => {
+        if (newLang !== 'ar' && newLang !== 'fr') return;
+        setLangState(newLang);
         localStorage.setItem('lang', newLang);
-    };
+        // Update DOM immediately (useEffect will also run, but this avoids any delay)
+        document.documentElement.lang = newLang;
+        document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+    }, []);
 
     const toLatinNumerals = (str) => {
         if (str === null || str === undefined) return '';
@@ -882,7 +883,6 @@ export const LanguageProvider = ({ children }) => {
     };
 
     const fmtNumber = useCallback((num, options = {}) => {
-        // Enforce nu-latn extension strictly
         const locale = lang === 'ar' ? 'ar-MA-u-nu-latn' : 'fr-FR';
         const formatted = new Intl.NumberFormat(locale, {
             minimumFractionDigits: 0,
@@ -895,12 +895,10 @@ export const LanguageProvider = ({ children }) => {
     const fmtDate = useCallback((date, options = {}) => {
         if (!date) return '';
         const d = typeof date === 'string' ? new Date(date) : date;
-        // Use 'en-GB' or similar to force Latin numerals if 'ar' is being stubborn
-        // But we want Arabic month names, so 'ar-MA-u-nu-latn' is better
         const locale = lang === 'ar' ? 'ar-MA-u-nu-latn' : 'fr-FR';
         const formatted = new Intl.DateTimeFormat(locale, {
             year: 'numeric',
-            month: 'numeric', // Using numeric to ensure numbers only in some views if needed
+            month: 'numeric',
             day: 'numeric',
             ...options
         }).format(d);
@@ -921,17 +919,8 @@ export const LanguageProvider = ({ children }) => {
     }, [lang]);
 
     const t = useCallback((key) => {
-        return translations[lang][key] || key;
+        return translations[lang]?.[key] || translations['ar']?.[key] || key;
     }, [lang]);
-
-    if (!isLoaded) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                <p className="text-slate-400 font-bold animate-pulse text-sm">RAID SYSTEM LOADING...</p>
-            </div>
-        </div>
-    );
 
     return (
         <LanguageContext.Provider value={{ lang, toggleLang, t, fmtNumber, fmtDate, fmtTime, isRTL: lang === 'ar' }}>

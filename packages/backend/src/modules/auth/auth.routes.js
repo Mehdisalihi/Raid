@@ -126,11 +126,31 @@ router.post('/register', async (req, res) => {
             }
         });
 
+        // 3. Sync to Supabase PostgreSQL "users" table
+        try {
+            const { error: pgError } = await supabase
+                .from('User')
+                .insert({
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    passwordHash: passwordHash,
+                    role: 'USER',
+                    isActive: true,
+                    isVerified: true
+                });
+            if (pgError) console.error('Failed to sync to Supabase PG:', pgError);
+            else console.log('User synced to Supabase PostgreSQL successfully');
+        } catch (pgErr) {
+            console.error('Error during Supabase PG sync:', pgErr);
+        }
+
         console.log('User registered successfully in local DB:', user.id);
         res.status(201).json({
             message: 'تم التسجيل بنجاح! يمكنك تسجيل الدخول الآن.',
             user: { id: user.id, email: user.email }
         });
+
     } catch (error) {
         console.error('Registration Error:', error);
         res.status(500).json({ error: 'حدث خطأ في الخادم أثناء إنشاء الحساب: ' + (error.message || '') });

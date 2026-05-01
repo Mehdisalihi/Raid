@@ -44,7 +44,8 @@ export default function SettingsPage() {
     const router = useRouter();
 
     const handleLogout = () => {
-        localStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         router.push('/login');
     };
 

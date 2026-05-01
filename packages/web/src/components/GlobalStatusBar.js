@@ -94,7 +94,9 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
         window.dispatchEvent(new CustomEvent('toggle-notifications'));
     };
 
-    const activeShortcuts = ALL_SHORTCUTS.filter(s => shortcuts.includes(s.href));
+    const activeShortcuts = useMemo(() => 
+        ALL_SHORTCUTS.filter(s => shortcuts.includes(s.href)),
+    [shortcuts]);
 
     const btnBase = `flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all hover:scale-105 active:scale-95`;
     const btnDark = `hover:bg-white/10`;

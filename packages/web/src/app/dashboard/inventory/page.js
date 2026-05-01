@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import api from '@/lib/api';
 import {
     Search, Filter, Package, Building2,
     Calendar, User, ChevronDown, Download,
-    Printer, Info, Settings
+    Printer, Info, Settings, ArrowLeftRight, X
 } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 import Link from 'next/link';
@@ -16,7 +16,14 @@ export default function InventoryPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filterType, setFilterType] = useState('ALL');
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+    const [transferData, setTransferData] = useState({
+        productId: '',
+        destinationWarehouseId: '',
+        qty: 1,
+        notes: ''
+    });
+    const [submitting, setSubmitting] = useState(false);
     const { t, isRTL, fmtNumber, fmtDate } = useLanguage();
 
     useEffect(() => {
@@ -54,24 +61,70 @@ export default function InventoryPage() {
         }
     };
 
-    // Filter products (currently this assumes all products are in one warehouse or we just show them all for demonstration if specific warehouse stock isn't fully implemented in the backend yet)
-    // To properly filter by warehouse, products should have a warehouse mapping or we use the warehouseId
-    const filteredProducts = products.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                              (p.barcode && p.barcode.toLowerCase().includes(searchQuery.toLowerCase()));
-        return matchesSearch;
-    });
+    // Memoized filtered products to prevent heavy recalculations on every render
+    const filteredProducts = useMemo(() => {
+        return products.filter(p => {
+            const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                  (p.barcode && p.barcode.toLowerCase().includes(searchQuery.toLowerCase()));
+            
+            if (filterType === 'ALL') return matchesSearch;
+            
+            const minAlert = p.minStockAlert || 0;
+            if (filterType === 'AVAILABLE') return matchesSearch && p.stockQty > minAlert;
+            if (filterType === 'LOW') return matchesSearch && p.stockQty <= minAlert && p.stockQty > 0;
+            if (filterType === 'OUT') return matchesSearch && p.stockQty <= 0;
+            
+            return matchesSearch;
+        });
+    }, [products, searchQuery, filterType]);
 
-    const activeWarehouse = warehouses.find(w => w.id === activeTab);
+    const activeWarehouse = useMemo(() => 
+        warehouses.find(w => w.id === activeTab),
+    [warehouses, activeTab]);
 
-    // Calculate Stats for the active warehouse (or all visible products)
-    const totalProducts = filteredProducts.length;
-    const availableProducts = filteredProducts.filter(p => p.stockQty > (p.minStockAlert || 0)).length;
-    const lowStockProducts = filteredProducts.filter(p => p.stockQty <= (p.minStockAlert || 0) && p.stockQty > 0).length;
-    const outOfStockProducts = filteredProducts.filter(p => p.stockQty <= 0).length;
+    // Memoized stats to avoid re-calculating unless products change
+    const stats = useMemo(() => {
+        return {
+            total: filteredProducts.length,
+            available: filteredProducts.filter(p => p.stockQty > (p.minStockAlert || 0)).length,
+            low: filteredProducts.filter(p => p.stockQty <= (p.minStockAlert || 0) && p.stockQty > 0).length,
+            out: filteredProducts.filter(p => p.stockQty <= 0).length
+        };
+    }, [filteredProducts]);
+
+    const { total: totalProducts, available: availableProducts, low: lowStockProducts, out: outOfStockProducts } = stats;
 
     const handlePrint = () => {
         window.print();
+    };
+
+    const handleTransfer = async (e) => {
+        e.preventDefault();
+        if (!activeTab || !transferData.destinationWarehouseId || !transferData.productId || transferData.qty <= 0) {
+            alert(isRTL ? 'يرجى إكمال جميع الحقول' : 'Veuillez remplir tous les champs');
+            return;
+        }
+
+        if (activeTab === transferData.destinationWarehouseId) {
+            alert(isRTL ? 'لا يمكن التحويل لنفس المخزن' : 'Impossible de transférer vers le même magasin');
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            await api.post('/warehouses/transfer', {
+                ...transferData,
+                sourceWarehouseId: activeTab
+            });
+            setIsTransferModalOpen(false);
+            fetchProducts(activeTab);
+            alert(isRTL ? 'تم التحويل بنجاح' : 'Transfert réussi');
+        } catch (err) {
+            console.error('Transfer error:', err);
+            alert(err.response?.data?.error || (isRTL ? 'خطأ في التحويل' : 'Erreur de transfert'));
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -115,6 +168,10 @@ export default function InventoryPage() {
                         {activeWarehouse?.name || (isRTL ? 'المخزن الرئيسي' : 'Magasin principal')}
                     </h2>
                     <div className="flex gap-3">
+                        <button onClick={() => setIsTransferModalOpen(true)} className="h-10 px-4 rounded-xl border border-primary/20 bg-primary/10 text-primary font-bold text-xs flex items-center gap-2 hover:bg-primary/20 transition-all shadow-sm">
+                            <ArrowLeftRight size={16} />
+                            <span>{isRTL ? 'ترحيل منتجات' : 'Transférer'}</span>
+                        </button>
                         <button className="h-10 px-4 rounded-xl border border-[var(--glass-border)] bg-[var(--surface-2)] text-[var(--text-primary)] font-bold text-xs flex items-center gap-2 hover:bg-[var(--surface-1)] transition-all shadow-sm">
                             <Download size={16} />
                             <span>Excel {isRTL ? 'تصدير' : 'Exporter'}</span>
@@ -277,6 +334,95 @@ export default function InventoryPage() {
                 </table>
             </div>
 
+            {/* Transfer Modal */}
+            {isTransferModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[var(--card-bg)] w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-[var(--glass-border)] overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="p-8">
+                            <div className={`flex justify-between items-center mb-8 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
+                                <button onClick={() => setIsTransferModalOpen(false)} className="p-2 hover:bg-[var(--surface-1)] rounded-full transition-colors">
+                                    <X size={20} className="text-[var(--text-faint)]" />
+                                </button>
+                                <h2 className="text-2xl font-black text-[var(--text-primary)]">{isRTL ? 'ترحيل منتجات' : 'Transférer Produits'}</h2>
+                            </div>
+
+                            <form onSubmit={handleTransfer} className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className={`block text-xs font-black uppercase tracking-widest text-[var(--text-faint)] ${isRTL ? 'text-right' : 'text-left'}`}>
+                                        {isRTL ? 'المنتج' : 'Produit'}
+                                    </label>
+                                    <select
+                                        required
+                                        value={transferData.productId}
+                                        onChange={(e) => setTransferData({ ...transferData, productId: e.target.value })}
+                                        className={`w-full h-14 bg-[var(--surface-1)] border border-[var(--glass-border)] rounded-2xl px-4 text-sm font-bold focus:outline-none focus:border-primary/40 text-[var(--text-primary)] ${isRTL ? 'text-right' : 'text-left'}`}
+                                    >
+                                        <option value="">{isRTL ? 'اختر المنتج' : 'Choisir un produit'}</option>
+                                        {products.filter(p => p.stockQty > 0).map(p => (
+                                            <option key={p.id} value={p.id}>{p.name} ({p.stockQty})</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className={`block text-xs font-black uppercase tracking-widest text-[var(--text-faint)] ${isRTL ? 'text-right' : 'text-left'}`}>
+                                        {isRTL ? 'إلى مخزن' : 'Vers Magasin'}
+                                    </label>
+                                    <select
+                                        required
+                                        value={transferData.destinationWarehouseId}
+                                        onChange={(e) => setTransferData({ ...transferData, destinationWarehouseId: e.target.value })}
+                                        className={`w-full h-14 bg-[var(--surface-1)] border border-[var(--glass-border)] rounded-2xl px-4 text-sm font-bold focus:outline-none focus:border-primary/40 text-[var(--text-primary)] ${isRTL ? 'text-right' : 'text-left'}`}
+                                    >
+                                        <option value="">{isRTL ? 'اختر المخزن المستهدف' : 'Choisir destination'}</option>
+                                        {warehouses.filter(w => w.id !== activeTab).map(w => (
+                                            <option key={w.id} value={w.id}>{w.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className={`block text-xs font-black uppercase tracking-widest text-[var(--text-faint)] ${isRTL ? 'text-right' : 'text-left'}`}>
+                                            {isRTL ? 'الكمية' : 'Quantité'}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="1"
+                                            value={transferData.qty}
+                                            onChange={(e) => setTransferData({ ...transferData, qty: e.target.value })}
+                                            className={`w-full h-14 bg-[var(--surface-1)] border border-[var(--glass-border)] rounded-2xl px-4 text-sm font-bold focus:outline-none focus:border-primary/40 text-[var(--text-primary)] ${isRTL ? 'text-right' : 'text-left'}`}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className={`block text-xs font-black uppercase tracking-widest text-[var(--text-faint)] ${isRTL ? 'text-right' : 'text-left'}`}>
+                                            {isRTL ? 'ملاحظات' : 'Notes'}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={transferData.notes}
+                                            onChange={(e) => setTransferData({ ...transferData, notes: e.target.value })}
+                                            placeholder="..."
+                                            className={`w-full h-14 bg-[var(--surface-1)] border border-[var(--glass-border)] rounded-2xl px-4 text-sm font-bold focus:outline-none focus:border-primary/40 text-[var(--text-primary)] ${isRTL ? 'text-right' : 'text-left'}`}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="pt-4">
+                                    <button
+                                        disabled={submitting}
+                                        className="w-full h-14 bg-primary text-white rounded-2xl font-black text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+                                    >
+                                        {submitting ? (isRTL ? 'جاري التحويل...' : 'Transfert...') : (isRTL ? 'تأكيد التحويل' : 'Confirmer le transfert')}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Print View Hidden */}
             <div className="hidden print:block bg-white text-black p-8 font-sans" dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: "'Cairo', sans-serif" }}>
                 <div className="text-center mb-8 pb-6 border-b-2 border-slate-200">
@@ -316,11 +462,11 @@ export default function InventoryPage() {
     );
 }
 
-function StatBox({ title, value, colorClass, isRTL }) {
+const StatBox = React.memo(function StatBox({ title, value, colorClass, isRTL }) {
     return (
         <div className={`p-5 rounded-2xl border ${colorClass} ${isRTL ? 'text-right' : 'text-left'} transition-transform hover:-translate-y-1`}>
             <div className="text-[11px] font-black uppercase tracking-widest opacity-80 mb-2">{title}</div>
             <div className="text-3xl font-black">{value}</div>
         </div>
     );
-}
+});

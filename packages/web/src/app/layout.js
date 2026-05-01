@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html>
       <body className="antialiased">
         <ThemeProvider>
           <LanguageProvider>
