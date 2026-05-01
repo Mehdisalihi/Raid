@@ -811,19 +811,22 @@ export default function ProductsPage() {
                                     )}
                                     {importing ? (isRTL ? 'جاري الاستيراد...' : 'Importation...') : (isRTL ? `استيراد ${importRows.length} منتج` : `Importer ${importRows.length} produits`)}
                                 </button>
-                            <button
-                                onClick={downloadTemplate}
-                                className="px-5 h-12 rounded-2xl border border-green-500/20 bg-green-500/10 text-green-500 font-bold hover:bg-green-500/20 transition-colors flex items-center gap-2"
-                            >
-                                <Download size={16} />
-                                {isRTL ? 'تحميل نموذج' : 'Modèle Excel'}
-                            </button>
-                            <button
-                                onClick={() => setIsImportModalOpen(false)}
-                                className="px-6 h-12 rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-2)] text-[var(--text-muted)] font-bold hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                            >
-                                {isRTL ? 'إلغاء' : 'Annuler'}
-                            </button>
+                                <button
+                                    onClick={downloadTemplate}
+                                    disabled={importing}
+                                    className="px-5 h-12 rounded-2xl border border-green-500/20 bg-green-500/10 text-green-500 font-bold hover:bg-green-500/20 transition-colors flex items-center gap-2 disabled:opacity-50"
+                                >
+                                    <Download size={16} />
+                                    <span>{isRTL ? 'تحميل نموذج' : 'Modèle Excel'}</span>
+                                </button>
+                                <button
+                                    onClick={() => setIsImportModalOpen(false)}
+                                    disabled={importing}
+                                    className="px-6 h-12 rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-2)] text-[var(--text-muted)] font-bold hover:bg-red-500/10 hover:text-red-500 transition-colors disabled:opacity-50"
+                                >
+                                    {isRTL ? 'إلغاء' : 'Annuler'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
