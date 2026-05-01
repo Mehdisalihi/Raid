@@ -626,7 +626,7 @@ export default function ProductsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredProducts.map(product => (
                             <div key={product.id} className="card-premium group relative flex flex-col h-full border-[var(--glass-border)] bg-[var(--surface-2)] hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                                <div className={`flex justify-between items-start mb-6 ${isRTL ? '' : 'flex-row-reverse'}`}>
+                                <div className="flex justify-between items-start mb-6">
                                     <div className={`p-3.5 rounded-2xl shadow-sm ${product.stockQty <= product.minStockAlert ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-primary/10 text-primary border border-primary/20'}`}>
                                         <Package size={22} />
                                     </div>
@@ -638,7 +638,7 @@ export default function ProductsPage() {
 
                                 <div className="mb-6 flex-1">
                                     <h3 className={`text-[17px] font-extrabold text-[var(--text-primary)] mb-2.5 line-clamp-2 ${isRTL ? 'text-right' : 'text-left'}`}>{product.name}</h3>
-                                    <div className={`flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-1)] rounded-lg w-fit border border-[var(--glass-border)] ${isRTL ? '' : 'flex-row-reverse'}`}>
+                                    <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-1)] rounded-lg w-fit border border-[var(--glass-border)]">
                                         <Barcode size={13} className="text-[--text-muted]" />
                                         <span className="text-[10px] text-[--text-muted] font-extrabold">{product.barcode || (isRTL ? 'عام' : 'Général')}</span>
                                     </div>
@@ -676,7 +676,7 @@ export default function ProductsPage() {
                                 {filteredProducts.map(p => (
                                     <tr key={p.id} className="group hover:bg-[var(--surface-2)] transition-all duration-200">
                                         <td className="p-6">
-                                            <div className={`flex items-center gap-4 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
+                                            <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm"><Package size={22} /></div>
                                                 <span className="font-extrabold text-sm text-[var(--text-main)] group-hover:text-primary transition-colors">{p.name}</span>
                                             </div>
