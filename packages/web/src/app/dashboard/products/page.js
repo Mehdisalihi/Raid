@@ -217,14 +217,23 @@ export default function ProductsPage() {
                 }
 
                 // Smart fuzzy column finder: check all column keys for any matching keyword
+                const normalizeStr = (str) => {
+                    if (!str) return '';
+                    return String(str).toLowerCase()
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove accents (é -> e)
+                        .replace(/[أإآ]/g, 'ا') // normalize arabic alef
+                        .replace(/ة/g, 'ه') // normalize teh marbuta
+                        .replace(/\s/g, '') // remove spaces
+                        .replace(/['"_\-.]/g, ''); // remove punctuation
+                };
+
                 const findCol = (row, keywords) => {
                     const keys = Object.keys(row);
                     for (const kw of keywords) {
+                        const target = normalizeStr(kw);
                         const found = keys.find(k => {
-                            const normalizedKey = k.toLowerCase()
-                                .replace(/\s/g, '')
-                                .replace(/[''""\-_.]/g, ''); // Remove punctuation
-                            return normalizedKey.includes(kw.toLowerCase().replace(/\s/g, ''));
+                            const normalizedKey = normalizeStr(k);
+                            return normalizedKey.includes(target);
                         });
                         
                         if (found !== undefined && row[found] !== '' && row[found] !== null && row[found] !== undefined) {
