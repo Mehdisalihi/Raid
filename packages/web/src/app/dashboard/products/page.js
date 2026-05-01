@@ -11,6 +11,7 @@ import {
 import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
+import { db } from '@/lib/db';
 import * as XLSX from 'xlsx';
 
 // ─── PROFESSIONAL PRINT COMPONENTS ───────────────────
@@ -85,12 +86,39 @@ export default function ProductsPage() {
     }, []);
 
     const fetchProducts = async () => {
+        setLoading(true);
         try {
-            const { data } = await api.get('/products');
-            setProducts(Array.isArray(data) ? data : []);
+            // 1. Fetch from API
+            let serverProducts = [];
+            try {
+                const { data } = await api.get('/products');
+                serverProducts = Array.isArray(data) ? data : [];
+            } catch (err) {
+                console.warn('Backend unreachable, using local data only:', err);
+            }
+
+            // 2. Fetch from Local IndexedDB
+            const localProducts = await db.products.toArray();
+
+            // 3. Merge (Prefer Server data, but keep unique local products)
+            // Use barcode or name as unique key for merging
+            const mergedMap = new Map();
+            
+            // Add local products first
+            localProducts.forEach(p => {
+                const key = p.barcode || p.name;
+                mergedMap.set(key, { ...p, isLocal: true });
+            });
+
+            // Override with server products (they are ground truth)
+            serverProducts.forEach(p => {
+                const key = p.barcode || p.name;
+                mergedMap.set(key, { ...p, isLocal: false });
+            });
+
+            setProducts(Array.from(mergedMap.values()));
         } catch (err) {
-            console.error('Error fetching products:', err);
-            // Fallback for demonstration if needed, or just stay empty
+            console.error('Final product fetch error:', err);
             setProducts([]);
         } finally {
             setLoading(false);
@@ -110,16 +138,31 @@ export default function ProductsPage() {
         try {
             const payload = {
                 ...formData,
-                buyPrice: parseFloat(formData.buyPrice),
-                sellPrice: parseFloat(formData.sellPrice),
-                stockQty: parseInt(formData.stockQty),
-                minStockAlert: parseInt(formData.minStockAlert)
+                buyPrice: parseFloat(formData.buyPrice) || 0,
+                sellPrice: parseFloat(formData.sellPrice) || 0,
+                stockQty: parseInt(formData.stockQty) || 0,
+                minStockAlert: parseInt(formData.minStockAlert) || 5,
+                sync_status: 'pending'
             };
-            if (currentProduct) {
-                await api.put(`/products/${currentProduct.id}`, payload);
-            } else {
-                await api.post('/products', payload);
+
+            try {
+                if (currentProduct) {
+                    await api.put(`/products/${currentProduct.id}`, payload);
+                } else {
+                    await api.post('/products', payload);
+                }
+            } catch (apiErr) {
+                console.warn('API save failed, saving LOCALLY:', apiErr);
+                // Save to IndexedDB
+                if (currentProduct) {
+                    // Update local record. If it has an id from server, find it. 
+                    // For simplicity, we match by name if id is a uuid or use the existing id if it's numeric/local
+                    await db.products.put({ ...payload, id: currentProduct.id });
+                } else {
+                    await db.products.add(payload);
+                }
             }
+
             fetchProducts();
             closeModal();
             triggerDialog(
@@ -128,9 +171,10 @@ export default function ProductsPage() {
                 'success'
             );
         } catch (err) {
+            console.error('Save error:', err);
             triggerDialog(
                 isRTL ? 'خطأ ❌' : 'Erreur ❌', 
-                isRTL ? 'حدث خطأ أثناء حفظ المنتج' : 'Erreur lors de l\'enregistrement', 
+                isRTL ? 'حدث خطأ أثناء حفظ المنتج: ' + err.message : 'Erreur: ' + err.message, 
                 'danger'
             );
         }
@@ -143,7 +187,14 @@ export default function ProductsPage() {
             'danger',
             async () => {
                 try {
-                    await api.delete(`/products/${id}`);
+                    try {
+                        await api.delete(`/products/${id}`);
+                    } catch (apiErr) {
+                        console.warn('API delete failed, removing LOCALLY:', apiErr);
+                    }
+                    // Always remove locally
+                    await db.products.delete(id);
+                    
                     fetchProducts();
                     triggerDialog(
                         isRTL ? 'تم الحذف' : 'Supprimé', 
@@ -151,7 +202,7 @@ export default function ProductsPage() {
                         'success'
                     );
                 } catch (err) {
-                    const errorMsg = err.response?.data?.message || (isRTL ? 'خطأ في حذف المنتج ❌' : 'Erreur lors de la suppression ❌');
+                    const errorMsg = err.message || (isRTL ? 'خطأ في حذف المنتج ❌' : 'Erreur lors de la suppression ❌');
                     triggerDialog(isRTL ? 'تنبيه' : 'Alerte', errorMsg, 'warning');
                 }
             }
@@ -337,46 +388,54 @@ export default function ProductsPage() {
         const CHUNK_SIZE = 50;
 
         try {
-            for (let i = 0; i < importRows.length; i += CHUNK_SIZE) {
-                const chunk = importRows.slice(i, i + CHUNK_SIZE);
-                const { data } = await api.post('/products/import', { products: chunk });
-                totalCreated += (data.created || 0);
-                totalUpdated += (data.updated || 0);
+            // Attempt Cloud Import first
+            try {
+                for (let i = 0; i < importRows.length; i += CHUNK_SIZE) {
+                    const chunk = importRows.slice(i, i + CHUNK_SIZE);
+                    const { data } = await api.post('/products/import', { products: chunk });
+                    totalCreated += (data.created || 0);
+                    totalUpdated += (data.updated || 0);
+                    
+                    const progress = Math.min(Math.round(((i + chunk.length) / importRows.length) * 100), 100);
+                    setImportProgress(progress);
+                }
+
+                triggerDialog(
+                    isRTL ? 'تم الاستيراد بنجاح! 🎉' : 'Importation réussie! 🎉', 
+                    isRTL ? `تم إضافة: ${totalCreated}\nتم تحديث: ${totalUpdated}` : `Créés: ${totalCreated}\nMis à jour: ${totalUpdated}`, 
+                    'success'
+                );
+            } catch (cloudErr) {
+                console.error('Cloud import failed, falling back to LOCAL:', cloudErr);
                 
-                const progress = Math.min(Math.round(((i + chunk.length) / importRows.length) * 100), 100);
-                setImportProgress(progress);
+                // LOCAL FALLBACK: Save to Dexie
+                for (let i = 0; i < importRows.length; i++) {
+                    const p = importRows[i];
+                    // Check if exists locally
+                    const existing = await db.products.where('name').equals(p.name).first();
+                    if (existing) {
+                        await db.products.update(existing.id, { ...p, sync_status: 'pending' });
+                        totalUpdated++;
+                    } else {
+                        await db.products.add({ ...p, sync_status: 'pending' });
+                        totalCreated++;
+                    }
+                    setImportProgress(Math.round(((i + 1) / importRows.length) * 100));
+                }
+
+                triggerDialog(
+                    isRTL ? 'تم الحفظ محلياً ✅' : 'Sauvegardé localement ✅', 
+                    isRTL ? `تعذر الاتصال بالسيرفر، تم حفظ ${totalCreated + totalUpdated} منتج على جهازك بنجاح.` : `Serveur injoignable. ${totalCreated + totalUpdated} produits sauvegardés localement.`, 
+                    'success'
+                );
             }
 
-            triggerDialog(
-                isRTL ? 'تم الاستيراد بنجاح! 🎉' : 'Importation réussie! 🎉', 
-                isRTL ? `تم إضافة: ${totalCreated}\nتم تحديث: ${totalUpdated}` : `Créés: ${totalCreated}\nMis à jour: ${totalUpdated}`, 
-                'success'
-            );
             setIsImportModalOpen(false);
             setImportRows([]);
             fetchProducts();
         } catch (err) {
-            console.error('Import error full details:', err);
-            
-            let detail = '';
-            if (err.response) {
-                detail = err.response.data?.details || err.response.data?.error || '';
-                if (!detail) {
-                    detail = typeof err.response.data === 'string' 
-                        ? err.response.data.substring(0, 100) 
-                        : `Status ${err.response.status}`;
-                }
-            } else if (err.request) {
-                detail = 'Network Error (الخادم لا يستجيب - تأكد من اتصالك)';
-            } else {
-                detail = err.message;
-            }
-
-            triggerDialog(
-                isRTL ? 'فشل الاستيراد' : 'Échec de l\'import', 
-                isRTL ? `خطأ في العملية: ${detail}` : `Erreur: ${detail}`, 
-                'danger'
-            );
+            console.error('Final Import error:', err);
+            triggerDialog(isRTL ? 'خطأ' : 'Erreur', String(err.message), 'danger');
         } finally {
             setImporting(false);
             setImportProgress(0);
