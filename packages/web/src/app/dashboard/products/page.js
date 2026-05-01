@@ -265,12 +265,12 @@ export default function ProductsPage() {
                 };
 
                 const normalized = json.map(row => {
-                    const name = findCol(row, ['name','nom','اسم','منتج','produit','designation','article','title','item']) || '';
-                    const barcode = findCol(row, ['barcode','code','باركود','barre','رمز','sku','ref','upc']) || '';
-                    const buyPriceRaw = findCol(row, ['buyprice','buy','شراء','achat','تكلفة','cost','cout','coût','prixachat','pa','p.a']);
-                    const sellPriceRaw = findCol(row, ['sellprice','sell','بيع','vente','prix','pv','p.v','prixvente','selling','rate']);
-                    const stockRaw = findCol(row, ['stockqty','stock','qty','quantity','quantite','quantité','qte','qté','كمية','عدد','inventory','balance']);
-                    const alertRaw = findCol(row, ['minstock','alert','minimum','أدنى','حد','limit','min','stockmin']);
+                    const name = findCol(row, ['name','nom','اسم','منتج','produit','designation','article','title','item','صنف','بيان','وصف','مادة','سلعة']) || '';
+                    const barcode = findCol(row, ['barcode','code','باركود','barre','رمز','sku','ref','upc','رقم']) || '';
+                    const buyPriceRaw = findCol(row, ['buyprice','buy','شراء','achat','تكلفة','cost','cout','coût','prixachat','pa','p.a','سعرالشراء','ثمنالشراء','التكلفة','شرا']);
+                    const sellPriceRaw = findCol(row, ['sellprice','sell','بيع','vente','prix','pv','p.v','prixvente','selling','rate','سعرالبيع','ثمنالبيع','السعر','بي']);
+                    const stockRaw = findCol(row, ['stockqty','stock','qty','quantity','quantite','quantité','qte','qté','كمية','عدد','inventory','balance','رصيد','المخزون','الكمية','كميه']);
+                    const alertRaw = findCol(row, ['minstock','alert','minimum','أدنى','حد','limit','min','stockmin','انذار','تنبيه']);
 
                     return {
                         name: String(name).trim(),
@@ -283,9 +283,10 @@ export default function ProductsPage() {
                 }).filter(r => r.name.length > 0);
 
                 if (normalized.length === 0) {
+                    const foundHeaders = Object.keys(json[0] || {}).join(' ، ');
                     triggerDialog(
                         isRTL ? 'تنبيه' : 'Attention', 
-                        isRTL ? 'لم يتم العثور على بيانات صالحة. تأكد أن الملف يحتوي على عمود اسم المنتج.' : 'Aucune ligne valide trouvée. Vérifiez les colonnes.', 
+                        isRTL ? `لم يتم العثور على بيانات صالحة. الأعمدة الموجودة في ملفك هي: (${foundHeaders}). يرجى التأكد من وجود عمود لاسم المنتج.` : `Aucune ligne valide trouvée. Colonnes trouvées: (${foundHeaders}). Vérifiez vos colonnes.`, 
                         'warning'
                     );
                     e.target.value = '';
