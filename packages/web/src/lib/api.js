@@ -93,14 +93,46 @@ api.interceptors.request.use(async (config) => {
         if (dexieTable && db[dexieTable]) {
             try {
                 if (config.method === 'post') {
-                    await db[dexieTable].add({ ...config.data, id: mockResponseData.id, sync_status: 'pending_push' });
+                    const newRecord = { ...config.data, id: mockResponseData.id, sync_status: 'pending_push', createdAt: new Date().toISOString() };
+                    await db[dexieTable].add(newRecord);
+                    
+                    // SPECIAL LOGIC: Sales/Purchases should also appear in 'invoices' table for the UI list
+                    if (dexieTable === 'sales' || dexieTable === 'purchases') {
+                        const invRecord = {
+                            ...newRecord,
+                            invoiceNo: newRecord.invoiceNo || `LOCAL-${Date.now()}`,
+                            type: dexieTable === 'sales' ? 'SALE' : 'PURCHASE',
+                            customer: newRecord.customerName ? { name: newRecord.customerName } : null,
+                            supplier: newRecord.supplierId ? { id: newRecord.supplierId } : null, // Simplified
+                        };
+                        await db.invoices.add(invRecord);
+
+                        // UPDATE PRODUCT STOCK LOCALLY
+                        if (newRecord.items && Array.isArray(newRecord.items)) {
+                            for (const item of newRecord.items) {
+                                const product = await db.products.get(item.id);
+                                if (product) {
+                                    const qtyChange = dexieTable === 'sales' ? -item.qty : item.qty;
+                                    await db.products.update(item.id, { 
+                                        stockQty: (product.stockQty || 0) + qtyChange 
+                                    });
+                                }
+                            }
+                        }
+                    }
                 } else if (config.method === 'put') {
                     await db[dexieTable].update(recordId, { ...config.data, sync_status: 'pending_push' });
+                    // Also update in invoices if it exists there
+                    if (db.invoices) {
+                        const exists = await db.invoices.get(recordId);
+                        if (exists) await db.invoices.update(recordId, { ...config.data });
+                    }
                 } else if (config.method === 'delete') {
                     await db[dexieTable].delete(recordId);
+                    if (db.invoices) await db.invoices.delete(recordId);
                 }
             } catch (e) {
-                console.warn('Failed to update local DB:', e);
+                console.warn('Failed to update local DB logic:', e);
             }
         }
 
