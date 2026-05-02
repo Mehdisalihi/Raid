@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db, cacheApiData, getLocalData } from './db';
 import api from './api';
 
 export const SyncService = {
@@ -26,19 +26,29 @@ export const SyncService = {
       
       try {
         if (action === 'INSERT') {
-          const { id, sync_status, ...cleanPayload } = payload;
+          const { id, sync_status, ...cleanPayload } = payload || {};
           const response = await api.post(`/${table_name}`, cleanPayload);
           
-          await db[table_name].update(record_id, { 
-            server_id: response.data.id, 
-            sync_status: 'synced' 
-          });
+          if (db[table_name]) {
+            try {
+              await db[table_name].update(record_id, { 
+                server_id: response.data?.id, 
+                sync_status: 'synced' 
+              });
+            } catch (e) {
+              console.warn(`Could not update local record for ${table_name}:`, e);
+            }
+          }
         } 
         else if (action === 'UPDATE') {
-          const idToUse = payload.server_id || record_id;
-          const { id, server_id, sync_status, ...cleanPayload } = payload;
+          const idToUse = payload?.server_id || record_id;
+          const { id, server_id, sync_status, ...cleanPayload } = payload || {};
           await api.put(`/${table_name}/${idToUse}`, cleanPayload);
-          await db[table_name].update(record_id, { sync_status: 'synced' });
+          if (db[table_name]) {
+            try {
+              await db[table_name].update(record_id, { sync_status: 'synced' });
+            } catch (e) {}
+          }
         }
         else if (action === 'DELETE') {
           const idToUse = payload?.server_id || record_id;
@@ -59,42 +69,75 @@ export const SyncService = {
   },
 
   async pullRemoteChanges() {
-    const tables = ['clients', 'products', 'invoices', 'expenses', 'warehouses'];
+    const tables = [
+      { api: 'clients', local: 'clients' },
+      { api: 'products', local: 'products' },
+      { api: 'invoices', local: 'invoices' },
+      { api: 'expenses', local: 'expenses' },
+      { api: 'warehouses', local: 'warehouses' },
+      { api: 'suppliers', local: 'suppliers' },
+      { api: 'sales', local: 'sales' },
+      { api: 'purchases', local: 'purchases' },
+      { api: 'returns', local: 'returns' },
+    ];
+    
+    const specialRoutes = [
+      { api: 'debts/debtors', local: 'debts_debtors' },
+      { api: 'debts/creditors', local: 'debts_creditors' },
+      { api: 'expenses/categories', local: 'expense_categories' },
+    ];
+
     const lastSync = localStorage.getItem('raid_last_sync') || '1970-01-01T00:00:00Z';
     const newSyncTime = new Date().toISOString();
 
-    for (const table of tables) {
+    // Pull standard tables
+    for (const { api: apiPath, local: localTable } of tables) {
       try {
-        const response = await api.get(`/${table}`, {
+        const response = await api.get(`/${apiPath}`, {
           params: { updated_at: lastSync }
         });
 
         const data = response.data;
-
-        if (data && data.length > 0) {
-          for (const remoteRecord of data) {
-            const localRecord = await db[table]
-              .where('server_id')
-              .equals(remoteRecord.id)
-              .first();
-
-            if (localRecord && localRecord.sync_status === 'pending_push') {
-              console.warn(`Conflict detected for ${table} ${remoteRecord.id}. Server version took priority.`);
-            }
-
-            await db[table].put({
-              ...remoteRecord,
-              server_id: remoteRecord.id,
-              sync_status: 'synced'
-            });
-          }
+        if (data && Array.isArray(data) && data.length > 0) {
+          await cacheApiData(localTable, data);
         }
       } catch (error) {
-        console.error(`Error pulling ${table}:`, error);
+        console.warn(`Pull ${apiPath} skipped (offline or error):`, error.message);
       }
+    }
+
+    // Pull special routes
+    for (const { api: apiPath, local: localTable } of specialRoutes) {
+      try {
+        const response = await api.get(`/${apiPath}`);
+        const data = response.data;
+        if (data && Array.isArray(data) && data.length > 0) {
+          await cacheApiData(localTable, data);
+        }
+      } catch (error) {
+        console.warn(`Pull ${apiPath} skipped:`, error.message);
+      }
+    }
+
+    // Pull and cache dashboard stats
+    try {
+      const statsRes = await api.get('/reports/stats');
+      if (statsRes.data) {
+        await db.cached_stats.put({ key: 'dashboard_stats', ...statsRes.data });
+      }
+    } catch (e) {
+      console.warn('Stats cache skipped:', e.message);
     }
     
     localStorage.setItem('raid_last_sync', newSyncTime);
+  },
+
+  // Get count of pending operations
+  async getPendingCount() {
+    try {
+      return await db.sync_outbox.where('processed').equals(0).count();
+    } catch {
+      return 0;
+    }
   }
 };
-

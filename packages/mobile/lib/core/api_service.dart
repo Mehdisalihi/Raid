@@ -237,20 +237,70 @@ class ProductService {
   }
 
   static Future<dynamic> create(Map<String, dynamic> data) async {
-    final res = await ApiService.post('/products', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.post('/products', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Saving Product to local DB...');
+      final id = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      await _db.insert('products', {
+        'id': id,
+        'name': data['name'],
+        'barcode': data['barcode'],
+        'buyPrice': (data['buyPrice'] ?? 0.0).toDouble(),
+        'sellPrice': (data['sellPrice'] ?? 0.0).toDouble(),
+        'stockQty': data['stockQty'] ?? 0,
+        'minStockAlert': data['minStockAlert'] ?? 5,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'products',
+        'operation': 'INSERT',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
-    final res = await ApiService.put('/products/$id', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.put('/products/$id', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Updating Product locally...');
+      await _db.update('products', {'id': id, ...data});
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'products',
+        'operation': 'UPDATE',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<void> delete(dynamic id) async {
-    await ApiService.delete('/products/$id');
-    DataSync.notify();
+    try {
+      await ApiService.delete('/products/$id');
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'products',
+        'operation': 'DELETE',
+        'data': jsonEncode({'id': id}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } finally {
+      await _db.delete('products', id as String);
+      DataSync.notify();
+    }
   }
 }
 
@@ -278,20 +328,68 @@ class CustomerService {
   }
 
   static Future<dynamic> create(Map<String, dynamic> data) async {
-    final res = await ApiService.post('/customers', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.post('/customers', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Saving Customer to local DB...');
+      final id = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      await _db.insert('customers', {
+        'id': id,
+        'name': data['name'],
+        'phone': data['phone'],
+        'email': data['email'],
+        'balance': 0.0,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'customers',
+        'operation': 'INSERT',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
-    final res = await ApiService.put('/customers/$id', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.put('/customers/$id', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Updating Customer locally...');
+      await _db.update('customers', {'id': id, ...data});
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'customers',
+        'operation': 'UPDATE',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<void> delete(dynamic id) async {
-    await ApiService.delete('/customers/$id');
-    DataSync.notify();
+    try {
+      await ApiService.delete('/customers/$id');
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'customers',
+        'operation': 'DELETE',
+        'data': jsonEncode({'id': id}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } finally {
+      await _db.delete('customers', id as String);
+      DataSync.notify();
+    }
   }
 
   static Future<Map<String, dynamic>> getStatement(dynamic id) async =>
@@ -322,20 +420,68 @@ class SupplierService {
   }
 
   static Future<dynamic> create(Map<String, dynamic> data) async {
-    final res = await ApiService.post('/suppliers', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.post('/suppliers', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Saving Supplier to local DB...');
+      final id = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      await _db.insert('suppliers', {
+        'id': id,
+        'name': data['name'],
+        'phone': data['phone'],
+        'email': data['email'],
+        'balance': 0.0,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'suppliers',
+        'operation': 'INSERT',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
-    final res = await ApiService.put('/suppliers/$id', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.put('/suppliers/$id', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      if (kDebugMode) print('Offline: Updating Supplier locally...');
+      await _db.update('suppliers', {'id': id, ...data});
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'suppliers',
+        'operation': 'UPDATE',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 
   static Future<void> delete(dynamic id) async {
-    await ApiService.delete('/suppliers/$id');
-    DataSync.notify();
+    try {
+      await ApiService.delete('/suppliers/$id');
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'suppliers',
+        'operation': 'DELETE',
+        'data': jsonEncode({'id': id}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } finally {
+      await _db.delete('suppliers', id as String);
+      DataSync.notify();
+    }
   }
 
   static Future<Map<String, dynamic>> getStatement(dynamic id) async =>
@@ -499,6 +645,26 @@ class SyncService {
         }
 
         switch (tableName) {
+          case 'products':
+            if (operation == 'INSERT') await ApiService.post('/products', data);
+            if (operation == 'UPDATE') await ApiService.put('/products/$recordId', data);
+            if (operation == 'DELETE') await ApiService.delete('/products/$recordId');
+            break;
+          case 'customers':
+            if (operation == 'INSERT') await ApiService.post('/customers', data);
+            if (operation == 'UPDATE') await ApiService.put('/customers/$recordId', data);
+            if (operation == 'DELETE') await ApiService.delete('/customers/$recordId');
+            break;
+          case 'suppliers':
+            if (operation == 'INSERT') await ApiService.post('/suppliers', data);
+            if (operation == 'UPDATE') await ApiService.put('/suppliers/$recordId', data);
+            if (operation == 'DELETE') await ApiService.delete('/suppliers/$recordId');
+            break;
+          case 'purchases':
+            if (operation == 'INSERT') await ApiService.post('/purchases', data);
+            if (operation == 'UPDATE') await ApiService.put('/invoices/$recordId', data);
+            if (operation == 'DELETE') await ApiService.delete('/purchases/$recordId');
+            break;
           case 'expenses':
             if (operation == 'INSERT') await ApiService.post('/expenses', data);
             if (operation == 'UPDATE') await ApiService.put('/expenses/$recordId', data);
@@ -730,14 +896,39 @@ class PurchaseService {
   }
 
   static Future<void> delete(dynamic id) async {
-    await ApiService.delete('/purchases/$id');
-    DataSync.notify();
+    try {
+      await ApiService.delete('/purchases/$id');
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'purchases',
+        'operation': 'DELETE',
+        'data': jsonEncode({'id': id}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } finally {
+      await _db.delete('invoices', id as String);
+      DataSync.notify();
+    }
   }
 
   static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
-    final res = await ApiService.put('/invoices/$id', data);
-    DataSync.notify();
-    return res;
+    try {
+      final res = await ApiService.put('/invoices/$id', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      await _db.update('invoices', {'id': id, ...data, 'isSynced': 0});
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'purchases',
+        'operation': 'UPDATE',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
   }
 }
 
