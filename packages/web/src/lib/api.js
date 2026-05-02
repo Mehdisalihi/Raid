@@ -23,7 +23,7 @@ api.interceptors.request.use(async (config) => {
         const segments = path.split('/').filter(Boolean);
         
         // Common resource names in our DB
-        const validTables = ['products', 'customers', 'suppliers', 'invoices', 'expenses', 'clients', 'organizations', 'users'];
+        const validTables = ['products', 'customers', 'suppliers', 'invoices', 'expenses', 'clients', 'organizations', 'users', 'warehouses'];
         
         let actualTable = segments.find(s => validTables.includes(s));
         

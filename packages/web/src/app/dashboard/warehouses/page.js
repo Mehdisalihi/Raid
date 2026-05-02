@@ -11,6 +11,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function WarehousesPage() {
     const [warehouses, setWarehouses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -44,12 +46,16 @@ export default function WarehousesPage() {
     }, []);
 
     const fetchWarehouses = async () => {
+        setLoading(true);
         try {
+            // 1. Try Cloud
             const { data } = await api.get('/warehouses');
             setWarehouses(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error('Error fetching warehouses:', err);
-            setWarehouses([]);
+            console.warn('Warehouses: Falling back to local data');
+            // 2. Local Fallback
+            const localWarehouses = await db.warehouses.toArray();
+            setWarehouses(localWarehouses);
         } finally {
             setLoading(false);
         }

@@ -59,7 +59,7 @@ export const SyncService = {
   },
 
   async pullRemoteChanges() {
-    const tables = ['clients', 'products', 'invoices', 'expenses'];
+    const tables = ['clients', 'products', 'invoices', 'expenses', 'warehouses'];
     const lastSync = localStorage.getItem('raid_last_sync') || '1970-01-01T00:00:00Z';
     const newSyncTime = new Date().toISOString();
 

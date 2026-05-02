@@ -2,7 +2,7 @@ import Dexie from 'dexie';
 
 export const db = new Dexie('RaidAccountingDB');
 
-db.version(2).stores({
+db.version(3).stores({
   organizations: '++id, server_id, name',
   users: '++id, server_id, username, email, role',
   clients: '++id, server_id, organization_id, name, balance, role, sync_status',
@@ -10,6 +10,7 @@ db.version(2).stores({
   invoices: '++id, server_id, organization_id, customerId, finalAmount, status, type, sync_status',
   invoice_items: '++id, server_id, invoice_id, product_id, sync_status',
   expenses: '++id, server_id, organization_id, title, amount, category, date, sync_status',
+  warehouses: '++id, server_id, organization_id, name, location, manager, sync_status',
   sync_outbox: '++id, organization_id, table_name, record_id, action, processed'
 });
 
