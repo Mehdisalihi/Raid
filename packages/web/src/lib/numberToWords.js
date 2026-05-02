@@ -121,16 +121,25 @@ export function formatInvoiceTotalWords(num, isRTL, currency = 'MRU', type = 'SA
     const whole = Math.floor(num);
     const fraction = Math.round((num - whole) * 100);
     
+    // Currency names map
+    const curNames = {
+        'MRU': { ar: 'أوقية جديدة', fr: 'Ouguiyas' },
+        'USD': { ar: 'دولار', fr: 'Dollars' },
+        'EUR': { ar: 'يورو', fr: 'Euros' }
+    };
+
+    const cur = curNames[currency] || { ar: currency, fr: currency };
+
     if (isRTL) {
         let res = `فقط ${numberToWordsAR(whole)}`;
         if (fraction > 0) res += ` فاصلة ${numberToWordsAR(fraction)}`;
-        res += ` أوقية لا غير`;
+        res += ` ${cur.ar} لا غير`;
         return res;
     } else {
         const docNameFR = type === 'QUOTATION' ? 'le présent devis' : 'la présente facture';
         let res = `Arrêté ${docNameFR} à la somme de ${numberToWordsFR(whole)}`;
         if (fraction > 0) res += ` virgule ${numberToWordsFR(fraction)}`;
-        res += ` Ouguiyas.`;
+        res += ` ${cur.fr}.`;
         return res;
     }
 }
