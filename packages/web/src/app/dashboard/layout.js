@@ -53,6 +53,8 @@ export default function DashboardLayout({ children }) {
     );
 }
 
+import { SyncService } from '@/lib/SyncService';
+
 function DashboardContent({ children }) {
     const [user, setUser] = useState(null);
     const [showNotif, setShowNotif] = useState(false);
@@ -63,6 +65,9 @@ function DashboardContent({ children }) {
     const { theme, toggleTheme } = useTheme();
 
     useEffect(() => {
+        // Initial Sync
+        SyncService.syncNow();
+
         const savedUser = localStorage.getItem('user');
         if (!savedUser) {
             router.push('/login');

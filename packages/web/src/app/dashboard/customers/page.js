@@ -12,6 +12,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function CustomersPage() {
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -41,11 +43,16 @@ export default function CustomersPage() {
     }, []);
 
     const fetchCustomers = async () => {
+        setLoading(true);
         try {
+            // 1. Try Cloud
             const { data } = await api.get('/customers');
             setCustomers(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error(err);
+            console.warn('Customers: Falling back to local data');
+            // 2. Local Fallback
+            const localCustomers = await db.clients.where('role').notEqual('supplier').toArray();
+            setCustomers(localCustomers);
         } finally {
             setLoading(false);
         }

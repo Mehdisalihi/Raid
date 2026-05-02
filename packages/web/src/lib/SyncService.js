@@ -25,9 +25,8 @@ export const SyncService = {
       const { table_name, action, payload, record_id, id: outboxId } = change;
       
       try {
-        let result;
         if (action === 'INSERT') {
-          const { id, ...cleanPayload } = payload;
+          const { id, sync_status, ...cleanPayload } = payload;
           const response = await api.post(`/${table_name}`, cleanPayload);
           
           await db[table_name].update(record_id, { 
@@ -36,13 +35,25 @@ export const SyncService = {
           });
         } 
         else if (action === 'UPDATE') {
-          await api.put(`/${table_name}/${payload.server_id}`, payload);
+          const idToUse = payload.server_id || record_id;
+          const { id, server_id, sync_status, ...cleanPayload } = payload;
+          await api.put(`/${table_name}/${idToUse}`, cleanPayload);
           await db[table_name].update(record_id, { sync_status: 'synced' });
+        }
+        else if (action === 'DELETE') {
+          const idToUse = payload?.server_id || record_id;
+          if (idToUse && !idToUse.toString().startsWith('local_')) {
+            await api.delete(`/${table_name}/${idToUse}`);
+          }
         }
 
         await db.sync_outbox.update(outboxId, { processed: 1 });
       } catch (err) {
         console.error(`Error pushing ${table_name}:`, err);
+        // If server returns 404 on update/delete, consider it processed
+        if (err.response?.status === 404) {
+           await db.sync_outbox.update(outboxId, { processed: 1 });
+        }
       }
     }
   },

@@ -15,6 +15,8 @@ import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 import { formatInvoiceTotalWords } from '@/lib/numberToWords';
 
+import { db } from '@/lib/db';
+
 export default function InvoicesPage() {
     const { t, isRTL, fmtNumber, fmtDate, fmtTime } = useLanguage();
     
@@ -65,13 +67,17 @@ export default function InvoicesPage() {
     const [isPrinting, setIsPrinting] = useState(false);
 
     useEffect(() => {
-        fetchInvoices();
-        fetchCommonData();
-    }, []);
+        const loadAll = async () => {
+            setLoading(true);
+            await Promise.all([fetchInvoices(), fetchCommonData()]);
+            setLoading(false);
+        };
+        loadAll();
+    }, [filterType, searchQuery]);
 
     const fetchInvoices = async () => {
-        setLoading(true);
         try {
+            // 1. Try Cloud
             const { data } = await api.get('/invoices', {
                 params: { 
                     type: filterType === 'ALL' ? undefined : filterType,
@@ -80,49 +86,61 @@ export default function InvoicesPage() {
             });
             setInvoices(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
+            console.warn('Invoices: Falling back to local data');
+            // 2. Local Fallback
+            let localInvoices = await db.invoices.toArray();
+            if (filterType !== 'ALL') {
+                localInvoices = localInvoices.filter(inv => inv.type === filterType);
+            }
+            if (searchQuery) {
+                localInvoices = localInvoices.filter(inv => 
+                    inv.invoiceNo?.includes(searchQuery) || 
+                    inv.customerName?.includes(searchQuery)
+                );
+            }
+            setInvoices(localInvoices);
         }
     };
 
     const fetchCommonData = async () => {
         try {
             const [p, c, s, w] = await Promise.all([
-                api.get('/products'),
-                api.get('/customers'),
-                api.get('/suppliers'),
-                api.get('/warehouses')
+                api.get('/products').catch(() => null),
+                api.get('/customers').catch(() => null),
+                api.get('/suppliers').catch(() => null),
+                api.get('/warehouses').catch(() => null)
             ]);
-            setProducts(Array.isArray(p.data) ? p.data : []);
-            setCustomers(Array.isArray(c.data) ? c.data : []);
-            setSuppliers(Array.isArray(s.data) ? s.data : []);
-            setWarehouses(Array.isArray(w.data) ? w.data : []);
-            if (Array.isArray(w.data) && w.data.length > 0) setSelectedWarehouseId(w.data[0].id);
 
-            // Load settings from user profile in localStorage
-            try {
-                const userStr = localStorage.getItem('user');
-                if (userStr) {
-                    const user = JSON.parse(userStr);
-                    setSettings({
-                        store: {
-                            name: user.storeName,
-                            taxId: user.storeTaxId,
-                            address: user.storeAddress,
-                            phone: user.storePhone,
-                            email: user.storeEmail,
-                            logo: user.storeLogo,
-                            currency: user.currency || 'MRU'
-                        }
-                    });
-                }
-            } catch (e) {
-                console.error("Failed to parse settings from localStorage:", e);
+            if (p) setProducts(p.data);
+            else setProducts(await db.products.toArray());
+
+            if (c) setCustomers(c.data);
+            else setCustomers(await db.clients.where('role').notEqual('supplier').toArray());
+
+            if (s) setSuppliers(s.data);
+            else setSuppliers(await db.clients.where('role').equals('supplier').toArray());
+
+            if (w) setWarehouses(w.data);
+            else setWarehouses(await db.organizations.toArray()); // Using organizations as a rough proxy for warehouses if missing
+
+            // Load settings
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                setSettings({
+                    store: {
+                        name: user.storeName,
+                        taxId: user.storeTaxId,
+                        address: user.storeAddress,
+                        phone: user.storePhone,
+                        email: user.storeEmail,
+                        logo: user.storeLogo,
+                        currency: user.currency || 'MRU'
+                    }
+                });
             }
-            
         } catch (err) {
-            console.error(err);
+            console.error('Common data fetch error:', err);
         }
     };
 

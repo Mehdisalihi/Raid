@@ -12,6 +12,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function ExpensesPage() {
     const { t, isRTL, fmtNumber, fmtDate, fmtTime } = useLanguage();
     const [expenses, setExpenses] = useState([]);
@@ -47,22 +49,27 @@ export default function ExpensesPage() {
     }, []);
 
     const fetchExpenses = async () => {
+        setLoading(true);
         try {
+            // 1. Try Cloud
             const [expRes, catRes] = await Promise.all([
-                api.get('/expenses'),
-                api.get('/expenses/categories')
+                api.get('/expenses').catch(() => null),
+                api.get('/expenses/categories').catch(() => null)
             ]);
-            const expData = Array.isArray(expRes.data) ? expRes.data : [];
-            const catData = Array.isArray(catRes.data) ? catRes.data : [];
             
-            setExpenses(expData);
-            setCategories(catData);
-            
-            if (!formData.category && catData.length > 0) {
-                setFormData(prev => ({ ...prev, category: catData[0].name }));
+            if (expRes && catRes) {
+                setExpenses(expRes.data);
+                setCategories(catRes.data);
+            } else {
+                throw new Error('Fallback to local');
             }
         } catch (err) {
-            console.error(err);
+            console.warn('Expenses: Falling back to local data');
+            // 2. Local Fallback
+            const localExpenses = await db.expenses.toArray();
+            setExpenses(localExpenses);
+            // Categories might be empty offline if never fetched, or we can use defaults
+            setCategories([{ id: 1, name: 'General' }, { id: 2, name: 'Stock' }, { id: 3, name: 'Staff' }]);
         } finally {
             setLoading(false);
         }

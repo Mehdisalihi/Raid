@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 
+import { db } from '@/lib/db';
+
 export default function DashboardPage() {
     const [stats, setStats] = useState(null);
     const [activities, setActivities] = useState([]);
@@ -23,23 +25,36 @@ export default function DashboardPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // 1. Try Cloud
                 const [statsRes, activitiesRes, chartsRes, topProductsRes] = await Promise.all([
-                    api.get('/reports/stats').catch(() => ({ data: { products: 0, sales: 0, expenses: 0 } })),
-                    api.get('/reports/activities').catch(() => ({ data: [] })),
-                    api.get('/reports/charts').catch(() => ({ data: [] })),
-                    api.get('/reports/top-products').catch(() => ({ data: [] }))
+                    api.get('/reports/stats').catch(() => null),
+                    api.get('/reports/activities').catch(() => null),
+                    api.get('/reports/charts').catch(() => null),
+                    api.get('/reports/top-products').catch(() => null)
                 ]);
-                setStats(statsRes.data || { products: 0, sales: 0, expenses: 0 });
-                setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
-                setChartData(Array.isArray(chartsRes.data) ? chartsRes.data : []);
-                setTopProducts(Array.isArray(topProductsRes.data) ? topProductsRes.data : []);
+
+                if (statsRes && activitiesRes) {
+                    setStats(statsRes.data);
+                    setActivities(activitiesRes.data);
+                    setChartData(chartsRes?.data || []);
+                    setTopProducts(topProductsRes?.data || []);
+                } else {
+                    throw new Error('Using local fallback');
+                }
             } catch (err) {
-                console.error('Error fetching dashboard data:', err);
-                setError(true);
-                // Set defaults even on error to allow rendering
-                setStats({ products: 0, sales: 0, expenses: 0 });
-                setActivities([]);
+                console.warn('Dashboard: Falling back to local data');
+                // 2. Local Fallback (Calculate from Dexie)
+                const productsCount = await db.products.count();
+                const invoices = await db.invoices.toArray();
+                const expenses = await db.expenses.toArray();
+                
+                const totalSales = invoices.reduce((acc, inv) => acc + (inv.finalAmount || 0), 0);
+                const totalExpenses = expenses.reduce((acc, exp) => acc + (exp.amount || 0), 0);
+
+                setStats({ products: productsCount, sales: totalSales, expenses: totalExpenses });
+                setActivities([]); // Would need a local activity log table for full offline
                 setChartData([]);
+                setTopProducts([]);
             } finally {
                 setLoading(false);
             }

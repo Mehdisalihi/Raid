@@ -12,6 +12,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function SuppliersPage() {
     const { t, isRTL, fmtNumber } = useLanguage();
     const [suppliers, setSuppliers] = useState([]);
@@ -43,11 +45,16 @@ export default function SuppliersPage() {
     }, []);
 
     const fetchSuppliers = async () => {
+        setLoading(true);
         try {
+            // 1. Try Cloud
             const { data } = await api.get('/suppliers');
             setSuppliers(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error(err);
+            console.warn('Suppliers: Falling back to local data');
+            // 2. Local Fallback
+            const localSuppliers = await db.clients.where('role').equals('supplier').toArray();
+            setSuppliers(localSuppliers);
         } finally {
             setLoading(false);
         }
