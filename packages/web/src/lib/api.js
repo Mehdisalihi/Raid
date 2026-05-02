@@ -56,7 +56,106 @@ function resolveTableFromUrl(url) {
 }
 
 // ────────────────────────────────────────────
-// REQUEST INTERCEPTOR — Offline Write Queuing
+// SHARED OFFLINE WRITE HANDLER
+// ────────────────────────────────────────────
+async function handleOfflineWrite(config) {
+    console.log(`📡 Handling ${config.method.toUpperCase()} offline/network failure for ${config.url}`);
+    
+    const { table: dexieTable } = resolveTableFromUrl(config.url);
+    const path = config.url.split('?')[0];
+    const segments = path.split('/').filter(Boolean);
+    const recordId = config.method === 'post' ? null : segments[segments.length - 1];
+    
+    // Generate a temporary local ID for POST requests if needed
+    let mockResponseData = { id: recordId || 'local_' + Date.now(), ...config.data };
+
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    const user = userStr ? JSON.parse(userStr) : null;
+    const orgId = user?.organizationId || 1;
+
+    await addToOutbox(
+        dexieTable, 
+        recordId || mockResponseData.id, 
+        config.method.toUpperCase() === 'POST' ? 'INSERT' : config.method.toUpperCase() === 'PUT' ? 'UPDATE' : 'DELETE', 
+        config.data,
+        orgId
+    );
+
+    // Update local database immediately
+    if (dexieTable && db[dexieTable]) {
+        try {
+            if (config.method === 'post') {
+                const newRecord = { ...config.data, id: mockResponseData.id, sync_status: 'pending_push', createdAt: new Date().toISOString() };
+                await db[dexieTable].add(newRecord);
+                
+                // SPECIAL LOGIC: Sales/Purchases should also appear in 'invoices' table for the UI list
+                if (dexieTable === 'sales' || dexieTable === 'purchases') {
+                    // Try to resolve customer/supplier names from local DB for better UI display
+                    let customer = null;
+                    if (newRecord.customerName) {
+                        customer = { name: newRecord.customerName };
+                    } else if (newRecord.customerId) {
+                        const localCust = await db.clients.get(newRecord.customerId);
+                        customer = localCust ? { name: localCust.name, id: localCust.id } : { id: newRecord.customerId };
+                    }
+
+                    let supplier = null;
+                    if (newRecord.supplierId) {
+                        const localSupp = await db.suppliers.get(newRecord.supplierId);
+                        supplier = localSupp ? { name: localSupp.name, id: localSupp.id } : { id: newRecord.supplierId };
+                    }
+
+                    const invRecord = {
+                        ...newRecord,
+                        invoiceNo: newRecord.invoiceNo || `LOCAL-${Date.now()}`,
+                        type: dexieTable === 'sales' ? 'SALE' : 'PURCHASE',
+                        customer,
+                        supplier,
+                    };
+                    await db.invoices.add(invRecord);
+
+                    // UPDATE PRODUCT STOCK LOCALLY
+                    if (newRecord.items && Array.isArray(newRecord.items)) {
+                        for (const item of newRecord.items) {
+                            const productId = item.id || item.productId;
+                            if (productId) {
+                                const product = await db.products.get(productId);
+                                if (product) {
+                                    const qtyChange = dexieTable === 'sales' ? -item.qty : item.qty;
+                                    await db.products.update(productId, { 
+                                        stockQty: (product.stockQty || 0) + qtyChange 
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (config.method === 'put') {
+                await db[dexieTable].update(recordId, { ...config.data, sync_status: 'pending_push' });
+                if (db.invoices) {
+                    const exists = await db.invoices.get(recordId);
+                    if (exists) await db.invoices.update(recordId, { ...config.data });
+                }
+            } else if (config.method === 'delete') {
+                await db[dexieTable].delete(recordId);
+                if (db.invoices) await db.invoices.delete(recordId);
+            }
+        } catch (e) {
+            console.warn('Failed to update local DB logic:', e);
+        }
+    }
+
+    return { 
+        data: mockResponseData, 
+        status: 200, 
+        statusText: 'OK (Offline/Queued)', 
+        headers: {}, 
+        config 
+    };
+}
+
+// ────────────────────────────────────────────
+// REQUEST INTERCEPTOR — Pre-emptive Offline
 // ────────────────────────────────────────────
 api.interceptors.request.use(async (config) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -64,82 +163,9 @@ api.interceptors.request.use(async (config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // OFFLINE QUEUING LOGIC for write operations
+    // Pre-emptive offline check
     if (typeof window !== 'undefined' && !navigator.onLine && ['post', 'put', 'delete'].includes(config.method)) {
-        console.log(`📡 App Offline: Queuing ${config.method.toUpperCase()} request for ${config.url}`);
-        
-        const { table: dexieTable } = resolveTableFromUrl(config.url);
-        
-        const path = config.url.split('?')[0];
-        const segments = path.split('/').filter(Boolean);
-        const recordId = config.method === 'post' ? null : segments[segments.length - 1];
-        
-        // Generate a temporary local ID for POST requests if needed
-        let mockResponseData = { id: recordId || 'local_' + Date.now(), ...config.data };
-
-        const userStr = localStorage.getItem('user');
-        const user = userStr ? JSON.parse(userStr) : null;
-        const orgId = user?.organizationId || 1;
-
-        await addToOutbox(
-            dexieTable, 
-            recordId || mockResponseData.id, 
-            config.method.toUpperCase() === 'POST' ? 'INSERT' : config.method.toUpperCase() === 'PUT' ? 'UPDATE' : 'DELETE', 
-            config.data,
-            orgId
-        );
-
-        // Update local database immediately
-        if (dexieTable && db[dexieTable]) {
-            try {
-                if (config.method === 'post') {
-                    const newRecord = { ...config.data, id: mockResponseData.id, sync_status: 'pending_push', createdAt: new Date().toISOString() };
-                    await db[dexieTable].add(newRecord);
-                    
-                    // SPECIAL LOGIC: Sales/Purchases should also appear in 'invoices' table for the UI list
-                    if (dexieTable === 'sales' || dexieTable === 'purchases') {
-                        const invRecord = {
-                            ...newRecord,
-                            invoiceNo: newRecord.invoiceNo || `LOCAL-${Date.now()}`,
-                            type: dexieTable === 'sales' ? 'SALE' : 'PURCHASE',
-                            customer: newRecord.customerName ? { name: newRecord.customerName } : null,
-                            supplier: newRecord.supplierId ? { id: newRecord.supplierId } : null, // Simplified
-                        };
-                        await db.invoices.add(invRecord);
-
-                        // UPDATE PRODUCT STOCK LOCALLY
-                        if (newRecord.items && Array.isArray(newRecord.items)) {
-                            for (const item of newRecord.items) {
-                                const product = await db.products.get(item.id);
-                                if (product) {
-                                    const qtyChange = dexieTable === 'sales' ? -item.qty : item.qty;
-                                    await db.products.update(item.id, { 
-                                        stockQty: (product.stockQty || 0) + qtyChange 
-                                    });
-                                }
-                            }
-                        }
-                    }
-                } else if (config.method === 'put') {
-                    await db[dexieTable].update(recordId, { ...config.data, sync_status: 'pending_push' });
-                    // Also update in invoices if it exists there
-                    if (db.invoices) {
-                        const exists = await db.invoices.get(recordId);
-                        if (exists) await db.invoices.update(recordId, { ...config.data });
-                    }
-                } else if (config.method === 'delete') {
-                    await db[dexieTable].delete(recordId);
-                    if (db.invoices) await db.invoices.delete(recordId);
-                }
-            } catch (e) {
-                console.warn('Failed to update local DB logic:', e);
-            }
-        }
-
-        // Throw a custom error that can be caught as "Success (Offline)"
-        const offlineError = new Error('OFFLINE_QUEUED');
-        offlineError.data = mockResponseData;
-        throw offlineError;
+        config.adapter = async () => await handleOfflineWrite(config);
     }
 
     return config;
@@ -156,75 +182,49 @@ api.interceptors.response.use(
                 const { table, isSpecial, compound } = resolveTableFromUrl(response.config.url);
                 
                 if (isSpecial && compound === 'reports/stats') {
-                    // Cache stats as a single keyed record
                     await db.cached_stats.put({ key: 'dashboard_stats', ...response.data });
                 } else if (table && db[table] && Array.isArray(response.data)) {
-                    // Cache array data silently in background
                     cacheApiData(table, response.data).catch(() => {});
                 }
-            } catch (e) {
-                // Caching failure should never break the app
-            }
+            } catch (e) {}
         }
         return response;
     },
     async (error) => {
-        // Handle OFFLINE_QUEUED: return as if it succeeded
-        if (error.message === 'OFFLINE_QUEUED') {
-            return Promise.resolve({ data: error.data, status: 200, statusText: 'OK (Offline)', config: error.config });
-        }
+        const { config, response } = error;
+        const isNetworkError = !response || 
+                               error.code === 'ERR_NETWORK' || 
+                               error.code === 'ECONNABORTED' || 
+                               error.message === 'Network Error' ||
+                               error.message.includes('timeout');
         
         // Handle network errors for GET requests — serve from local cache
-        if (error.config && error.config.method === 'get' && (!error.response || error.code === 'ERR_NETWORK' || error.message === 'Network Error')) {
-            console.warn(`🔌 Offline fallback for GET ${error.config.url}`);
-            
+        if (config && config.method === 'get' && isNetworkError) {
+            console.warn(`🔌 Network error fallback for GET ${config.url}`);
             try {
-                const { table, isSpecial, compound } = resolveTableFromUrl(error.config.url);
-                
+                const { table, isSpecial, compound } = resolveTableFromUrl(config.url);
                 if (isSpecial) {
                     if (compound === 'reports/stats') {
                         const cached = await db.cached_stats.get('dashboard_stats');
                         if (cached) {
                             const { key, ...stats } = cached;
-                            return { data: stats, status: 200, statusText: 'OK (Local Cache)', config: error.config };
+                            return { data: stats, status: 200, statusText: 'OK (Local Cache)', config };
                         }
-                        // If no cached stats, compute from local data
-                        const products = await getLocalData('products');
-                        const invoices = await getLocalData('invoices');
-                        const expenses = await getLocalData('expenses');
-                        const sales = await getLocalData('sales');
-                        
-                        const totalSales = sales.reduce((acc, s) => acc + (s.finalAmount || s.totalAmount || 0), 0)
-                            + invoices.filter(i => i.type === 'SALE').reduce((acc, i) => acc + (i.finalAmount || 0), 0);
-                        const totalExpenses = expenses.reduce((acc, e) => acc + (e.amount || 0), 0);
-                        
-                        return {
-                            data: { products: products.length, sales: totalSales, expenses: totalExpenses },
-                            status: 200,
-                            statusText: 'OK (Computed Local)',
-                            config: error.config
-                        };
                     }
-                    if (compound === 'debts/debtors') {
-                        return { data: await getLocalData('debts_debtors'), status: 200, statusText: 'OK (Local)', config: error.config };
-                    }
-                    if (compound === 'debts/creditors') {
-                        return { data: await getLocalData('debts_creditors'), status: 200, statusText: 'OK (Local)', config: error.config };
-                    }
-                    if (compound === 'expenses/categories') {
-                        return { data: await getLocalData('expense_categories'), status: 200, statusText: 'OK (Local)', config: error.config };
-                    }
-                    // reports/activities, reports/charts, reports/top-products — return empty
-                    return { data: [], status: 200, statusText: 'OK (Empty Local)', config: error.config };
+                    return { data: [], status: 200, statusText: 'OK (Empty Local)', config };
                 }
                 
                 if (table && db[table]) {
                     const localData = await getLocalData(table);
-                    return { data: localData, status: 200, statusText: 'OK (Local Cache)', config: error.config };
+                    return { data: localData, status: 200, statusText: 'OK (Local Cache)', config };
                 }
-            } catch (localErr) {
-                console.warn('Local fallback also failed:', localErr);
-            }
+            } catch (localErr) {}
+        }
+
+        // ⚠️ CRITICAL: Handle network errors for WRITE requests — Queue for later
+        if (config && ['post', 'put', 'delete'].includes(config.method) && isNetworkError) {
+            console.warn(`🔌 Network error during WRITE ${config.url}. Queuing for background sync.`);
+            return await handleOfflineWrite(config);
         }
         
         return Promise.reject(error);

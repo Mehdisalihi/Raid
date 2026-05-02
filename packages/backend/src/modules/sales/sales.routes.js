@@ -13,9 +13,11 @@ router.post('/', async (req, res) => {
         const result = await prisma.$transaction(async (tx) => {
             // Find/Create Customer
             let customer = null;
+            const cashCustomerNames = ['عميل نقدي', 'Client Comptant', 'Cash Customer'];
+            
             if (cleanCustomerId) {
                 customer = await tx.customer.findUnique({ where: { id: cleanCustomerId } });
-            } else if (customerName && customerName !== 'عميل نقدي') {
+            } else if (customerName && !cashCustomerNames.includes(customerName)) {
                 customer = await tx.customer.findFirst({ where: { name: customerName } });
                 if (!customer) customer = await tx.customer.create({ data: { name: customerName } });
             }
@@ -25,8 +27,11 @@ router.post('/', async (req, res) => {
                 data: {
                     invoiceNo: `INV-${Date.now()}`,
                     customerId: cleanCustomerId || customer?.id || null,
+                    supplierId: supplierId || null,
                     totalAmount: parseFloat(totalAmount || 0),
                     discount: parseFloat(discount || 0),
+                    taxRate: parseFloat(taxRate || 0),
+                    taxAmount: parseFloat(taxAmount || 0),
                     finalAmount: parseFloat(finalAmount || totalAmount || 0),
                     type: type || 'SALE',
                     isDebt: !!isDebt,
@@ -43,11 +48,19 @@ router.post('/', async (req, res) => {
                 }
             });
 
-            // Stock Deduction
+            // Stock Deduction & Warehouse Fallback
             let targetWH = warehouseId;
             if (!targetWH) {
                 const def = await tx.warehouse.findFirst({ where: { isActive: true } });
-                targetWH = def?.id;
+                if (def) {
+                    targetWH = def.id;
+                } else {
+                    // Create a default warehouse if none exists, to prevent crash
+                    const newWH = await tx.warehouse.create({
+                        data: { name: 'المخزن الرئيسي', location: 'Default', manager: 'System', isActive: true }
+                    });
+                    targetWH = newWH.id;
+                }
             }
 
             if (type !== 'QUOTATION') {

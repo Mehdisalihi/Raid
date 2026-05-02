@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database_service.dart';
 
-final String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
+const String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
 
 class ApiService {
   static const _timeout = Duration(seconds: 15); // Slightly shorter timeout for better UX

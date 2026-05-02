@@ -212,7 +212,8 @@ export default function InvoicesPage() {
         try {
             const payload = {
                 customerName: customerName || t('cash_customer'),
-                supplierId: supplierId,
+                customerId: selectedCustomerId,
+                supplierId: supplierId || selectedSupplierId,
                 items: cart.map(i => ({ id: i.id, qty: i.qty, price: activeTab === 'PURCHASE' ? i.buyPrice : i.sellPrice })),
                 isDebt: isDebt && activeTab !== 'QUOTATION',
                 cart: cart,
@@ -246,9 +247,11 @@ export default function InvoicesPage() {
             setEditingInvoiceId(null);
             fetchInvoices();
         } catch (err) {
+            console.error('Save Error:', err.response?.data || err);
+            const errorMsg = err.response?.data?.error || (isRTL ? 'حدث خطأ أثناء حفظ الفاتورة' : 'Erreur lors de l\'enregistrement');
             triggerDialog(
                 isRTL ? 'خطأ ❌' : 'Erreur ❌', 
-                isRTL ? 'حدث خطأ أثناء حفظ الفاتورة' : 'Erreur lors de l\'enregistrement', 
+                errorMsg, 
                 'danger'
             );
         } finally {

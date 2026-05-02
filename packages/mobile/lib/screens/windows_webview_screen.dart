@@ -40,8 +40,8 @@ class _WindowsWebviewScreenState extends State<WindowsWebviewScreen> {
 
       // DevTools automatically disabled for a cleaner experience
 
-      // Load the same URL that Electron loads
-      await _controller.loadUrl('http://localhost:3000');
+      // Load the live web app which now has offline support
+      await _controller.loadUrl('https://mohassibe.vercel.app');
 
       if (mounted) {
         setState(() => _isReady = true);
