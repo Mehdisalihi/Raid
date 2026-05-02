@@ -1,22 +1,14 @@
 services:
   - type: web
-    name: raid-backend
-    runtime: node
-    region: oregon
-    plan: free
+    name: mohassibe-backend
+    env: node
     rootDir: packages/backend
-    buildCommand: npm install && npx prisma generate
-    startCommand: node src/app.js
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
+      - key: NODE_VERSION
+        value: 20.x
+      - key: PORT
+        value: 5001
       - key: DATABASE_URL
-        value: postgresql://postgres.eonetsffmkfdhoehtusa:Mehdy%4043173070@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
-      - key: JWT_SECRET
-        value: supersafesecretkey123
-      - key: NODE_ENV
-        value: production
-      - key: FRONTEND_URL
-        value: https://web-smoky-iota-94.vercel.app
-      - key: SUPABASE_URL
-        value: https://eonetsffmkfdhoehtusa.supabase.co
-      - key: SUPABASE_ANON_KEY
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjYnh1b2RkanZwb2FpZmx3ZGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDk0NzYsImV4cCI6MjA5Mjc4NTQ3Nn0.61DJg1y-ldWEX5EbzGawpnFmS5nn1SGnNrQlSDWORQI
+        sync: false # You will need to enter your Supabase connection string manually in the Render dashboard

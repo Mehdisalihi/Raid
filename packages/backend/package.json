@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "nodemon src/app.js",
         "start": "node src/app.js",
-        "build": "prisma generate"
+        "build": "prisma generate",
+        "postinstall": "prisma generate"
     },
     "dependencies": {
         "@capacitor/app": "8.0.1",
