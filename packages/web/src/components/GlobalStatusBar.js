@@ -6,7 +6,7 @@ import {
     Package, Users, Moon, Sun, Star, Trash2,
     ShoppingCart, Receipt, TrendingDown, CreditCard,
     Truck, BarChart3, ClipboardList, Archive, Undo2,
-    Building2, ArrowLeftRight, LayoutDashboard, Check, LogOut
+    Building2, ArrowLeftRight, LayoutDashboard, Check, LogOut, Printer
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -230,6 +230,13 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
                         title={t?.('notifications')}
                     >
                         <Bell size={16} className="opacity-70 group-hover:opacity-100" />
+                    </button>
+                    <button
+                        onClick={() => window.print()}
+                        className={`p-1.5 rounded transition-all hover:scale-110 active:scale-90 group ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-black/10'}`}
+                        title={lang === 'ar' ? 'طباعة' : 'Imprimer'}
+                    >
+                        <Printer size={16} className="opacity-70 group-hover:opacity-100" />
                     </button>
                     <button
                         onClick={toggleTheme}
