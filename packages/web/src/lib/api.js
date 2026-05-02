@@ -77,12 +77,16 @@ api.interceptors.request.use(async (config) => {
         // Generate a temporary local ID for POST requests if needed
         let mockResponseData = { id: recordId || 'local_' + Date.now(), ...config.data };
 
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        const orgId = user?.organizationId || 1;
+
         await addToOutbox(
             dexieTable, 
             recordId || mockResponseData.id, 
             config.method.toUpperCase() === 'POST' ? 'INSERT' : config.method.toUpperCase() === 'PUT' ? 'UPDATE' : 'DELETE', 
             config.data,
-            1 // Default organization ID for now
+            orgId
         );
 
         // Update local database immediately
