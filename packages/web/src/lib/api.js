@@ -14,13 +14,13 @@ const localToServerMap = new Map();
 const URL_TO_TABLE = {
     'products': 'products',
     'customers': 'clients',
-    'suppliers': 'suppliers',
+    'suppliers': 'clients', // Using clients table for both
     'invoices': 'invoices',
     'expenses': 'expenses',
     'warehouses': 'warehouses',
-    'sales': 'sales',
-    'purchases': 'purchases',
-    'returns': 'returns',
+    'sales': 'invoices',
+    'purchases': 'invoices',
+    'returns': 'invoices',
     'users': 'users',
     'organizations': 'organizations',
 };
@@ -73,8 +73,10 @@ async function handleOfflineWrite(config) {
     const user = userStr ? JSON.parse(userStr) : null;
     const orgId = user?.organizationId || 1;
 
+    const resource = segments[0] || dexieTable;
+
     await addToOutbox(
-        dexieTable, 
+        resource, // Store the resource path for SyncService
         recordId || mockResponseData.id, 
         config.method.toUpperCase() === 'POST' ? 'INSERT' : config.method.toUpperCase() === 'PUT' ? 'UPDATE' : 'DELETE', 
         config.data,
@@ -88,8 +90,9 @@ async function handleOfflineWrite(config) {
                 const newRecord = { ...config.data, id: mockResponseData.id, sync_status: 'pending_push', createdAt: new Date().toISOString() };
                 await db[dexieTable].add(newRecord);
                 
-                // SPECIAL LOGIC: Sales/Purchases should also appear in 'invoices' table for the UI list
-                if (dexieTable === 'sales' || dexieTable === 'purchases') {
+                // SPECIAL LOGIC: Sales/Purchases/Returns should also appear in 'invoices' table for the UI list
+                const resource = segments[0] || '';
+                if (resource === 'sales' || resource === 'purchases' || resource === 'returns') {
                     // Try to resolve customer/supplier names from local DB for better UI display
                     let customer = null;
                     if (newRecord.customerName) {
@@ -101,18 +104,22 @@ async function handleOfflineWrite(config) {
 
                     let supplier = null;
                     if (newRecord.supplierId) {
-                        const localSupp = await db.suppliers.get(newRecord.supplierId);
+                        const localSupp = await db.clients.get(newRecord.supplierId);
                         supplier = localSupp ? { name: localSupp.name, id: localSupp.id } : { id: newRecord.supplierId };
                     }
 
                     const invRecord = {
                         ...newRecord,
                         invoiceNo: newRecord.invoiceNo || `LOCAL-${Date.now()}`,
-                        type: dexieTable === 'sales' ? 'SALE' : 'PURCHASE',
+                        type: resource === 'sales' ? 'SALE' : resource === 'purchases' ? 'PURCHASE' : 'RETURN',
                         customer,
                         supplier,
                     };
-                    await db.invoices.add(invRecord);
+                    
+                    // Add to invoices table if not already there (it might be if dexieTable is invoices)
+                    if (dexieTable !== 'invoices') {
+                        await db.invoices.add(invRecord);
+                    }
 
                     // UPDATE PRODUCT STOCK LOCALLY
                     if (newRecord.items && Array.isArray(newRecord.items)) {
@@ -121,7 +128,8 @@ async function handleOfflineWrite(config) {
                             if (productId) {
                                 const product = await db.products.get(productId);
                                 if (product) {
-                                    const qtyChange = dexieTable === 'sales' ? -item.qty : item.qty;
+                                    // Sale: subtract, Purchase: add, Return: add
+                                    const qtyChange = resource === 'sales' ? -item.quantity : (resource === 'purchases' || resource === 'returns') ? item.quantity : 0;
                                     await db.products.update(productId, { 
                                         stockQty: (product.stockQty || 0) + qtyChange 
                                     });
@@ -192,11 +200,18 @@ api.interceptors.response.use(
     },
     async (error) => {
         const { config, response } = error;
+        
+        // If the request explicitly wants to skip offline handling (like from SyncService)
+        if (config?.skipOffline) {
+            return Promise.reject(error);
+        }
+
         const isNetworkError = !response || 
                                error.code === 'ERR_NETWORK' || 
                                error.code === 'ECONNABORTED' || 
                                error.message === 'Network Error' ||
-                               error.message.includes('timeout');
+                               error.message.includes('timeout') ||
+                               error.message.includes('ERR_CONNECTION_REFUSED');
         
         // Handle network errors for GET requests — serve from local cache
         if (config && config.method === 'get' && isNetworkError) {
@@ -215,7 +230,14 @@ api.interceptors.response.use(
                 }
                 
                 if (table && db[table]) {
-                    const localData = await getLocalData(table);
+                    let localData;
+                    if (config.url.includes('/customers')) {
+                        localData = await db.clients.where('role').notEqual('supplier').toArray();
+                    } else if (config.url.includes('/suppliers')) {
+                        localData = await db.clients.where('role').equals('supplier').toArray();
+                    } else {
+                        localData = await getLocalData(table);
+                    }
                     return { data: localData, status: 200, statusText: 'OK (Local Cache)', config };
                 }
             } catch (localErr) {}

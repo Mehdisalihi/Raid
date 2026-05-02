@@ -212,8 +212,8 @@ export default function InvoicesPage() {
         try {
             const payload = {
                 customerName: customerName || t('cash_customer'),
-                customerId: selectedCustomerId,
-                supplierId: supplierId || selectedSupplierId,
+                customerId: customerId || null,
+                supplierId: supplierId || null,
                 items: cart.map(i => ({ id: i.id, qty: i.qty, price: activeTab === 'PURCHASE' ? i.buyPrice : i.sellPrice })),
                 isDebt: isDebt && activeTab !== 'QUOTATION',
                 cart: cart,
@@ -226,21 +226,30 @@ export default function InvoicesPage() {
                 total: calculateTotal() // Needed for purchases
             };
 
+            let response;
             if (editingInvoiceId) {
-                await api.put(`/invoices/${editingInvoiceId}`, payload);
+                response = await api.put(`/invoices/${editingInvoiceId}`, payload);
             } else {
                 if (activeTab === 'PURCHASE') {
-                    await api.post('/purchases', payload);
+                    response = await api.post('/purchases', payload);
                 } else {
-                    await api.post('/sales', payload);
+                    response = await api.post('/sales', payload);
                 }
             }
-            
-            triggerDialog(
-                isRTL ? 'نجاح ✨' : 'Succès ✨', 
-                isRTL ? (editingInvoiceId ? 'تم تحديث الفاتورة بنجاح' : 'تم حفظ الفاتورة بنجاح') : (editingInvoiceId ? 'Facture mise à jour' : 'Facture enregistrée avec succès'), 
-                'success'
-            );
+
+            if (response?.data?.offline) {
+                triggerDialog(
+                    isRTL ? 'تم الحفظ محلياً 📵' : 'Enregistré localement 📵',
+                    isRTL ? 'أنت غير متصل بالإنترنت. تم حفظ الفاتورة على جهازك وسيتم مزامنتها تلقائياً عند عودة الاتصال.' : 'Vous êtes hors ligne. La facture est enregistrée localement et sera synchronisée dès le retour de la connexion.',
+                    'info'
+                );
+            } else {
+                triggerDialog(
+                    isRTL ? 'نجاح ✨' : 'Succès ✨', 
+                    isRTL ? (editingInvoiceId ? 'تم تحديث الفاتورة بنجاح' : 'تم حفظ الفاتورة بنجاح') : (editingInvoiceId ? 'Facture mise à jour' : 'Facture enregistrée avec succès'), 
+                    'success'
+                );
+            }
             
             setIsCreateModalOpen(false);
             setCart([]);

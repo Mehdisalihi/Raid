@@ -48,14 +48,11 @@ export default function WarehousesPage() {
     const fetchWarehouses = async () => {
         setLoading(true);
         try {
-            // 1. Try Cloud
             const { data } = await api.get('/warehouses');
             setWarehouses(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.warn('Warehouses: Falling back to local data');
-            // 2. Local Fallback
-            const localWarehouses = await db.warehouses.toArray();
-            setWarehouses(localWarehouses);
+            console.error('Warehouses fetch error:', err);
+            setWarehouses([]);
         } finally {
             setLoading(false);
         }

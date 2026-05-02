@@ -51,24 +51,16 @@ export default function ExpensesPage() {
     const fetchExpenses = async () => {
         setLoading(true);
         try {
-            // 1. Try Cloud
             const [expRes, catRes] = await Promise.all([
-                api.get('/expenses').catch(() => null),
-                api.get('/expenses/categories').catch(() => null)
+                api.get('/expenses'),
+                api.get('/expenses/categories')
             ]);
             
-            if (expRes && catRes) {
-                setExpenses(expRes.data);
-                setCategories(catRes.data);
-            } else {
-                throw new Error('Fallback to local');
-            }
+            setExpenses(expRes.data || []);
+            setCategories(catRes.data || []);
         } catch (err) {
-            console.warn('Expenses: Falling back to local data');
-            // 2. Local Fallback
-            const localExpenses = await db.expenses.toArray();
-            setExpenses(localExpenses);
-            // Categories might be empty offline if never fetched, or we can use defaults
+            console.error('Expenses fetch error:', err);
+            // Default categories if offline and first time
             setCategories([{ id: 1, name: 'General' }, { id: 2, name: 'Stock' }, { id: 3, name: 'Staff' }]);
         } finally {
             setLoading(false);

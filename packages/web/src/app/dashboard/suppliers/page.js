@@ -47,14 +47,11 @@ export default function SuppliersPage() {
     const fetchSuppliers = async () => {
         setLoading(true);
         try {
-            // 1. Try Cloud
             const { data } = await api.get('/suppliers');
             setSuppliers(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.warn('Suppliers: Falling back to local data');
-            // 2. Local Fallback
-            const localSuppliers = await db.clients.where('role').equals('supplier').toArray();
-            setSuppliers(localSuppliers);
+            console.error('Suppliers fetch error:', err);
+            setSuppliers([]);
         } finally {
             setLoading(false);
         }

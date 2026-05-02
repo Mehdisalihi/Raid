@@ -142,25 +142,12 @@ export default function ProductsPage() {
                 sellPrice: parseFloat(formData.sellPrice) || 0,
                 stockQty: parseInt(formData.stockQty) || 0,
                 minStockAlert: parseInt(formData.minStockAlert) || 5,
-                sync_status: 'pending'
             };
 
-            try {
-                if (currentProduct) {
-                    await api.put(`/products/${currentProduct.id}`, payload);
-                } else {
-                    await api.post('/products', payload);
-                }
-            } catch (apiErr) {
-                console.warn('API save failed, saving LOCALLY:', apiErr);
-                // Save to IndexedDB
-                if (currentProduct) {
-                    // Update local record. If it has an id from server, find it. 
-                    // For simplicity, we match by name if id is a uuid or use the existing id if it's numeric/local
-                    await db.products.put({ ...payload, id: currentProduct.id });
-                } else {
-                    await db.products.add(payload);
-                }
+            if (currentProduct) {
+                await api.put(`/products/${currentProduct.id}`, payload);
+            } else {
+                await api.post('/products', payload);
             }
 
             fetchProducts();
@@ -174,7 +161,7 @@ export default function ProductsPage() {
             console.error('Save error:', err);
             triggerDialog(
                 isRTL ? 'خطأ ❌' : 'Erreur ❌', 
-                isRTL ? 'حدث خطأ أثناء حفظ المنتج: ' + err.message : 'Erreur: ' + err.message, 
+                isRTL ? 'حدث خطأ أثناء حفظ المنتج' : 'Erreur lors de l\'enregistrement', 
                 'danger'
             );
         }
@@ -187,14 +174,7 @@ export default function ProductsPage() {
             'danger',
             async () => {
                 try {
-                    try {
-                        await api.delete(`/products/${id}`);
-                    } catch (apiErr) {
-                        console.warn('API delete failed, removing LOCALLY:', apiErr);
-                    }
-                    // Always remove locally
-                    await db.products.delete(id);
-                    
+                    await api.delete(`/products/${id}`);
                     fetchProducts();
                     triggerDialog(
                         isRTL ? 'تم الحذف' : 'Supprimé', 
@@ -202,8 +182,11 @@ export default function ProductsPage() {
                         'success'
                     );
                 } catch (err) {
-                    const errorMsg = err.message || (isRTL ? 'خطأ في حذف المنتج ❌' : 'Erreur lors de la suppression ❌');
-                    triggerDialog(isRTL ? 'تنبيه' : 'Alerte', errorMsg, 'warning');
+                    triggerDialog(
+                        isRTL ? 'خطأ' : 'Erreur', 
+                        isRTL ? 'فشل حذف المنتج' : 'Échec de la suppression', 
+                        'warning'
+                    );
                 }
             }
         );

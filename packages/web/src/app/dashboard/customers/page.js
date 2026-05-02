@@ -45,14 +45,11 @@ export default function CustomersPage() {
     const fetchCustomers = async () => {
         setLoading(true);
         try {
-            // 1. Try Cloud
             const { data } = await api.get('/customers');
             setCustomers(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.warn('Customers: Falling back to local data');
-            // 2. Local Fallback
-            const localCustomers = await db.clients.where('role').notEqual('supplier').toArray();
-            setCustomers(localCustomers);
+            console.error('Customers fetch error:', err);
+            setCustomers([]);
         } finally {
             setLoading(false);
         }

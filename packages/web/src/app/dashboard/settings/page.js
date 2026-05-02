@@ -866,6 +866,7 @@ export default function SettingsPage() {
                                                 <p className="text-[var(--text-faint)] font-bold text-sm">v2.5.0-Stable</p>
                                             </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg">
+                                                <InfoItem label={lang === 'ar' ? 'المطور' : 'Developer'} value="Elmehdi Deda Salihi" />
                                                 <InfoItem label={t('copyright')} value="© 2026 Raid Tech" />
                                                 <InfoItem label={t('system_version')} value="v2.5.0" />
                                                 <InfoItem label={t('privacy_policy')} value={t('view') || 'View'} icon={<ShieldCheck size={14}/>} link />

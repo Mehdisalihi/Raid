@@ -25,35 +25,39 @@ export const SyncService = {
       const { table_name, action, payload, record_id, id: outboxId } = change;
       
       try {
+        const apiPath = table_name; // Now stored as the resource segment in api.js
         if (action === 'INSERT') {
           const { id, sync_status, ...cleanPayload } = payload || {};
-          const response = await api.post(`/${table_name}`, cleanPayload);
+          const response = await api.post(`/${apiPath}`, cleanPayload, { skipOffline: true });
           
-          if (db[table_name]) {
+          // Map back to dexie table for update
+          const dexieTable = this.getDexieTableForResource(apiPath);
+          if (dexieTable && db[dexieTable]) {
             try {
-              await db[table_name].update(record_id, { 
+              await db[dexieTable].update(record_id, { 
                 server_id: response.data?.id, 
                 sync_status: 'synced' 
               });
             } catch (e) {
-              console.warn(`Could not update local record for ${table_name}:`, e);
+              console.warn(`Could not update local record for ${dexieTable}:`, e);
             }
           }
         } 
         else if (action === 'UPDATE') {
           const idToUse = payload?.server_id || record_id;
           const { id, server_id, sync_status, ...cleanPayload } = payload || {};
-          await api.put(`/${table_name}/${idToUse}`, cleanPayload);
-          if (db[table_name]) {
+          await api.put(`/${apiPath}/${idToUse}`, cleanPayload, { skipOffline: true });
+          const dexieTable = this.getDexieTableForResource(apiPath);
+          if (dexieTable && db[dexieTable]) {
             try {
-              await db[table_name].update(record_id, { sync_status: 'synced' });
+              await db[dexieTable].update(record_id, { sync_status: 'synced' });
             } catch (e) {}
           }
         }
         else if (action === 'DELETE') {
           const idToUse = payload?.server_id || record_id;
           if (idToUse && !idToUse.toString().startsWith('local_')) {
-            await api.delete(`/${table_name}/${idToUse}`);
+            await api.delete(`/${apiPath}/${idToUse}`, { skipOffline: true });
           }
         }
 
@@ -66,6 +70,22 @@ export const SyncService = {
         }
       }
     }
+  },
+
+  // Helper to map resource back to dexie table
+  getDexieTableForResource(resource) {
+    const map = {
+      'products': 'products',
+      'customers': 'clients',
+      'suppliers': 'clients',
+      'invoices': 'invoices',
+      'expenses': 'expenses',
+      'warehouses': 'warehouses',
+      'sales': 'invoices',
+      'purchases': 'invoices',
+      'returns': 'invoices'
+    };
+    return map[resource] || resource;
   },
 
   async pullRemoteChanges() {

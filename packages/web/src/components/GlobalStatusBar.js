@@ -9,6 +9,7 @@ import {
     Building2, ArrowLeftRight, LayoutDashboard, Check, LogOut, Printer
 } from 'lucide-react';
 import Link from 'next/link';
+import { SyncService } from '@/lib/SyncService';
 
 const ALL_SHORTCUTS = [
     { href: '/dashboard', label: 'لوحة التحكم', labelFr: 'Dashboard', icon: 'LayoutDashboard', color: 'text-primary' },
@@ -44,11 +45,27 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
     const [time, setTime] = useState(new Date());
     const [showShortcutManager, setShowShortcutManager] = useState(false);
     const [shortcuts, setShortcuts] = useState(DEFAULT_SHORTCUTS);
+    const [pendingCount, setPendingCount] = useState(0);
+    const [isOnline, setIsOnline] = useState(true);
     const panelRef = useRef(null);
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
-        return () => clearInterval(timer);
+        
+        // Sync monitoring
+        const checkSync = async () => {
+            setIsOnline(navigator.onLine);
+            const count = await SyncService.getPendingCount();
+            setPendingCount(count);
+        };
+        
+        checkSync();
+        const syncTimer = setInterval(checkSync, 5000);
+        
+        return () => {
+            clearInterval(timer);
+            clearInterval(syncTimer);
+        };
     }, []);
 
     useEffect(() => {
@@ -210,8 +227,35 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
                 </div>
             </div>
 
-            {/* MIDDLE SPACER */}
-            <div className="flex-1" />
+            {/* MIDDLE SPACER — Sync Status */}
+            <div className="flex-1 flex justify-center items-center">
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                    isOnline 
+                        ? (pendingCount > 0 ? 'bg-amber-500/10 text-amber-500 animate-pulse' : 'bg-emerald-500/10 text-emerald-500')
+                        : 'bg-red-500/10 text-red-500'
+                }`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${
+                        isOnline 
+                            ? (pendingCount > 0 ? 'bg-amber-500' : 'bg-emerald-500')
+                            : 'bg-red-500'
+                    }`} />
+                    <span>
+                        {isOnline 
+                            ? (pendingCount > 0 
+                                ? (lang === 'ar' ? `جاري المزامنة (${pendingCount})` : `Syncing (${pendingCount})`)
+                                : (lang === 'ar' ? 'متصل بالسحابة' : 'Cloud Connected'))
+                            : (lang === 'ar' ? 'وضع الأوفلاين' : 'Offline Mode')}
+                    </span>
+                    {isOnline && pendingCount > 0 && (
+                        <button 
+                            onClick={() => SyncService.syncNow()}
+                            className="ms-2 hover:scale-110 active:rotate-180 transition-all"
+                        >
+                            <Undo2 size={10} className="rotate-180" />
+                        </button>
+                    )}
+                </div>
+            </div>
 
             {/* RIGHT SECTION */}
             <div className="flex items-center gap-1">
