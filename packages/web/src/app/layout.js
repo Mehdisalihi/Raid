@@ -34,6 +34,30 @@ export default function RootLayout({ children }) {
                   });
                 });
               }
+
+              // Scroll Booster for snappy desktop experience
+              (function() {
+                let isTouch = false;
+                window.addEventListener('touchstart', function() { isTouch = true; }, {passive: true});
+                
+                window.addEventListener('wheel', function(e) {
+                  if (isTouch) return;
+                  if (e.ctrlKey) return; // Allow zooming
+                  
+                  const speed = 1.6; // Boost speed by 60%
+                  const delta = e.deltaY;
+                  
+                  if (delta !== 0) {
+                    // Smooth but fast manual scroll
+                    window.scrollBy({
+                      top: delta * speed,
+                      behavior: 'auto'
+                    });
+                    // Optimization: stop native scroll if we handle it
+                    // e.preventDefault(); 
+                  }
+                }, { passive: true });
+              })();
             `,
           }}
         />

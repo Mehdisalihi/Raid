@@ -137,7 +137,8 @@ input, select, textarea, button {
 
 html {
   font-size: var(--font-base, 14px);
-  scroll-behavior: auto; /* Instant scroll is faster and more responsive than smooth */
+  scroll-behavior: auto !important; /* Force instant scroll for maximum snappiness */
+  overscroll-behavior: none; /* Disable bounce which causes lag on Windows */
 }
 
 body {
@@ -146,13 +147,14 @@ body {
   font-family: 'Outfit', 'Cairo', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: none; /* Removed transition to avoid lag during state changes */
   background-image:
     radial-gradient(at 0% 0%, rgba(var(--primary-rgb), 0.05) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.05) 0px, transparent 50%);
   background-attachment: fixed;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
 }
 
 button, a, .cursor-pointer, [role="button"], svg {
