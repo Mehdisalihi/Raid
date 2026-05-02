@@ -35,28 +35,50 @@ export default function RootLayout({ children }) {
                 });
               }
 
-              // Scroll Booster for snappy desktop experience
+              // Scroll Booster for snappy desktop experience (Global & Sidebar)
               (function() {
                 let isTouch = false;
                 window.addEventListener('touchstart', function() { isTouch = true; }, {passive: true});
                 
                 window.addEventListener('wheel', function(e) {
                   if (isTouch) return;
-                  if (e.ctrlKey) return; // Allow zooming
+                  if (e.ctrlKey) return; 
                   
-                  const speed = 1.6; // Boost speed by 60%
+                  const speed = 2.0; // 2x speed for ultra-snappy feel
                   const delta = e.deltaY;
                   
-                  if (delta !== 0) {
-                    // Smooth but fast manual scroll
-                    window.scrollBy({
-                      top: delta * speed,
-                      behavior: 'auto'
-                    });
-                    // Optimization: stop native scroll if we handle it
-                    // e.preventDefault(); 
+                  if (delta === 0) return;
+
+                  // Find the actual scrollable element under the cursor
+                  let target = e.target;
+                  while (target && target !== document.documentElement) {
+                    const style = window.getComputedStyle(target);
+                    const overflow = style.overflowY || style.overflow;
+                    const isScrollable = overflow === 'auto' || overflow === 'scroll';
+                    const canScroll = target.scrollHeight > target.clientHeight;
+                    
+                    if (isScrollable && canScroll) {
+                      // Check if we are at the boundaries to allow propagation
+                      const isAtTop = target.scrollTop <= 0 && delta < 0;
+                      const isAtBottom = target.scrollTop + target.clientHeight >= target.scrollHeight && delta > 0;
+                      
+                      if (!isAtTop && !isAtBottom) {
+                        e.preventDefault();
+                        target.scrollBy({
+                          top: delta * speed,
+                          behavior: 'auto'
+                        });
+                        return;
+                      }
+                      break; // Let it bubble to window if at boundary
+                    }
+                    target = target.parentElement;
                   }
-                }, { passive: true });
+                  
+                  // Default window scroll
+                  // No preventDefault here to keep it natural but we can boost it if needed
+                  // window.scrollBy({ top: delta * speed, behavior: 'auto' });
+                }, { passive: false });
               })();
             `,
           }}
