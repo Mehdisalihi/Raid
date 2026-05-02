@@ -2,7 +2,7 @@ import axios from 'axios';
 import { db, addToOutbox, cacheApiData, getLocalData } from './db';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001/v1',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://backend-dedamed222s-projects.vercel.app/v1',
 });
 
 // Cache for mapping local IDs to server IDs if needed

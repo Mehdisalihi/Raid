@@ -4,12 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database_service.dart';
 
-final String _baseUrl = (kIsWeb ||
-        defaultTargetPlatform == TargetPlatform.windows ||
-        defaultTargetPlatform == TargetPlatform.linux ||
-        defaultTargetPlatform == TargetPlatform.macOS)
-    ? 'http://localhost:5001/v1'
-    : 'http://10.0.2.2:5001/v1';
+final String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
 
 class ApiService {
   static const _timeout = Duration(seconds: 15); // Slightly shorter timeout for better UX
