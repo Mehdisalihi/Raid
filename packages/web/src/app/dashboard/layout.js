@@ -137,6 +137,42 @@ function DashboardContent({ children }) {
         setShowLogoutModal(true);
     };
 
+    const filteredNavItems = NAV_ITEMS.filter(item => {
+        if (!user) return false;
+        const role = (user.role || '').toUpperCase();
+        if (role === 'ADMIN') return true;
+        const permission = PERMISSION_MAP[item.href];
+        return !permission || user[permission] !== false;
+    });
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Don't intercept if user is typing in an input/textarea
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                const currentIndex = filteredNavItems.findIndex(item => 
+                    pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                );
+                
+                let nextIndex = currentIndex;
+                if (e.key === 'ArrowDown') {
+                    nextIndex = (currentIndex + 1) % filteredNavItems.length;
+                } else {
+                    nextIndex = (currentIndex - 1 + filteredNavItems.length) % filteredNavItems.length;
+                }
+                
+                if (nextIndex !== currentIndex) {
+                    router.push(filteredNavItems[nextIndex].href);
+                }
+            }
+        };
+        
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [pathname, filteredNavItems, router]);
+
     if (!user) return (
         <div className="min-h-screen bg-[--background] flex items-center justify-center">
             <div className="w-10 h-10 border-3 border-primary/20 border-t-primary rounded-full animate-spin" />
@@ -156,16 +192,7 @@ function DashboardContent({ children }) {
                 </div>
                 {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto px-4 py-2 space-y-1 custom-scroll">
-                    {NAV_ITEMS.filter(item => {
-                        if (!user) return false;
-                        const role = (user.role || '').toUpperCase();
-                        if (role === 'ADMIN') return true;
-                        
-                        const permission = PERMISSION_MAP[item.href];
-                        if (!permission) return true;
-                        
-                        return user[permission] !== false;
-                    }).map((item) => (
+                    {filteredNavItems.map((item) => (
                         <SidebarLink key={item.href} {...item} pathname={pathname} t={t} isRTL={isRTL} />
                     ))}
                 </nav>
@@ -317,7 +344,7 @@ function SidebarLink({ href, icon: Icon, labelKey, pathname, t, isRTL }) {
     return (
         <Link
             href={href}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 group/link ${isActive
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 group/link outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${isActive
                 ? 'bg-primary/10 text-primary shadow-sm'
                 : 'text-[var(--text-muted)] hover:bg-primary/5 hover:text-primary'
                 }`}
