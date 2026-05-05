@@ -17,8 +17,8 @@ import { Printer } from 'lucide-react';
 
 const ExpensePrintContent = ({ expenses, totalExpenses, isRTL, fmtDate, fmtTime, fmtNumber }) => (
     <div className="bg-white text-black p-0 font-sans" dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: "'Cairo', sans-serif" }}>
-        <div className="text-center border-b-[3px] border-red-600 pb-8 mb-10">
-            <h1 className="text-4xl font-black mb-1 text-red-600 tracking-tighter uppercase">{isRTL ? 'رائد' : 'RAID'}</h1>
+        <div className="text-center border-b-[3px] border-sky-600 pb-8 mb-10 print-exact">
+            <h1 className="text-4xl font-black mb-1 text-sky-600 tracking-tighter uppercase">{isRTL ? 'رائد' : 'RAID'}</h1>
             <h2 className="text-2xl font-black uppercase tracking-widest">{isRTL ? 'سجل المصروفات والنفقات' : 'JOURNAL DES DÉPENSES'}</h2>
             <p className="text-sm mt-3 opacity-70 font-bold uppercase tracking-widest">
                 {isRTL ? 'تاريخ التقرير:' : 'Date du rapport:'} {fmtDate(new Date())} {fmtTime(new Date())}
@@ -38,7 +38,7 @@ const ExpensePrintContent = ({ expenses, totalExpenses, isRTL, fmtDate, fmtTime,
 
         <table className="w-full border-collapse mb-10 text-lg">
             <thead>
-                <tr className="bg-gray-100 border-black border-y-2 text-sm uppercase">
+                <tr className="bg-sky-600 text-white print-exact border-sky-700 border-y-2 text-sm uppercase">
                     <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
                     <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'بيان المصروف' : 'Désignation'}</th>
                     <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التصنيف' : 'Catégorie'}</th>

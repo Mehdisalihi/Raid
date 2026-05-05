@@ -667,7 +667,7 @@ function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
         <div className="hidden print:grid grid-cols-2 gap-4 mb-2 break-inside-avoid">
             {/* Left: Bill To */}
             <div className="flex flex-col border border-slate-300">
-                <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
+                <div className="bg-sky-600 text-white font-bold text-[12px] px-3 py-1 uppercase print-exact">
                     {isRTL ? 'فاتورة إلى:' : (lang === 'fr' ? 'FACTURER À :' : 'FACTURER À :')}
                 </div>
                 <div className="p-3 text-[11px] font-bold text-slate-800 leading-relaxed">
@@ -680,7 +680,7 @@ function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
 
             {/* Right: Account Summary */}
             <div className="flex flex-col border border-slate-300">
-                <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
+                <div className="bg-sky-600 text-white font-bold text-[12px] px-3 py-1 uppercase print-exact">
                     {isRTL ? 'ملخص الحساب' : (lang === 'fr' ? 'RÉSUMÉ DU COMPTE' : 'RÉSUMÉ DU COMPTE')}
                 </div>
                 <table className="w-full text-[11px] font-bold text-slate-800 border-collapse">

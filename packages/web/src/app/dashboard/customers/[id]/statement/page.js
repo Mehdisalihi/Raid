@@ -153,7 +153,7 @@ function CorporateHeader({ isRTL, printDate, customerId }) {
 
                 {/* Right: Statement Title & Details Table */}
                 <div className="flex flex-col items-end gap-3">
-                    <h2 className="text-3xl font-black text-emerald-700 uppercase tracking-widest leading-none">
+                    <h2 className="text-3xl font-black text-sky-700 uppercase tracking-widest leading-none">
                         {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'Statement')}
                     </h2>
                     <table className="text-[10px] font-bold text-slate-800 border-collapse">
@@ -204,7 +204,7 @@ function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
         <div className="hidden print:grid grid-cols-2 gap-4 mb-2 break-inside-avoid">
             {/* Left: Bill To */}
             <div className="flex flex-col border border-slate-300">
-                <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
+                <div className="bg-sky-600 text-white font-bold text-[12px] px-3 py-1 uppercase print-exact">
                     {isRTL ? 'فاتورة إلى:' : (lang === 'fr' ? 'FACTURER À :' : 'Bill To:')}
                 </div>
                 <div className="p-3 text-[11px] font-bold text-slate-800 leading-relaxed">
@@ -217,7 +217,7 @@ function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
 
             {/* Right: Account Summary */}
             <div className="flex flex-col border border-slate-300">
-                <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
+                <div className="bg-sky-600 text-white font-bold text-[12px] px-3 py-1 uppercase print-exact">
                     {isRTL ? 'ملخص الحساب' : (lang === 'fr' ? 'RÉSUMÉ DU COMPTE' : 'Account Summary')}
                 </div>
                 <table className="w-full text-[11px] font-bold text-slate-800 border-collapse">
@@ -586,7 +586,7 @@ export default function CustomerStatementPage() {
             <div className="hidden print:block mb-2">
                 <table className="w-full border-collapse border border-slate-300">
                     <thead>
-                        <tr className="bg-emerald-700 print-exact">
+                        <tr className="bg-sky-600 print-exact">
                             <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[12%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
                             <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[15%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'رقم الفاتورة' : 'N° Facture'}</th>
                             <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[37%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'البيان' : 'Description'}</th>
@@ -611,11 +611,11 @@ export default function CustomerStatementPage() {
                 </table>
                 
                 {/* ─── PRINT ONLY: FULL WIDTH TOTALS BAR ─── */}
-                <div className="hidden print:flex items-center justify-between bg-emerald-700 text-white font-bold text-[12px] print-exact mt-0 border border-slate-300 border-t-0 break-inside-avoid">
+                <div className="hidden print:flex items-center justify-between bg-sky-600 text-white font-bold text-[12px] print-exact mt-0 border border-slate-300 border-t-0 break-inside-avoid">
                     <div className="flex-1 px-3 py-1.5 text-right">
                         {isRTL ? 'إجمالي الرصيد الحالي' : 'Solde actuel du compte'} MRU
                     </div>
-                    <div className="px-3 py-1.5 font-black text-right w-32 border-l border-white bg-emerald-800">
+                    <div className="px-3 py-1.5 font-black text-right w-32 border-l border-white bg-sky-700 print-exact">
                         {fmt(summary.finalBalance)}
                     </div>
                 </div>

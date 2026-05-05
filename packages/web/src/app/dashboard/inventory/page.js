@@ -434,7 +434,7 @@ export default function InventoryPage() {
                 
                 <table className="w-full border-collapse text-sm">
                     <thead>
-                        <tr className="bg-slate-100 border-black border-y-2">
+                        <tr className="bg-sky-600 text-white print-exact border-y-2 border-sky-700">
                             <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'رمز المنتج' : 'Code'}</th>
                             <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'اسم المنتج' : 'Nom Produit'}</th>
                             <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر الشراء' : 'P.A'}</th>

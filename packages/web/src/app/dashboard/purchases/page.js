@@ -188,9 +188,9 @@ export default function PurchasesPage() {
 
             {/* ─── PRINT JOURNAL ─── */}
             <div className="hidden print:block bg-white p-12 text-black min-h-screen font-serif" dir={isRTL ? 'rtl' : 'ltr'}>
-                <div className="text-center border-b-4 border-accent pb-10 mb-12">
+                <div className="text-center border-b-4 border-sky-600 pb-10 mb-12 print-exact">
                     <h1 className="text-4xl font-black mb-1 text-black tracking-tighter uppercase">{isRTL ? 'رائد' : 'RAID'}</h1>
-                    <h2 className="text-2xl font-black uppercase tracking-widest text-accent">{isRTL ? 'سجل المشتريات والتوريدات' : 'JOURNAL DES ACHATS'}</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-widest text-sky-600">{isRTL ? 'سجل المشتريات والتوريدات' : 'JOURNAL DES ACHATS'}</h2>
                     <p className="text-sm mt-3 opacity-70 font-bold uppercase tracking-widest text-gray-500">
                         {isRTL ? 'تاريخ الاستخراج:' : 'Date d\'extraction:'} {fmtDate(new Date())}
                     </p>
@@ -198,7 +198,7 @@ export default function PurchasesPage() {
 
                 <table className="w-full border-collapse mb-10 text-lg">
                     <thead>
-                        <tr className="bg-accent/5 border-b-2 border-accent text-sm font-black uppercase tracking-widest">
+                        <tr className="bg-sky-600 text-white print-exact border-sky-700 border-y-2 text-sm uppercase">
                             <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
                             <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'المورد' : 'Fournisseur'}</th>
                             <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'ملاحظات' : 'Notes'}</th>
@@ -209,7 +209,7 @@ export default function PurchasesPage() {
                         {filtered.map(p => (
                             <tr key={p.id} className="border-b border-gray-100">
                                 <td className={`p-4 font-bold text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{fmtDate(p.date || p.createdAt)}</td>
-                                <td className={`p-4 font-black text-accent ${isRTL ? 'text-right' : 'text-left'}`}>{p.supplier?.name}</td>
+                                <td className={`p-4 font-black text-sky-600 ${isRTL ? 'text-right' : 'text-left'}`}>{p.supplier?.name}</td>
                                 <td className={`p-4 text-xs font-bold opacity-60 italic ${isRTL ? 'text-right' : 'text-left'}`}>{p.notes || '---'}</td>
                                 <td className={`p-4 font-black ${isRTL ? 'text-left' : 'text-right'}`}>{fmtNumber(p.totalAmount)} MRU</td>
                             </tr>
@@ -217,7 +217,7 @@ export default function PurchasesPage() {
                     </tbody>
                 </table>
 
-                <div className="mt-20 border-t-2 border-accent pt-10 text-center text-[10px] font-black text-accent/50 uppercase tracking-[0.4em]">
+                <div className="mt-20 border-t-2 border-sky-600 pt-10 text-center text-[10px] font-black text-sky-600/50 uppercase tracking-[0.4em]">
                     End of Purchases Journal • Rapport Raid Professional
                 </div>
             </div>
