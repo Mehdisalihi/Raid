@@ -178,7 +178,7 @@ export default function InventoryPage() {
                             <span>Excel {isRTL ? 'تصدير' : 'Exporter'}</span>
                         </button>
                         <button onClick={handlePrint} className="h-10 px-4 rounded-xl border border-[var(--glass-border)] bg-[var(--surface-2)] text-[var(--text-primary)] font-bold text-xs flex items-center gap-2 hover:bg-[var(--surface-1)] transition-all shadow-sm">
-                            <Printer size={16} />
+                            <Printer size={16}   color="#10b981" />
                             <span>{isRTL ? 'طباعة' : 'Imprimer'}</span>
                         </button>
                     </div>
@@ -437,11 +437,11 @@ export default function InventoryPage() {
                         <tr className="bg-slate-100 border-black border-y-2">
                             <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'رمز المنتج' : 'Code'}</th>
                             <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'اسم المنتج' : 'Nom Produit'}</th>
-                            <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر الشراء' : 'PA'}</th>
-                            <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر البيع' : 'PV'}</th>
+                            <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر الشراء' : 'P.A'}</th>
+                            <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر البيع' : 'P.V'}</th>
                             <th className={`p-3 uppercase text-xs font-black text-center`}>{isRTL ? 'الكمية' : 'Qté'}</th>
                             <th className={`p-3 uppercase text-xs font-black text-center`}>{isRTL ? 'الحد الأدنى' : 'Min'}</th>
-                            <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-left' : 'text-right'}`}>{isRTL ? 'إجمالي التكلفة' : 'Val. Totale'}</th>
+                            <th className={`p-3 uppercase text-xs font-black ${isRTL ? 'text-left' : 'text-right'}`}>{isRTL ? 'إجمالي التكلفة' : 'Valeur Totale'}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -280,7 +280,7 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
                         className={`p-1.5 rounded transition-all hover:scale-110 active:scale-90 group ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-black/10'}`}
                         title={lang === 'ar' ? 'طباعة' : 'Imprimer'}
                     >
-                        <Printer size={16} className="opacity-70 group-hover:opacity-100" />
+                        <Printer size={16} className="opacity-70 group-hover:opacity-100"  color="#10b981" />
                     </button>
                     <button
                         onClick={toggleTheme}

@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
     const { type, search, startDate, endDate } = req.query;
     try {
-        const where = {};
+        const where = { userId: req.userId };
         
         if (type && type !== 'ALL') {
             where.type = type;
@@ -55,8 +55,8 @@ router.post('/convert-quote/:id', async (req, res) => {
     try {
         const result = await prisma.$transaction(async (tx) => {
             // 1. Get the quotation
-            const quote = await tx.invoice.findUnique({
-                where: { id },
+            const quote = await tx.invoice.findFirst({
+                where: { id, userId: req.userId },
                 include: { items: true, customer: true }
             });
 
@@ -77,11 +77,11 @@ router.post('/convert-quote/:id', async (req, res) => {
             // 3. Process Stock (Same logic as sales)
             let targetWarehouseId = warehouseId;
             if (!targetWarehouseId) {
-                const defaultWarehouse = await tx.warehouse.findFirst({ where: { isActive: true } });
+                const defaultWarehouse = await tx.warehouse.findFirst({ where: { isActive: true, userId: req.userId } });
                 targetWarehouseId = defaultWarehouse?.id;
                 if (!targetWarehouseId) {
                     const newWarehouse = await tx.warehouse.create({
-                        data: { name: 'المخزن الرئيسي', isActive: true }
+                        data: { name: 'المخزن الرئيسي', isActive: true, userId: req.userId }
                     });
                     targetWarehouseId = newWarehouse.id;
                 }
@@ -105,6 +105,7 @@ router.post('/convert-quote/:id', async (req, res) => {
                         warehouseId: targetWarehouseId,
                         qty: item.qty,
                         type: 'SALE',
+                        userId: req.userId,
                         note: `Converted from Quote: ${quote.invoiceNo}`
                     }
                 });
@@ -133,8 +134,8 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         await prisma.$transaction(async (tx) => {
-            const invoice = await tx.invoice.findUnique({
-                where: { id },
+            const invoice = await tx.invoice.findFirst({
+                where: { id, userId: req.userId },
                 include: { items: true, customer: true, supplier: true }
             });
 
@@ -221,8 +222,8 @@ router.put('/:id', async (req, res) => {
     try {
         const result = await prisma.$transaction(async (tx) => {
             // 1. Get Old Invoice
-            const oldInv = await tx.invoice.findUnique({
-                where: { id },
+            const oldInv = await tx.invoice.findFirst({
+                where: { id, userId: req.userId },
                 include: { items: true }
             });
             if (!oldInv) throw new Error('Invoice not found');
@@ -263,7 +264,7 @@ router.put('/:id', async (req, res) => {
             // Use provided warehouse or default
             let targetWH = warehouseId;
             if (!targetWH) {
-                const def = await tx.warehouse.findFirst({ where: { isActive: true } });
+                const def = await tx.warehouse.findFirst({ where: { isActive: true, userId: req.userId } });
                 targetWH = def?.id;
             }
 
@@ -307,7 +308,7 @@ router.put('/:id', async (req, res) => {
                             create: { productId: pid, warehouseId: targetWH, qty: -qty }
                         });
                         await tx.stockMovement.create({
-                            data: { productId: pid, sourceId: targetWH, qty, type: 'SALE', notes: `Updated Invoice: ${updated.invoiceNo}` }
+                            data: { productId: pid, sourceId: targetWH, qty, type: 'SALE', userId: req.userId, notes: `Updated Invoice: ${updated.invoiceNo}` }
                         });
                     }
                 } else if (updated.type === 'PURCHASE') {
@@ -319,7 +320,7 @@ router.put('/:id', async (req, res) => {
                             create: { productId: pid, warehouseId: targetWH, qty }
                         });
                         await tx.stockMovement.create({
-                            data: { productId: pid, destinationId: targetWH, qty, type: 'PURCHASE', notes: `Updated Invoice: ${updated.invoiceNo}` }
+                            data: { productId: pid, destinationId: targetWH, qty, type: 'PURCHASE', userId: req.userId, notes: `Updated Invoice: ${updated.invoiceNo}` }
                         });
                     }
                 }

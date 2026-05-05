@@ -101,7 +101,7 @@ const Archive = () => {
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t.archiveSubtitle}</p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button className="btn btn-outline" onClick={handlePrint}><Printer size={18} /> {t.printLog}</button>
+                    <button className="btn btn-outline" onClick={handlePrint}><Printer size={18} color="green" /> {t.printLog}</button>
                     <button className="btn btn-outline" onClick={exportToCSV}><Download size={18} /> {t.exportExcel}</button>
                 </div>
             </div>

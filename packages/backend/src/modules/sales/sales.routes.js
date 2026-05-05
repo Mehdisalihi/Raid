@@ -16,10 +16,10 @@ router.post('/', async (req, res) => {
             const cashCustomerNames = ['عميل نقدي', 'Client Comptant', 'Cash Customer'];
             
             if (cleanCustomerId) {
-                customer = await tx.customer.findUnique({ where: { id: cleanCustomerId } });
+                customer = await tx.customer.findFirst({ where: { id: cleanCustomerId, userId: req.userId } });
             } else if (customerName && !cashCustomerNames.includes(customerName)) {
-                customer = await tx.customer.findFirst({ where: { name: customerName } });
-                if (!customer) customer = await tx.customer.create({ data: { name: customerName } });
+                customer = await tx.customer.findFirst({ where: { name: customerName, userId: req.userId } });
+                if (!customer) customer = await tx.customer.create({ data: { name: customerName, userId: req.userId } });
             }
 
             // Create Invoice
@@ -36,6 +36,7 @@ router.post('/', async (req, res) => {
                     type: type || 'SALE',
                     isDebt: !!isDebt,
                     paymentMethod: paymentMethod || 'cash',
+                    userId: req.userId,
                     createdAt: createdAt ? new Date(createdAt) : new Date(),
                     items: {
                         create: cart.map(item => ({
@@ -51,13 +52,13 @@ router.post('/', async (req, res) => {
             // Stock Deduction & Warehouse Fallback
             let targetWH = warehouseId;
             if (!targetWH) {
-                const def = await tx.warehouse.findFirst({ where: { isActive: true } });
+                const def = await tx.warehouse.findFirst({ where: { isActive: true, userId: req.userId } });
                 if (def) {
                     targetWH = def.id;
                 } else {
                     // Create a default warehouse if none exists, to prevent crash
                     const newWH = await tx.warehouse.create({
-                        data: { name: 'المخزن الرئيسي', location: 'Default', manager: 'System', isActive: true }
+                        data: { name: 'المخزن الرئيسي', location: 'Default', manager: 'System', isActive: true, userId: req.userId }
                     });
                     targetWH = newWH.id;
                 }
@@ -76,7 +77,7 @@ router.post('/', async (req, res) => {
                             create: { productId: item.id, warehouseId: targetWH, qty: -parseInt(item.qty) }
                         });
                         await tx.stockMovement.create({
-                            data: { productId: item.id, sourceId: targetWH, qty: parseInt(item.qty), type: 'SALE', notes: `Sale: ${invoice.invoiceNo}` }
+                            data: { productId: item.id, sourceId: targetWH, qty: parseInt(item.qty), type: 'SALE', userId: req.userId, notes: `Sale: ${invoice.invoiceNo}` }
                         });
                     }
                 }
@@ -106,7 +107,7 @@ router.get('/', async (req, res) => {
         const query = {
             include: { customer: true, items: { include: { product: true } } },
             orderBy: { createdAt: 'desc' },
-            where: { type: 'SALE' }
+            where: { type: 'SALE', userId: req.userId }
         };
 
         if (invoiceNo) query.where.invoiceNo = invoiceNo;
@@ -141,7 +142,7 @@ router.put('/:id', async (req, res) => {
     const { customerName, cart, finalAmount, paymentMethod, warehouseId, createdAt } = req.body;
     try {
         const result = await prisma.$transaction(async (tx) => {
-            const old = await tx.invoice.findUnique({ where: { id }, include: { items: true } });
+            const old = await tx.invoice.findFirst({ where: { id, userId: req.userId }, include: { items: true } });
             if (!old) throw new Error('Not found');
 
             // Reverse Stock
@@ -183,7 +184,7 @@ router.put('/:id', async (req, res) => {
                 const pid = it.id || it.productId;
                 await tx.product.update({ where: { id: pid }, data: { stockQty: { decrement: it.qty } } });
                 await tx.stockMovement.create({
-                    data: { productId: pid, sourceId: warehouseId || (await tx.warehouse.findFirst({where:{isActive:true}}))?.id, qty: it.qty, type: 'SALE', notes: `Updated: ${updated.invoiceNo}` }
+                    data: { productId: pid, sourceId: warehouseId || (await tx.warehouse.findFirst({where:{isActive:true, userId: req.userId}}))?.id, qty: it.qty, type: 'SALE', userId: req.userId, notes: `Updated: ${updated.invoiceNo}` }
                 });
             }
             return updated;
@@ -199,7 +200,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         await prisma.$transaction(async (tx) => {
-            const inv = await tx.invoice.findUnique({ where: { id }, include: { items: true } });
+            const inv = await tx.invoice.findFirst({ where: { id, userId: req.userId }, include: { items: true } });
             if (!inv) throw new Error('Not found');
             for (const it of inv.items) {
                 await tx.product.update({ where: { id: it.productId }, data: { stockQty: { increment: it.qty } } });

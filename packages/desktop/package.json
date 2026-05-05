@@ -8,120 +8,29 @@
     "start": "electron .",
     "dist": "electron-builder"
   },
-  "dependencies": {
-    "electron-is-dev": "^2.0.0",
-    "mohassibe-platform": "file:../.."
-  },
+  "dependencies": {},
   "devDependencies": {
-    "7zip-bin": "^5.2.0",
-    "electron": "31.7.7",
-    "electron-builder": "^24.13.3"
+    "electron": "31.7.7"
   },
   "build": {
     "appId": "com.mohassibe.desktop",
     "productName": "Mohassibe Desktop",
     "directories": {
-      "output": "dist_zip"
+      "output": "dist_setup"
     },
     "win": {
-      "target": [
-        "nsis",
-        "zip"
-      ],
-      "icon": "build/icon.png"
+      "target": "nsis",
+      "icon": null
     },
     "nsis": {
       "oneClick": true,
-      "allowToChangeInstallationDirectory": false
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     },
     "files": [
       "main.js",
       "package.json"
-    ],
-    "extraResources": [
-      {
-        "from": "../backend/src",
-        "to": "backend/src"
-      },
-      {
-        "from": "../backend/prisma",
-        "to": "backend/prisma"
-      },
-      {
-        "from": "../backend/package.json",
-        "to": "backend/package.json"
-      },
-      {
-        "from": "../backend/.env",
-        "to": "backend/.env"
-      },
-      {
-        "from": "../web/.next",
-        "to": "web/.next"
-      },
-      {
-        "from": "../web/public",
-        "to": "web/public"
-      },
-      {
-        "from": "../web/package.json",
-        "to": "web/package.json"
-      },
-      {
-        "from": "../../node_modules",
-        "to": "node_modules",
-        "filter": [
-          "!@mohassibe/mobile",
-          "!@mohassibe/desktop",
-          "!**/*.dart",
-          "!**/*.apk",
-          "!**/*.zip",
-          "!**/*.tar",
-          "!**/*.gz",
-          "!**/*.md",
-          "!**/*.map",
-          "!**/.cache",
-          "!**/electron",
-          "!**/puppeteer",
-          "!**/typescript",
-          "!**/eslint",
-          "!**/prettier",
-          "!**/@types",
-          "!**/@tailwindcss",
-          "!**/cypress",
-          "!**/playwright",
-          "!**/puppeteer",
-          "!**/electron",
-          "!**/typescript",
-          "!**/eslint",
-          "!**/prettier",
-          "!**/@types",
-          "!**/@mohassibe/mobile",
-          "!**/@mohassibe/desktop",
-          "!**/*.dart",
-          "!**/*.apk",
-          "!**/*.zip",
-          "!**/*.tar",
-          "!**/*.gz",
-          "!**/*.md",
-          "!**/*.map",
-          "!**/.cache",
-          "!**/docs",
-          "!**/tests",
-          "!**/examples",
-          "!**/vitest",
-          "!**/jest",
-          "!**/*.ts",
-          "!**/*.tsx",
-          "!**/*.test.js",
-          "!**/*.spec.js",
-          "!**/@tailwindcss"
-        ]
-      },
-      {
-        "from": "bin/node.exe",
-        "to": "bin/node.exe"
-      }
     ]
   }
 }

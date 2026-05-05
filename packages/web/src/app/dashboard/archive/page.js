@@ -43,6 +43,20 @@ export default function ArchivePage() {
             setTransactions([...sales, ...expenses].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
         } catch (err) {
             console.error('Error fetching archive:', err);
+            // Offline fallback
+            try {
+                const localSales = await db.sales.toArray();
+                const localExpenses = await db.expenses.toArray();
+                const expenses = localExpenses.map(e => ({
+                    ...e,
+                    type: 'EXPENSE',
+                    finalAmount: e.amount,
+                    createdAt: e.date,
+                    invoiceNo: `EXP-${e.id?.toString().slice(0, 4) || 'TMP'}`,
+                    notes: e.description
+                }));
+                setTransactions([...localSales, ...expenses].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+            } catch {}
         } finally {
             setLoading(false);
         }
@@ -208,7 +222,7 @@ export default function ArchivePage() {
                                         <button 
                                             onClick={() => window.print()}
                                             className="p-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--glass-border)] text-[--text-muted] hover:text-primary hover:bg-white hover:shadow-sm transition-all group-hover/row:scale-110">
-                                            <Printer size={16} />
+                                            <Printer size={16}   color="#10b981" />
                                         </button>
                                     </td>
                                 </tr>

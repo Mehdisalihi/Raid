@@ -56,7 +56,7 @@ const Sales = () => {
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t.salesSubtitle}</p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button className="btn btn-outline" onClick={() => window.print()}><Printer size={18} /> {t.printDaily}</button>
+                    <button className="btn btn-outline" onClick={() => window.print()}><Printer size={18} color="green" /> {t.printDaily}</button>
                     <button className="btn btn-outline"><Download size={18} /> {t.exportStatement}</button>
                 </div>
             </div>
@@ -282,7 +282,7 @@ const Sales = () => {
 
                             <div style={{ display: 'flex', gap: '1rem' }}>
                                 <button className="btn btn-primary" style={{ flex: 1, height: '48px', justifyContent: 'center' }} onClick={() => window.print()}>
-                                    <Printer size={18} /> {t.printInvoice}
+                                    <Printer size={18} color="green" /> {t.printInvoice}
                                 </button>
                                 <button className="btn btn-outline" style={{ flex: 1, height: '48px', justifyContent: 'center' }} onClick={() => setSelectedSale(null)}>
                                     {t.close}

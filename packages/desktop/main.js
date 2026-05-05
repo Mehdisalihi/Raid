@@ -1,158 +1,173 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, session, ipcMain, Menu, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs');
-const { spawn, execSync } = require('child_process');
 
 let mainWindow;
-let backendProcess;
-let frontendProcess;
 
-const isDev = require('electron-is-dev');
-
-// ─── Resolve node.exe path ────────────────────────────────────────────────────
-// When Electron is launched outside a terminal (e.g. double-click), the system
-// PATH usually doesn't include Node.js, causing `spawn 'node' ENOENT`.
-// We locate it using `where.exe` or common installation paths.
-function resolveNodeBin() {
-  // 1. Try `where.exe node` (works when Node is in PATH)
-  try {
-    const result = execSync('where.exe node', { encoding: 'utf8', timeout: 3000 });
-    const found = result.split(/\r?\n/).map(s => s.trim()).filter(s => s.endsWith('.exe') && fs.existsSync(s));
-    if (found.length > 0) return found[0];
-  } catch (_) {}
-
-  // 2. Fallback: check common Windows installation paths
-  const candidates = [
-    'C:\\Program Files\\nodejs\\node.exe',
-    'C:\\Program Files (x86)\\nodejs\\node.exe',
-    path.join(process.env.LOCALAPPDATA || '', 'Programs', 'nodejs', 'node.exe'),
-    path.join(process.env.APPDATA || '', 'nvm', 'current', 'node.exe'),
-  ];
-  for (const p of candidates) {
-    if (fs.existsSync(p)) return p;
-  }
-
-  // 3. Last resort: rely on shell PATH
-  return 'node';
-}
-
-const NODE_BIN = resolveNodeBin();
-console.log(`Using node: ${NODE_BIN}`);
-
-// ─── Load backend .env into child process env ────────────────────────────────
-function loadEnv(envFile) {
-  if (!fs.existsSync(envFile)) return {};
-  const result = {};
-  const lines = fs.readFileSync(envFile, 'utf8').split(/\r?\n/);
-  for (const line of lines) {
-    const match = line.match(/^\s*([\w.-]+)\s*=\s*"?([^"]*)"?\s*$/);
-    if (match) result[match[1]] = match[2];
-  }
-  return result;
-}
-
-// ─── Windows ─────────────────────────────────────────────────────────────────
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 1280,
     height: 800,
-    title: 'RAID Accounting System',
+    title: 'Mohassibe Accounting System',
+    icon: path.join(__dirname, 'build', 'icon.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      spellcheck: true,
+      preload: path.join(__dirname, 'preload.js')
     },
   });
 
-  mainWindow.loadURL('http://localhost:3000');
+  // Set User Agent to something standard to avoid being blocked
+  session.defaultSession.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Mohassibe/1.0.0');
 
-  if (isDev) mainWindow.webContents.openDevTools();
+  // Load the web app which has the offline synchronization logic
+  mainWindow.loadURL('https://mohassibe.vercel.app');
 
-  mainWindow.on('closed', () => { mainWindow = null; });
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
-function startBackend() {
-  const isPackaged = app.isPackaged;
-  const baseDir    = isPackaged ? process.resourcesPath : path.join(__dirname, '..');
+function createAppMenu() {
+  const isMac = process.platform === 'darwin';
 
-  const backendPath = path.join(baseDir, 'backend', 'src', 'app.js');
-  const envPath    = path.join(baseDir, 'backend', '.env');
-  const envVars    = loadEnv(envPath);
-
-  // Set database path to userData to ensure persistence across updates
-  const userDataPath = app.getPath('userData');
-  const dbPath = path.join(userDataPath, 'mohassibe.db');
-  
-  // Copy initial DB if it exists in resources and not in userData
-  if (isPackaged) {
-    const packagedDbPath = path.join(baseDir, 'backend', 'prisma', 'mohassibe.db');
-    if (fs.existsSync(packagedDbPath) && !fs.existsSync(dbPath)) {
-      try {
-        fs.copyFileSync(packagedDbPath, dbPath);
-        console.log('Initial database copied to userData');
-      } catch (err) {
-        console.error('Failed to copy initial database:', err);
-      }
+  const template = [
+    // { role: 'appMenu' }
+    ...(isMac ? [{
+      label: app.name,
+      submenu: [
+        { label: 'عن محاسب', click: showAboutDialog },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit', label: 'إنهاء' }
+      ]
+    }] : []),
+    // { role: 'fileMenu' }
+    {
+      label: 'ملف (File)',
+      submenu: [
+        { label: 'تحديث الصفحة', role: 'reload' },
+        { label: 'فرض التحديث', role: 'forceReload' },
+        { type: 'separator' },
+        isMac ? { role: 'close', label: 'إغلاق' } : { role: 'quit', label: 'خروج' }
+      ]
+    },
+    // { role: 'editMenu' }
+    {
+      label: 'تعديل (Edit)',
+      submenu: [
+        { role: 'undo', label: 'تراجع' },
+        { role: 'redo', label: 'إعادة' },
+        { type: 'separator' },
+        { role: 'cut', label: 'قص' },
+        { role: 'copy', label: 'نسخ' },
+        { role: 'paste', label: 'لصق' },
+        { role: 'selectAll', label: 'تحديد الكل' }
+      ]
+    },
+    // { role: 'viewMenu' }
+    {
+      label: 'عرض (View)',
+      submenu: [
+        { role: 'resetZoom', label: 'استعادة الحجم الطبيعي' },
+        { role: 'zoomIn', label: 'تكبير' },
+        { role: 'zoomOut', label: 'تصغير' },
+        { type: 'separator' },
+        { role: 'togglefullscreen', label: 'ملء الشاشة' },
+        { type: 'separator' },
+        { role: 'toggleDevTools', label: 'أدوات المطور' }
+      ]
+    },
+    // Help / About Menu
+    {
+      label: 'مساعدة (Help)',
+      submenu: [
+        {
+          label: 'معلومات المطور (About Developer)',
+          click: showAboutDialog
+        }
+      ]
     }
-  }
+  ];
 
-  const nodeBin = isPackaged ? path.join(process.resourcesPath, 'bin', 'node.exe') : NODE_BIN;
-  backendProcess = spawn(nodeBin, [backendPath], {
-    env: { 
-      ...process.env, 
-      ...envVars, 
-      PORT: '5001',
-      DATABASE_URL: `file:${dbPath}` 
-    },
-    shell: false,
-  });
-
-  backendProcess.stdout.on('data', d => console.log(`Backend: ${d}`));
-  backendProcess.stderr.on('data', d => console.error(`Backend Error: ${d}`));
-  backendProcess.on('error', e => console.error('Backend spawn error:', e.message));
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
-function startFrontend() {
-  const isPackaged = app.isPackaged;
-  const baseDir    = isPackaged ? process.resourcesPath : path.join(__dirname, '..');
-  const nodeModulesDir = isPackaged ? path.join(process.resourcesPath, 'node_modules') : path.join(__dirname, '..', '..', 'node_modules');
-
-  const nodeBin = isPackaged ? path.join(process.resourcesPath, 'bin', 'node.exe') : NODE_BIN;
-  const nextBin = path.join(nodeModulesDir, 'next', 'dist', 'bin', 'next');
-  const webPath  = path.join(baseDir, 'web');
-  const command  = isDev ? 'dev' : 'start';
-
-  console.log(`Starting frontend in ${command} mode...`);
-
-  frontendProcess = spawn(nodeBin, [nextBin, command], {
-    cwd: webPath,
-    env: { ...process.env, PORT: '3000' },
-    shell: false,
+function showAboutDialog() {
+  dialog.showMessageBox(mainWindow, {
+    type: 'info',
+    title: 'معلومات المطور | Developer Info',
+    message: 'Mohassibe Accounting System - نظام محاسب',
+    detail: `الإصدار (Version): 1.0.0\n\nتطوير المهندس: المهدي صلوحي (Mehdi Salihi)\n\nمنصة متطورة لإدارة الحسابات والمخازن ونقاط البيع مع دعم كامل للعمل بدون إنترنت (Offline-First).\n\n© ${new Date().getFullYear()} Raid. All rights reserved.`,
+    buttons: ['موافق (OK)'],
+    icon: path.join(__dirname, 'build', 'icon.png')
   });
-
-  frontendProcess.stdout.on('data', d => console.log(`Frontend: ${d}`));
-  frontendProcess.stderr.on('data', d => console.error(`Frontend Error: ${d}`));
-  frontendProcess.on('error', e => console.error('Frontend spawn error:', e.message));
 }
 
-// ─── App lifecycle ────────────────────────────────────────────────────────────
+// Setup IPC handlers for printing
+function setupIpcHandlers() {
+  ipcMain.handle('get-printers', async (event) => {
+    return await event.sender.getPrintersAsync();
+  });
+
+  ipcMain.handle('print', async (event, options = {}) => {
+    return new Promise((resolve, reject) => {
+      // options can include silent: true, deviceName: '...', etc.
+      // We default to native dialog if not silent
+      const printOptions = {
+        silent: options.silent || false,
+        printBackground: options.printBackground !== false,
+        deviceName: options.deviceName,
+        color: options.color !== false,
+        margins: options.margins || { marginType: 'default' },
+        landscape: options.landscape || false,
+        pagesPerSheet: options.pagesPerSheet || 1,
+        collate: options.collate !== false,
+        copies: options.copies || 1,
+        header: options.header || '',
+        footer: options.footer || '',
+      };
+      
+      event.sender.print(printOptions, (success, failureReason) => {
+        if (!success) {
+          resolve({ success: false, error: failureReason });
+        } else {
+          resolve({ success: true });
+        }
+      });
+    });
+  });
+
+  ipcMain.handle('print-to-pdf', async (event, options = {}) => {
+    try {
+      const data = await event.sender.printToPDF(options);
+      return { success: true, data: data.toString('base64') };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+}
+
 app.on('ready', () => {
-  console.log('App ready. Starting services...');
-  startBackend();
-  startFrontend();
-
-  const waitTime = isDev ? 12000 : 8000;
-  setTimeout(createWindow, waitTime);
+  setupIpcHandlers();
+  createWindow();
+  createAppMenu();
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
-
-app.on('will-quit', () => {
-  if (backendProcess)  backendProcess.kill();
-  if (frontendProcess) frontendProcess.kill();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
 app.on('activate', () => {
-  if (mainWindow === null) createWindow();
+  if (mainWindow === null) {
+    createWindow();
+  }
 });

@@ -208,7 +208,7 @@ const DailyInvoice = () => {
                     </div>
 
                     <div style={{ display: 'flex', gap: '1.25rem' }}>
-                        <button className="btn btn-primary" style={{ flex: 1, height: '60px', borderRadius: '18px', fontSize: '1rem' }} onClick={() => window.print()}><Printer size={22} /> {t.printInvoice}</button>
+                        <button className="btn btn-primary" style={{ flex: 1, height: '60px', borderRadius: '18px', fontSize: '1rem' }} onClick={() => window.print()}><Printer size={22} color="green" /> {t.printInvoice}</button>
                         <button className="btn btn-outline" style={{ flex: 1, height: '60px', borderRadius: '18px', fontSize: '1rem' }} onClick={() => setIsSuccess(false)}>{t.close} (Esc)</button>
                     </div>
                 </motion.div>

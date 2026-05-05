@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
     try {
         const customers = await prisma.customer.findMany({
+            where: { userId: req.userId },
             orderBy: { name: 'asc' },
         });
         res.json(customers);
@@ -21,7 +22,7 @@ router.post('/', async (req, res) => {
     const { name, phone, email } = req.body;
     try {
         const customer = await prisma.customer.create({
-            data: { name, phone, email },
+            data: { name, phone, email, userId: req.userId },
         });
         res.json(customer);
     } catch (error) {
@@ -34,6 +35,9 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, phone, email, balance } = req.body;
     try {
+        const existing = await prisma.customer.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Customer not found' });
+
         const customer = await prisma.customer.update({
             where: { id },
             data: { name, phone, email, balance: parseFloat(balance || 0) },
@@ -48,6 +52,9 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
+        const existing = await prisma.customer.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Customer not found' });
+
         await prisma.customer.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
@@ -59,8 +66,8 @@ router.delete('/:id', async (req, res) => {
 router.get('/:id/statement', async (req, res) => {
     const { id } = req.params;
     try {
-        const customer = await prisma.customer.findUnique({
-            where: { id },
+        const customer = await prisma.customer.findFirst({
+            where: { id, userId: req.userId },
             include: {
                 Invoices: {
                     select: {

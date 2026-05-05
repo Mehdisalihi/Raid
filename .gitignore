@@ -8,6 +8,10 @@ build/
 packages/web/out/
 packages/backend/prisma/migrations/
 packages/desktop/dist_zip/
+packages/desktop/dist_setup/
+packages/desktop/dist_final/
+packages/desktop/build_old/
+packages/desktop/dist/
 *.db
 *.db-journal
 .DS_Store
@@ -40,3 +44,7 @@ business_manager.db
 local.properties
 
 .vercel
+AppBundle/
+*.exe
+*.nsi
+

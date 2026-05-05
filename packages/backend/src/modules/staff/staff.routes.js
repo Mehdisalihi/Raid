@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
     try {
         const staff = await prisma.staff.findMany({
+            where: { userId: req.userId },
             orderBy: { name: 'asc' },
             include: {
                 _count: {
@@ -32,7 +33,8 @@ router.post('/', async (req, res) => {
                 phone, 
                 role, 
                 baseSalary: parseFloat(baseSalary || 0),
-                joinedAt: joinedAt ? new Date(joinedAt) : new Date()
+                joinedAt: joinedAt ? new Date(joinedAt) : new Date(),
+                userId: req.userId
             },
         });
         res.json(staff);
@@ -47,6 +49,9 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, phone, role, baseSalary, isActive, joinedAt } = req.body;
     try {
+        const existing = await prisma.staff.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Staff not found' });
+
         const staff = await prisma.staff.update({
             where: { id },
             data: { 
@@ -75,8 +80,8 @@ router.post('/:id/transactions', async (req, res) => {
         // Transaction using Prisma transaction to ensure balance is updated
         const result = await prisma.$transaction(async (tx) => {
             // Get current staff record to find current balance
-            const currentStaff = await tx.staff.findUnique({
-                where: { id },
+            const currentStaff = await tx.staff.findFirst({
+                where: { id, userId: req.userId },
                 select: { balance: true }
             });
 
@@ -120,8 +125,8 @@ router.post('/:id/transactions', async (req, res) => {
 router.get('/:id/statement', async (req, res) => {
     const { id } = req.params;
     try {
-        const statement = await prisma.staff.findUnique({
-            where: { id },
+        const statement = await prisma.staff.findFirst({
+            where: { id, userId: req.userId },
             include: {
                 Transactions: {
                     orderBy: { date: 'desc' }
@@ -141,6 +146,9 @@ router.get('/:id/statement', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
+        const existing = await prisma.staff.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Staff not found' });
+
         await prisma.staff.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {

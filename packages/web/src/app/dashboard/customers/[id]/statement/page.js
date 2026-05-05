@@ -456,7 +456,7 @@ export default function CustomerStatementPage() {
                     {isRTL ? 'قائمة العملاء' : 'Liste des clients'}
                 </Link>
                 <div className="flex items-center gap-2">
-                    <Btn onClick={() => window.print()} icon={<Printer size={15} />} label={isRTL ? 'طباعة' : 'Imprimer'} />
+                    <Btn onClick={() => window.print()} icon={<Printer size={15}   color="#10b981" />} label={isRTL ? 'طباعة' : 'Imprimer'} />
                     <Btn onClick={exportCSV} icon={<FileSpreadsheet size={15} />} label={isRTL ? 'تصدير CSV' : 'Exporter CSV'} />
                     <Btn onClick={fetchData} icon={<RefreshCw size={15} />} label={isRTL ? 'تحديث' : 'Actualiser'} ghost />
                 </div>

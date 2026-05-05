@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 router.get('/movements', async (req, res) => {
     try {
         const movements = await prisma.stockMovement.findMany({
+            where: { userId: req.userId },
             include: {
                 product: { select: { name: true, barcode: true } },
                 source: { select: { name: true } },
@@ -26,7 +27,10 @@ router.get('/warehouses/:warehouseId', async (req, res) => {
     const { warehouseId } = req.params;
     try {
         const inventory = await prisma.warehouseInventory.findMany({
-            where: { warehouseId },
+            where: { 
+                warehouseId,
+                warehouse: { userId: req.userId }
+            },
             include: {
                 product: true
             }
@@ -39,7 +43,7 @@ router.get('/warehouses/:warehouseId', async (req, res) => {
 
 // Transfer stock
 router.post('/transfer', async (req, res) => {
-    const { productId, fromWarehouseId, toWarehouseId, qty, notes, userId } = req.body;
+    const { productId, fromWarehouseId, toWarehouseId, qty, notes } = req.body;
     
     try {
         await prisma.$transaction(async (tx) => {
@@ -67,7 +71,7 @@ router.post('/transfer', async (req, res) => {
                     qty,
                     type: 'TRANSFER',
                     notes,
-                    userId
+                    userId: req.userId
                 }
             });
         });
@@ -79,7 +83,7 @@ router.post('/transfer', async (req, res) => {
 
 // Add stock manually
 router.post('/add', async (req, res) => {
-    const { productId, warehouseId, qty, notes, userId } = req.body;
+    const { productId, warehouseId, qty, notes } = req.body;
     try {
         await prisma.$transaction(async (tx) => {
             await tx.warehouseInventory.upsert({
@@ -100,7 +104,7 @@ router.post('/add', async (req, res) => {
                     qty,
                     type: 'ADD',
                     notes,
-                    userId
+                    userId: req.userId
                 }
             });
         });

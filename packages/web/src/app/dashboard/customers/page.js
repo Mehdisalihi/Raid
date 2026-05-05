@@ -49,7 +49,11 @@ export default function CustomersPage() {
             setCustomers(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Customers fetch error:', err);
-            setCustomers([]);
+            // Offline fallback: load from IndexedDB
+            try {
+                const localData = await db.clients.filter(c => c.role !== 'supplier').toArray();
+                setCustomers(localData);
+            } catch { setCustomers([]); }
         } finally {
             setLoading(false);
         }

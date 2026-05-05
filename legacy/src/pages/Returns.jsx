@@ -118,7 +118,7 @@ const Returns = () => {
                     </div>
 
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button className="btn btn-primary" style={{ flex: 1, background: 'var(--danger)' }} onClick={() => window.print()}><Printer size={18} /> {t.printInvoice}</button>
+                        <button className="btn btn-primary" style={{ flex: 1, background: 'var(--danger)' }} onClick={() => window.print()}><Printer size={18} color="green" /> {t.printInvoice}</button>
                         <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setIsSuccess(false)}>{t.back}</button>
                     </div>
                 </motion.div>

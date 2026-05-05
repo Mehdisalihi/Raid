@@ -15,35 +15,54 @@ import { db } from '@/lib/db';
 import * as XLSX from 'xlsx';
 
 // ─── PROFESSIONAL PRINT COMPONENTS ───────────────────
-function CorporateHeader({ isRTL, title, printDate }) {
-    return (
-        <div className="hidden print:flex flex-col gap-6 mb-8 border-b-2 border-slate-900 pb-6">
-            <div className="flex justify-between items-start">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-xl font-black text-slate-900 uppercase tracking-tighter">
-                        {isRTL ? 'مؤسسة رائد للحلول' : 'RAID SOLUTIONS ENT.'}
-                    </h1>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                        <span>{isRTL ? 'تاريخ الطباعة:' : 'PRINT DATE:'}</span>
-                        <span className="text-slate-900">{printDate}</span>
-                    </div>
-                </div>
-
-                <div className="text-right">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                        {title}
-                    </p>
-                </div>
+const InventoryPrintContent = ({ products, isRTL, fmtDate, fmtNumber, title }) => (
+    <div dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: "'Cairo', sans-serif" }} className="bg-white p-0 text-slate-900">
+        <div className="mb-8 border-b-2 border-slate-900 pb-6 flex justify-between items-start">
+            <div>
+                <h1 className="text-xl font-black text-slate-900 uppercase">
+                    {isRTL ? 'مؤسسة رائد للحلول' : 'ÉTABLISSEMENT RAID SOLUTIONS'}
+                </h1>
+                <p className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-widest">
+                    {isRTL ? 'تقرير جرد المخزون الرسمي' : 'RAPPORT D\'INVENTAIRE OFFICIEL'}
+                </p>
             </div>
-
-            <div className="hidden print:block text-center relative py-2">
-                <div className="inline-block px-8 py-1 border border-slate-200 rounded-full bg-slate-50 relative z-10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                    {isRTL ? 'تقرير جرد المخزون الرسمي' : 'OFFICIAL INVENTORY REPORT'}
-                </div>
+            <div className="text-right">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isRTL ? 'تاريخ التقرير' : 'DATE DU RAPPORT'}</p>
+                <p className="text-sm font-black text-slate-900">{fmtDate(new Date())}</p>
             </div>
         </div>
-    );
-}
+
+        <table className="w-full border-collapse border border-slate-300 text-xs">
+            <thead>
+                <tr className="bg-slate-100 font-black uppercase text-slate-900">
+                    <th className="p-2 border border-slate-300 text-right">{isRTL ? 'المنتج' : 'Produit'}</th>
+                    <th className="p-2 border border-slate-300 text-center">{isRTL ? 'البار كود' : 'Code-barres'}</th>
+                    <th className="p-2 border border-slate-300 text-center">{isRTL ? 'الكمية' : 'Stock'}</th>
+                    <th className="p-2 border border-slate-300 text-left">{isRTL ? 'سعر البيع' : 'Prix de Vente'}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {products.map((p, idx) => (
+                    <tr key={idx} className="border-b border-slate-200">
+                        <td className="p-2 border border-slate-300 font-bold">{p.name}</td>
+                        <td className="p-2 border border-slate-300 text-center text-slate-500">{p.barcode || '-'}</td>
+                        <td className="p-2 border border-slate-300 text-center font-black">{p.stockQty}</td>
+                        <td className="p-2 border border-slate-300 text-left font-bold">{fmtNumber(p.sellPrice)}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+
+        <div className="mt-8 flex justify-between items-center pt-4 border-t border-slate-100">
+            <div className="text-[10px] font-bold text-slate-400">
+                {isRTL ? `إجمالي عدد الأصناف: ${products.length}` : `Nombre total d'articles: ${products.length}`}
+            </div>
+            <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                SYSTÈME RAID • {new Date().getFullYear()}
+            </div>
+        </div>
+    </div>
+);
 
 export default function ProductsPage() {
     const [products, setProducts] = useState([]);
@@ -66,6 +85,7 @@ export default function ProductsPage() {
     const [importRows, setImportRows] = useState([]);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [importing, setImporting] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
     const [dialog, setDialog] = useState({
         isOpen: false,
@@ -88,38 +108,15 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            // 1. Fetch from API
-            let serverProducts = [];
-            try {
-                const { data } = await api.get('/products');
-                serverProducts = Array.isArray(data) ? data : [];
-            } catch (err) {
-                console.warn('Backend unreachable, using local data only:', err);
-            }
-
-            // 2. Fetch from Local IndexedDB
-            const localProducts = await db.products.toArray();
-
-            // 3. Merge (Prefer Server data, but keep unique local products)
-            // Use barcode or name as unique key for merging
-            const mergedMap = new Map();
-            
-            // Add local products first
-            localProducts.forEach(p => {
-                const key = p.barcode || p.name;
-                mergedMap.set(key, { ...p, isLocal: true });
-            });
-
-            // Override with server products (they are ground truth)
-            serverProducts.forEach(p => {
-                const key = p.barcode || p.name;
-                mergedMap.set(key, { ...p, isLocal: false });
-            });
-
-            setProducts(Array.from(mergedMap.values()));
+            const { data } = await api.get('/products');
+            setProducts(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error('Final product fetch error:', err);
-            setProducts([]);
+            console.error('Products fetch error:', err);
+            // Offline fallback: load from IndexedDB
+            try {
+                const local = await db.products.toArray();
+                setProducts(local);
+            } catch { setProducts([]); }
         } finally {
             setLoading(false);
         }
@@ -464,17 +461,28 @@ export default function ProductsPage() {
     };
 
     const handlePrint = () => {
-        window.print();
+        setIsPreviewOpen(true);
+    };
+
+    const executePrint = () => {
+        setIsPreviewOpen(false);
+        setTimeout(() => {
+            window.print();
+        }, 300);
     };
 
     return (
         <div className="space-y-8 animate-fade-up bg-[var(--background)] min-h-[85vh] print:p-0 print:bg-white">
-            {/* ─── PRINT HEADER ─── */}
-            <CorporateHeader 
-                isRTL={isRTL} 
-                title={isRTL ? 'قائمة المنتجات والمخزون' : 'Product Inventory List'} 
-                printDate={fmtDate(new Date())} 
-            />
+            {/* ─── PRINT AREA ─── */}
+            <div className="hidden print:block">
+                <InventoryPrintContent 
+                    products={filteredProducts} 
+                    isRTL={isRTL} 
+                    fmtDate={fmtDate} 
+                    fmtNumber={fmtNumber} 
+                    title={isRTL ? 'قائمة المنتجات والمخزون' : 'Liste d\'inventaire des produits'}
+                />
+            </div>
             {/* ─── Header Area (SCREEN ONLY) ─── */}
             <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:hidden ${isRTL ? '' : 'flex-row-reverse'}`}>
                 <div className={isRTL ? 'text-right' : 'text-left'}>
@@ -541,9 +549,9 @@ export default function ProductsPage() {
                     <button
                         onClick={handlePrint}
                         id="print-button"
-                        className="bg-[var(--text-primary)] text-[var(--background)] px-5 h-11 rounded-xl hover:opacity-90 hover:shadow-md flex items-center gap-2 font-bold transition-all duration-300"
+                        className="bg-green-500/10 border border-green-500/20 text-green-600 px-5 h-11 rounded-xl hover:opacity-90 hover:shadow-md flex items-center gap-2 font-bold transition-all duration-300"
                     >
-                        <Printer size={18} />
+                        <Printer size={18}   color="#10b981" />
                         <span>{isRTL ? 'طباعة' : 'Imprimer'}</span>
                     </button>
                     <button onClick={() => openModal()} className="btn-primary h-11 px-5 rounded-xl flex items-center gap-2">
@@ -697,13 +705,13 @@ export default function ProductsPage() {
                 `}</style>
                 <table className="w-full border-collapse border border-slate-200">
                     <thead>
-                        <tr className="bg-slate-900 text-white">
-                            <th className="p-3 text-[10px] font-black uppercase text-left">{isRTL ? 'المنتج' : 'Product'}</th>
-                            <th className="p-3 text-[10px] font-black uppercase text-center">{isRTL ? 'الباركود' : 'Barcode'}</th>
+                        <tr className="bg-sky-600 text-white print-exact">
+                            <th className="p-3 text-[10px] font-black uppercase text-left">{isRTL ? 'المنتج' : 'Produit'}</th>
+                            <th className="p-3 text-[10px] font-black uppercase text-center">{isRTL ? 'الباركود' : 'Code-barres'}</th>
                             <th className="p-3 text-[10px] font-black uppercase text-center">{isRTL ? 'المخزن' : 'Stock'}</th>
-                            <th className="p-3 text-[10px] font-black uppercase text-right">{isRTL ? 'التكلفة' : 'Cost'}</th>
-                            <th className="p-3 text-[10px] font-black uppercase text-right">{isRTL ? 'سعر البيع' : 'Sell Price'}</th>
-                            <th className="p-3 text-[10px] font-black uppercase text-right">{isRTL ? 'القيمة الإجمالية' : 'Total Value'}</th>
+                            <th className="p-3 text-[10px] font-black uppercase text-right">{isRTL ? 'التكلفة' : 'Coût'}</th>
+                            <th className="p-3 text-[10px] font-black uppercase text-right">{isRTL ? 'سعر البيع' : 'Prix Vente'}</th>
+                            <th className="p-3 text-[10px] font-black uppercase text-right">{isRTL ? 'القيمة الإجمالية' : 'Valeur Totale'}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
@@ -720,8 +728,8 @@ export default function ProductsPage() {
                             </tr>
                         ))}
                         {/* Total row — inside tbody so it renders ONCE at the end of the last page */}
-                        <tr className="print-total-row font-black text-[11px] border-t-2 border-slate-900 bg-slate-100">
-                            <td colSpan={5} className="p-4 uppercase tracking-[0.2em] text-slate-600">{isRTL ? '• إجمالي قيمة المخزون' : '• TOTAL INVENTORY VALUE'}</td>
+                        <tr className="print-total-row font-black text-[11px] border-t-2 border-slate-900 bg-sky-50">
+                            <td colSpan={5} className="p-4 uppercase tracking-[0.2em] text-slate-600">{isRTL ? '• إجمالي قيمة المخزون' : '• VALEUR TOTALE DU STOCK'}</td>
                             <td className="p-4 text-right text-slate-900 text-sm font-black">{fmtNumber(stats.totalValue)} MRU</td>
                         </tr>
                     </tbody>
@@ -883,6 +891,44 @@ export default function ProductsPage() {
                 type={dialog.type}
                 onConfirm={dialog.onConfirm}
             />
+
+            {/* ─── PRINT PREVIEW MODAL ─── */}
+            <RaidModal
+                isOpen={isPreviewOpen}
+                onClose={() => setIsPreviewOpen(false)}
+                title={isRTL ? 'معاينة قائمة الجرد قبل الطباعة' : 'Aperçu de l\'inventaire'}
+                maxWidth="max-w-6xl"
+            >
+                <div className="flex flex-col gap-6">
+                    <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200 overflow-y-auto max-h-[70vh] shadow-inner">
+                        <div className="bg-white shadow-2xl mx-auto p-12" style={{ width: '210mm', minHeight: '297mm' }}>
+                            <InventoryPrintContent 
+                                products={filteredProducts} 
+                                isRTL={isRTL} 
+                                fmtDate={fmtDate} 
+                                fmtNumber={fmtNumber} 
+                                title={isRTL ? 'قائمة المنتجات والمخزون' : 'Liste d\'inventaire des produits'}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setIsPreviewOpen(false)}
+                            className="flex-1 h-14 rounded-2xl bg-slate-100 text-slate-600 font-black hover:bg-slate-200 transition-all"
+                        >
+                            {t('cancel')}
+                        </button>
+                        <button
+                            onClick={executePrint}
+                            className="flex-[2] h-14 rounded-2xl bg-emerald-600 text-white font-black shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3"
+                        >
+                            <Printer size={20} />
+                            {isRTL ? 'تأكيد وطباعة القائمة' : 'Confirmer et Imprimer'}
+                        </button>
+                    </div>
+                </div>
+            </RaidModal>
         </div>
     );
 }

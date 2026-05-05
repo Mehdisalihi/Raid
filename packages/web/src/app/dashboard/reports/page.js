@@ -13,6 +13,8 @@ import {
 } from 'recharts';
 import { useLanguage } from '@/lib/LanguageContext';
 
+import { db } from '@/lib/db';
+
 export default function ReportsPage() {
     const { t, isRTL, fmtNumber, fmtDate, fmtTime } = useLanguage();
     const [stats, setStats] = useState(null);
@@ -25,11 +27,37 @@ export default function ReportsPage() {
         const fetchData = async () => {
             try {
                 const [statsRes, chartRes, topRes] = await Promise.all([
-                    api.get('/reports/stats').catch(() => ({ data: { sales: 0, expenses: 0, profit: 0, products: 0, customers: 0, lowStock: 0 } })),
+                    api.get('/reports/stats').catch(() => ({ data: null })),
                     api.get('/reports/charts').catch(() => ({ data: [] })),
                     api.get('/reports/top-products').catch(() => ({ data: [] })),
                 ]);
-                setStats(statsRes.data);
+                
+                let statsData = statsRes.data;
+                
+                // If stats came back null (offline), compute from local DB
+                if (!statsData || (typeof statsData === 'object' && !statsData.sales && !statsData.expenses)) {
+                    try {
+                        const cached = await db.cached_stats.get('dashboard_stats');
+                        if (cached) {
+                            const { key, ...rest } = cached;
+                            statsData = rest;
+                        } else {
+                            // Compute from local tables
+                            const products = await db.products.count();
+                            const customers = await db.clients.count();
+                            const invoices = await db.invoices.toArray();
+                            const expenses = await db.expenses.toArray();
+                            const totalSales = invoices.filter(i => i.type === 'SALE').reduce((s, i) => s + (i.finalAmount || 0), 0);
+                            const totalExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+                            const lowStock = (await db.products.toArray()).filter(p => (p.stockQty || 0) <= 5).length;
+                            statsData = { sales: totalSales, expenses: totalExpenses, profit: totalSales - totalExpenses, products, customers, lowStock };
+                        }
+                    } catch {
+                        statsData = { sales: 0, expenses: 0, profit: 0, products: 0, customers: 0, lowStock: 0 };
+                    }
+                }
+                
+                setStats(statsData);
                 setCharts(Array.isArray(chartRes.data) ? chartRes.data : []);
                 setTopProducts(Array.isArray(topRes.data) ? topRes.data : []);
             } catch (err) { console.error(err); }
@@ -89,7 +117,7 @@ export default function ReportsPage() {
                         onClick={handlePrint}
                         className={`btn-ghost flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm bg-[var(--surface-2)] border border-[var(--glass-border)] hover:bg-[var(--surface-1)] hover:shadow-md transition-all print:hidden group ${isRTL ? '' : 'flex-row-reverse'}`}
                     >
-                        <Printer size={20} className="text-primary group-hover:scale-110 transition-transform" />
+                        <Printer size={20} className="group-hover:scale-110 transition-transform"  color="#10b981" />
                         {t('print_report')}
                     </button>
                 </div>
@@ -407,7 +435,7 @@ export default function ReportsPage() {
                     </div>
 
                     <div className="mt-20 border-t-2 border-black pt-10 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-                        End of Report • Rapport de Performance Raid
+                        {isRTL ? 'نهاية التقرير' : 'Fin du rapport'} • Rapport de Performance Raid
                     </div>
                 </div>
             </div>

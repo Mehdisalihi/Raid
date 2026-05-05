@@ -13,6 +13,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function ReturnsPage() {
     const { t, isRTL, fmtNumber, fmtDate, fmtTime } = useLanguage();
     const [sales, setSales] = useState([]);
@@ -60,6 +62,14 @@ export default function ReturnsPage() {
             }
         } catch (err) {
             console.error('Error fetching returns:', err);
+            // Offline fallback: load from IndexedDB
+            try {
+                const localReturns = await db.returns.toArray();
+                const localWarehouses = await db.warehouses.toArray();
+                setReturns(localReturns);
+                setWarehouses(localWarehouses);
+                if (localWarehouses.length > 0) setSelectedWarehouseId(localWarehouses[0].id);
+            } catch {}
         } finally {
             setLoading(false);
         }

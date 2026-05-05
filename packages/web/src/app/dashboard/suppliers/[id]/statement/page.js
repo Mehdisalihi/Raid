@@ -139,18 +139,18 @@ function CorporateHeader({ isRTL, printDate, supplierId }) {
                             {storeInfo.name}
                         </h1>
                         <div className="flex flex-col text-[9px] font-bold text-slate-600 uppercase tracking-tight">
-                            {storeInfo.address && <span>{isRTL ? 'العنوان: ' : 'Address: '}{storeInfo.address}</span>}
-                            {storeInfo.phone && <span>{isRTL ? 'الهاتف: ' : 'Tel: '}{storeInfo.phone}</span>}
-                            {storeInfo.email && <span>{isRTL ? 'الإيميل: ' : 'Email: '}{storeInfo.email}</span>}
-                            {storeInfo.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'Tax ID: '}{storeInfo.taxId}</span>}
+                            {storeInfo.address && <span>{isRTL ? 'العنوان: ' : 'Adresse: '}{storeInfo.address}</span>}
+                            {storeInfo.phone && <span>{isRTL ? 'الهاتف: ' : 'Tél: '}{storeInfo.phone}</span>}
+                            {storeInfo.email && <span>{isRTL ? 'الإيميل: ' : 'E-mail: '}{storeInfo.email}</span>}
+                            {storeInfo.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'NIF: '}{storeInfo.taxId}</span>}
                         </div>
                     </div>
                 </div>
 
                 {/* Right: Statement Title & Details Table */}
                 <div className="flex flex-col items-end gap-3">
-                    <h2 className="text-3xl font-black text-emerald-700 uppercase tracking-widest leading-none">
-                        {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'Statement')}
+                    <h2 className="text-3xl font-black text-sky-600 uppercase tracking-widest leading-none">
+                        {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'RELEVÉ DE COMPTE')}
                     </h2>
                     <table className="text-[10px] font-bold text-slate-800 border-collapse">
                         <tbody>
@@ -178,7 +178,7 @@ function PrintFooter({ isRTL, finalBalance, fmt }) {
                         : `Account balance is ${fmt(Math.abs(finalBalance))} MRU. Please settle outstanding balances.`)}
             </p>
             <h4 className="text-base font-black mb-4">
-                {isRTL ? 'شكراً لتعاملكم معنا!' : (lang === 'fr' ? 'Merci de votre confiance !' : 'Thank you for your business!')}
+                {isRTL ? 'شكراً لتعاملكم معنا!' : (lang === 'fr' ? 'Merci de votre confiance !' : 'Merci de votre confiance !')}
             </h4>
             
             <div className="w-full border-t border-slate-300 pt-3 text-center space-y-1 text-[10px]">
@@ -187,7 +187,7 @@ function PrintFooter({ isRTL, finalBalance, fmt }) {
                         ? 'إذا كان لديك أي استفسارات بخصوص كشف الحساب، يرجى التواصل معنا'
                         : (lang === 'fr' 
                             ? 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter'
-                            : 'Should you have any enquiries concerning this statement, please contact us')}
+                            : 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter')}
                 </p>
             </div>
         </div>
@@ -201,7 +201,7 @@ function SupplierSection({ supplier, fmtDate, isRTL, fmtNumber, summary }) {
         <div className="hidden print:grid grid-cols-2 gap-4 mb-2 break-inside-avoid">
             {/* Left: Bill To */}
             <div className="flex flex-col border border-slate-300">
-                <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
+                <div className="bg-sky-600 text-white font-bold text-[12px] px-3 py-1 uppercase print-exact">
                     {isRTL ? 'المورد:' : (lang === 'fr' ? 'FOURNISSEUR :' : 'Supplier:')}
                 </div>
                 <div className="p-3 text-[11px] font-bold text-slate-800 leading-relaxed">
@@ -214,7 +214,7 @@ function SupplierSection({ supplier, fmtDate, isRTL, fmtNumber, summary }) {
 
             {/* Right: Account Summary */}
             <div className="flex flex-col border border-slate-300">
-                <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
+                <div className="bg-sky-600 text-white font-bold text-[12px] px-3 py-1 uppercase print-exact">
                     {isRTL ? 'ملخص الحساب' : (lang === 'fr' ? 'RÉSUMÉ DU COMPTE' : 'Account Summary')}
                 </div>
                 <table className="w-full text-[11px] font-bold text-slate-800 border-collapse">
@@ -228,7 +228,7 @@ function SupplierSection({ supplier, fmtDate, isRTL, fmtNumber, summary }) {
                             <td className="px-3 py-1.5 text-right">{fmtNumber(summary.totalCredit)}</td>
                         </tr>
                         <tr className="border-b border-slate-100">
-                            <td className="px-3 py-1.5 font-black text-slate-900">{isRTL ? 'إجمالي الرصيد القائم' : (lang === 'fr' ? 'Solde total' : 'Total Balance')}</td>
+                            <td className="px-3 py-1.5 font-black text-slate-900">{isRTL ? 'إجمالي الرصيد القائم' : (lang === 'fr' ? 'Solde total' : 'Solde total')}</td>
                             <td className="px-3 py-1.5 text-right font-black text-slate-900">{fmtNumber(Math.abs(summary.finalBalance))}</td>
                         </tr>
                     </tbody>
@@ -432,7 +432,7 @@ export default function SupplierStatementPage() {
                     {isRTL ? 'قائمة الموردين' : 'Liste des fournisseurs'}
                 </Link>
                 <div className="flex items-center gap-2">
-                    <Btn onClick={() => window.print()} icon={<Printer size={15} />} label={isRTL ? 'طباعة' : 'Imprimer'} />
+                    <Btn onClick={() => window.print()} icon={<Printer size={15}   color="#10b981" />} label={isRTL ? 'طباعة' : 'Imprimer'} />
                     <Btn onClick={exportCSV} icon={<FileSpreadsheet size={15} />} label={isRTL ? 'تصدير CSV' : 'Exporter CSV'} />
                     <Btn onClick={fetchData} icon={<RefreshCw size={15} />} label={isRTL ? 'تحديث' : 'Actualiser'} ghost />
                 </div>
@@ -555,7 +555,7 @@ export default function SupplierStatementPage() {
             <div className="hidden print:block mb-2">
                 <table className="w-full border-collapse border border-slate-300">
                     <thead>
-                        <tr className="bg-emerald-700 print-exact">
+                        <tr className="bg-sky-600 print-exact">
                             <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[12%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
                             <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[15%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'رقم الفاتورة' : 'N° Facture'}</th>
                             <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[37%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'البيان' : 'Description'}</th>
@@ -581,11 +581,11 @@ export default function SupplierStatementPage() {
                 </table>
                 
                 {/* ─── PRINT ONLY: FULL WIDTH TOTALS BAR ─── */}
-                <div className="hidden print:flex items-center justify-between bg-emerald-700 text-white font-bold text-[12px] print-exact mt-0 border border-slate-300 border-t-0 break-inside-avoid">
+                <div className="hidden print:flex items-center justify-between bg-sky-600 text-white font-bold text-[12px] print-exact mt-0 border border-slate-300 border-t-0 break-inside-avoid">
                     <div className="flex-1 px-3 py-1.5 text-right">
                         {isRTL ? 'إجمالي الرصيد القائم' : 'Solde actuel du compte'} MRU
                     </div>
-                    <div className="px-3 py-1.5 font-black text-right w-32 border-l border-white bg-emerald-800">
+                    <div className="px-3 py-1.5 font-black text-right w-32 border-l border-white bg-sky-700 print-exact">
                         {fmt(Math.abs(summary.finalBalance))}
                     </div>
                 </div>
@@ -620,7 +620,7 @@ export default function SupplierStatementPage() {
 
             {/* Print footer timestamp */}
             <div className="hidden print:block text-center text-[6px] text-gray-400 mt-12 border-t border-slate-100 pt-4">
-                {isRTL ? `تم استخراج هذا التقرير تلقائياً بواسطة النظام بتاريخ ${new Date().toLocaleString('ar-SA')}` : `Report generated automatically by the system on ${new Date().toLocaleString('fr-FR')}`}
+                {isRTL ? `تم استخراج هذا التقرير تلقائياً بواسطة النظام بتاريخ ${new Date().toLocaleString('ar-SA')}` : `Rapport généré automatiquement par le système le ${new Date().toLocaleString('fr-FR')}`}
             </div>
         </div>
     );

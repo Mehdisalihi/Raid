@@ -19,6 +19,8 @@ db.version(4).stores({
   debts_creditors: '++id, server_id, supplierId, amount, remaining',
   expense_categories: '++id, server_id, name',
   cached_stats: 'key',
+  staff: '++id, server_id, organization_id, name, role, status, sync_status',
+  activities: '++id, server_id, organization_id, user_id, action, target_table, target_id, timestamp, sync_status',
   sync_outbox: '++id, organization_id, table_name, record_id, action, processed'
 });
 
@@ -81,5 +83,26 @@ export async function getLocalData(tableName) {
   } catch (e) {
     console.warn(`Failed to read local ${tableName}:`, e);
     return [];
+  }
+}
+
+// Helper to clear all business data tables for data isolation between users
+export async function clearBusinessData() {
+  const tablesToClear = [
+    'clients', 'products', 'invoices', 'invoice_items', 'expenses',
+    'warehouses', 'suppliers', 'sales', 'purchases', 'returns',
+    'debts_debtors', 'debts_creditors', 'expense_categories',
+    'cached_stats', 'staff', 'activities', 'sync_outbox'
+  ];
+  
+  try {
+    await Promise.all(
+      tablesToClear.map(table => {
+        if (db[table]) return db[table].clear();
+      })
+    );
+    console.log('✅ Local business data cleared successfully for data isolation.');
+  } catch (e) {
+    console.error('❌ Failed to clear local business data:', e);
   }
 }

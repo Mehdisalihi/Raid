@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
                     let productId = item.id;
                     if (!productId) {
                         const existing = await tx.product.findFirst({
-                            where: { name: { equals: item.name } }
+                            where: { name: { equals: item.name }, userId: req.userId }
                         });
                         if (existing) {
                             productId = existing.id;
@@ -32,7 +32,8 @@ router.post('/', async (req, res) => {
                                     name: item.name,
                                     buyPrice: parseFloat(item.purchasePrice || 0),
                                     sellPrice: parseFloat(item.purchasePrice || 0) * 1.2,
-                                    stockQty: 0
+                                    stockQty: 0,
+                                    userId: req.userId
                                 }
                             });
                             productId = newProduct.id;
@@ -59,6 +60,7 @@ router.post('/', async (req, res) => {
                     taxAmount: 0,
                     finalAmount: parseFloat(total || 0),
                     type: "PURCHASE",
+                    userId: req.userId,
                     createdAt: invoiceDate,
                     items: {
                         create: processedItems.map(item => ({
@@ -74,12 +76,12 @@ router.post('/', async (req, res) => {
             // 1.5 Ensure Warehouse exists or use default
             let targetWarehouseId = warehouseId;
             if (!targetWarehouseId) {
-                const defaultWarehouse = await tx.warehouse.findFirst({ where: { isActive: true } });
+                const defaultWarehouse = await tx.warehouse.findFirst({ where: { isActive: true, userId: req.userId } });
                 if (defaultWarehouse) {
                     targetWarehouseId = defaultWarehouse.id;
                 } else {
                     const newWarehouse = await tx.warehouse.create({
-                        data: { name: 'المخزن الرئيسي', location: 'Default', manager: 'System', isActive: true }
+                        data: { name: 'المخزن الرئيسي', location: 'Default', manager: 'System', isActive: true, userId: req.userId }
                     });
                     targetWarehouseId = newWarehouse.id;
                 }
@@ -119,6 +121,7 @@ router.post('/', async (req, res) => {
                         destinationId: targetWarehouseId,
                         qty: item.qty,
                         type: 'PURCHASE',
+                        userId: req.userId,
                         notes: `Purchase Invoice: ${invoice.invoiceNo}`
                     }
                 });
@@ -155,7 +158,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const purchases = await prisma.invoice.findMany({
-            where: { type: 'PURCHASE' },
+            where: { type: 'PURCHASE', userId: req.userId },
             include: { customer: true, supplier: true, items: { include: { product: true } } },
             orderBy: { createdAt: 'desc' }
         });
@@ -170,8 +173,8 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         await prisma.$transaction(async (tx) => {
-            const invoice = await tx.invoice.findUnique({
-                where: { id: id },
+            const invoice = await tx.invoice.findFirst({
+                where: { id: id, userId: req.userId },
                 include: { items: true }
             });
 
@@ -208,6 +211,7 @@ router.delete('/:id', async (req, res) => {
                             sourceId: movement.destinationId,
                             qty: item.qty,
                             type: 'REMOVE',
+                            userId: req.userId,
                             notes: `Reversed from deleted purchase: ${invoice.invoiceNo}`
                         }
                     });

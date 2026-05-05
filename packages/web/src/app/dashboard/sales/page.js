@@ -10,6 +10,8 @@ import {
 import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 
+import { db } from '@/lib/db';
+
 export default function DailySalesPage() {
     const { t, isRTL, fmtNumber, fmtDate } = useLanguage();
 
@@ -80,6 +82,7 @@ export default function DailySalesPage() {
             setProducts(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Error fetching products:', err);
+            try { setProducts(await db.products.toArray()); } catch {}
         }
     };
 
@@ -93,6 +96,11 @@ export default function DailySalesPage() {
             }
         } catch (err) {
             console.error('Error fetching warehouses:', err);
+            try {
+                const local = await db.warehouses.toArray();
+                setWarehouses(local);
+                if (local.length > 0 && !selectedWarehouseId) setSelectedWarehouseId(local[0].id);
+            } catch {}
         }
     };
 
@@ -110,8 +118,15 @@ export default function DailySalesPage() {
             setTotalSales(total);
         } catch (err) {
             console.error('Frontend Fetch Sales Error:', err);
-            setSales([]);
-            setTotalSales(0);
+            // Offline fallback
+            try {
+                const localSales = await db.sales.toArray();
+                setSales(localSales);
+                setTotalSales(localSales.reduce((s, i) => s + (parseFloat(i.finalAmount || i.totalAmount || 0)), 0));
+            } catch {
+                setSales([]);
+                setTotalSales(0);
+            }
         } finally {
             setIsLoadingSales(false);
         }

@@ -347,7 +347,7 @@ const Products = () => {
                             </button>
                         )}
                         <button className="btn btn-outline" onClick={() => window.print()}>
-                            <Printer size={18} /> {t.print}
+                            <Printer size={18} color="green" /> {t.print}
                         </button>
                         <button className="btn btn-outline" onClick={downloadTemplate} style={{ color: 'var(--success)', borderColor: 'var(--success)' }}>
                             <Download size={18} style={{ transform: 'rotate(180deg)' }} /> {language === 'ar' ? 'نموذج الاستيراد' : 'Template Import'}

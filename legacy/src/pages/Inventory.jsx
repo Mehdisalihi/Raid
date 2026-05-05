@@ -111,7 +111,7 @@ const Inventory = () => {
                             onClick={() => window.print()}
                             style={{ padding: '0.6rem 1rem', borderRadius: '10px', border: '1.5px solid var(--border-light)', background: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, color: 'var(--text-main)', cursor: 'pointer' }}
                         >
-                            <Printer size={18} /> {t.print}
+                            <Printer size={18} color="green" /> {t.print}
                         </button>
                     </div>
                 </div>

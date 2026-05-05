@@ -13,6 +13,55 @@ import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
 import { db } from '@/lib/db';
+import { Printer } from 'lucide-react';
+
+const ExpensePrintContent = ({ expenses, totalExpenses, isRTL, fmtDate, fmtTime, fmtNumber }) => (
+    <div className="bg-white text-black p-0 font-sans" dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: "'Cairo', sans-serif" }}>
+        <div className="text-center border-b-[3px] border-red-600 pb-8 mb-10">
+            <h1 className="text-4xl font-black mb-1 text-red-600 tracking-tighter uppercase">{isRTL ? 'رائد' : 'RAID'}</h1>
+            <h2 className="text-2xl font-black uppercase tracking-widest">{isRTL ? 'سجل المصروفات والنفقات' : 'JOURNAL DES DÉPENSES'}</h2>
+            <p className="text-sm mt-3 opacity-70 font-bold uppercase tracking-widest">
+                {isRTL ? 'تاريخ التقرير:' : 'Date du rapport:'} {fmtDate(new Date())} {fmtTime(new Date())}
+            </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 mb-12 border-b-2 border-dashed border-gray-200 pb-12">
+            <div className="text-center">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{isRTL ? 'إجمالي المصروفات' : 'Total des Dépenses'}</p>
+                <p className="text-4xl font-black">{fmtNumber(totalExpenses)} <span className="text-xs">MRU</span></p>
+            </div>
+            <div className="text-center">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{isRTL ? 'عدد العمليات' : 'Nombre d\'Opérations'}</p>
+                <p className="text-4xl font-black">{expenses.length}</p>
+            </div>
+        </div>
+
+        <table className="w-full border-collapse mb-10 text-lg">
+            <thead>
+                <tr className="bg-gray-100 border-black border-y-2 text-sm uppercase">
+                    <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
+                    <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'بيان المصروف' : 'Désignation'}</th>
+                    <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التصنيف' : 'Catégorie'}</th>
+                    <th className={`p-4 ${isRTL ? 'text-left' : 'text-right'}`}>{isRTL ? 'المبلغ' : 'Montant'}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {expenses.map(exp => (
+                    <tr key={exp.id} className="border-b border-gray-300">
+                        <td className={`p-4 font-bold text-xs ${isRTL ? 'text-right' : 'text-left'}`}>{fmtDate(exp.date)}</td>
+                        <td className={`p-4 font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{exp.title}</td>
+                        <td className={`p-4 text-xs font-black uppercase opacity-60 ${isRTL ? 'text-right' : 'text-left'}`}>{exp.category}</td>
+                        <td className={`p-4 font-black ${isRTL ? 'text-left' : 'text-right'}`}>{fmtNumber(exp.amount)} MRU</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+
+        <div className="mt-20 border-t-2 border-black pt-10 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+            Fin du journal des dépenses • Rapport des Dépenses Raid
+        </div>
+    </div>
+);
 
 export default function ExpensesPage() {
     const { t, isRTL, fmtNumber, fmtDate, fmtTime } = useLanguage();
@@ -21,6 +70,7 @@ export default function ExpensesPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentExpense, setCurrentExpense] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
@@ -60,8 +110,15 @@ export default function ExpensesPage() {
             setCategories(catRes.data || []);
         } catch (err) {
             console.error('Expenses fetch error:', err);
-            // Default categories if offline and first time
-            setCategories([{ id: 1, name: 'General' }, { id: 2, name: 'Stock' }, { id: 3, name: 'Staff' }]);
+            // Offline fallback: load from IndexedDB
+            try {
+                const localExpenses = await db.expenses.toArray();
+                setExpenses(localExpenses);
+                const localCats = await db.expense_categories.toArray();
+                setCategories(localCats.length > 0 ? localCats : [{ id: 1, name: 'General' }, { id: 2, name: 'Stock' }, { id: 3, name: 'Staff' }]);
+            } catch {
+                setCategories([{ id: 1, name: 'General' }, { id: 2, name: 'Stock' }, { id: 3, name: 'Staff' }]);
+            }
         } finally {
             setLoading(false);
         }
@@ -187,10 +244,10 @@ export default function ExpensesPage() {
                             />
                         </div>
                         <button
-                            onClick={() => window.print()}
+                            onClick={() => setIsPreviewOpen(true)}
                             className={`w-full md:w-auto bg-[var(--card-bg)] border border-[var(--glass-border)] text-[var(--text-muted)] flex items-center justify-center gap-3 px-6 h-11 rounded-xl shadow-sm font-bold transition-all hover:bg-[var(--surface-1)] active:scale-95 text-sm print:hidden ${isRTL ? '' : 'flex-row-reverse'}`}
                         >
-                            <CreditCard size={18} />
+                            <Printer size={18} color="#ef4444" />
                             {isRTL ? 'طباعة التقرير' : 'Imprimer Journal'}
                         </button>
                         <button
@@ -384,51 +441,58 @@ export default function ExpensesPage() {
             </RaidModal>
 
             {/* ─── HIDDEN PRINT LAYOUT ─── */}
-            <div className="hidden print:block print:bg-white print:text-black print:p-12 font-sans" dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: "'Cairo', sans-serif" }}>
-                <div className="text-center border-b-[3px] border-red-600 pb-8 mb-10">
-                    <h1 className="text-4xl font-black mb-1 text-red-600 tracking-tighter uppercase">{isRTL ? 'رائد' : 'RAID'}</h1>
-                    <h2 className="text-2xl font-black uppercase tracking-widest">{isRTL ? 'سجل المصروفات والنفقات' : 'JOURNAL DES DÉPENSES'}</h2>
-                    <p className="text-sm mt-3 opacity-70 font-bold uppercase tracking-widest">
-                        {isRTL ? 'تاريخ التقرير:' : 'Date du rapport:'} {fmtDate(new Date())} {fmtTime(new Date())}
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-8 mb-12 border-b-2 border-dashed border-gray-200 pb-12">
-                    <div className="text-center">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{isRTL ? 'إجمالي المصروفات' : 'Total des Dépenses'}</p>
-                        <p className="text-4xl font-black">{fmtNumber(totalExpenses)} <span className="text-xs">MRU</span></p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{isRTL ? 'عدد العمليات' : 'Nombre d\'Opérations'}</p>
-                        <p className="text-4xl font-black">{expenses.length}</p>
-                    </div>
-                </div>
-
-                <table className="w-full border-collapse mb-10 text-lg">
-                    <thead>
-                        <tr className="bg-gray-100 border-black border-y-2 text-sm uppercase">
-                            <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
-                            <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'بيان المصروف' : 'Désignation'}</th>
-                            <th className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التصنيف' : 'Catégorie'}</th>
-                            <th className={`p-4 ${isRTL ? 'text-left' : 'text-right'}`}>{isRTL ? 'المبلغ' : 'Montant'}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {expenses.map(exp => (
-                            <tr key={exp.id} className="border-b border-gray-300">
-                                <td className={`p-4 font-bold text-xs ${isRTL ? 'text-right' : 'text-left'}`}>{fmtDate(exp.date)}</td>
-                                <td className={`p-4 font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{exp.title}</td>
-                                <td className={`p-4 text-xs font-black uppercase opacity-60 ${isRTL ? 'text-right' : 'text-left'}`}>{exp.category}</td>
-                                <td className={`p-4 font-black ${isRTL ? 'text-left' : 'text-right'}`}>{fmtNumber(exp.amount)} MRU</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-
-                <div className="mt-20 border-t-2 border-black pt-10 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-                    End of Expenses Journal • Rapport des Dépenses Raid
-                </div>
+            <div className="hidden print:block">
+                <ExpensePrintContent 
+                    expenses={expenses}
+                    totalExpenses={totalExpenses}
+                    isRTL={isRTL}
+                    fmtDate={fmtDate}
+                    fmtTime={fmtTime}
+                    fmtNumber={fmtNumber}
+                />
             </div>
+
+            {/* ─── PRINT PREVIEW MODAL ─── */}
+            <RaidModal
+                isOpen={isPreviewOpen}
+                onClose={() => setIsPreviewOpen(false)}
+                title={isRTL ? 'معاينة سجل المصاريف' : 'Aperçu du journal des dépenses'}
+                maxWidth="max-w-5xl"
+            >
+                <div className="flex flex-col gap-6">
+                    <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200 overflow-y-auto max-h-[70vh] shadow-inner">
+                        <div className="bg-white shadow-2xl mx-auto p-12" style={{ width: '210mm', minHeight: '297mm' }}>
+                            <ExpensePrintContent 
+                                expenses={expenses}
+                                totalExpenses={totalExpenses}
+                                isRTL={isRTL}
+                                fmtDate={fmtDate}
+                                fmtTime={fmtTime}
+                                fmtNumber={fmtNumber}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setIsPreviewOpen(false)}
+                            className="flex-1 h-14 rounded-2xl bg-slate-100 text-slate-600 font-black hover:bg-slate-200 transition-all"
+                        >
+                            {isRTL ? 'إلغاء' : 'Annuler'}
+                        </button>
+                        <button
+                            onClick={() => {
+                                setIsPreviewOpen(false);
+                                setTimeout(() => window.print(), 300);
+                            }}
+                            className="flex-[2] h-14 rounded-2xl bg-red-600 text-white font-black shadow-lg shadow-red-500/20 hover:bg-red-700 transition-all flex items-center justify-center gap-3"
+                        >
+                            <Printer size={20} />
+                            {isRTL ? 'تأكيد وطباعة السجل' : 'Confirmer et Imprimer'}
+                        </button>
+                    </div>
+                </div>
+            </RaidModal>
 
             {/* ─── Custom Professional Dialog ─── */}
             <RaidDialog

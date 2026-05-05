@@ -12,6 +12,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function DebtsPage() {
     const { t, isRTL, fmtNumber } = useLanguage();
     const [debtors, setDebtors] = useState([]);
@@ -51,6 +53,13 @@ export default function DebtsPage() {
             setCreditors(Array.isArray(creditorsRes.data) ? creditorsRes.data : []);
         } catch (err) {
             console.error('Error fetching debts:', err);
+            // Offline fallback: load from IndexedDB
+            try {
+                const localDebtors = await db.debts_debtors.toArray();
+                const localCreditors = await db.debts_creditors.toArray();
+                setDebtors(localDebtors);
+                setCreditors(localCreditors);
+            } catch { /* silent */ }
         } finally {
             setLoading(false);
         }

@@ -9,7 +9,8 @@ router.get('/debtors', async (req, res) => {
     try {
         const customers = await prisma.customer.findMany({
             where: {
-                balance: { gt: 0 }
+                balance: { gt: 0 },
+                userId: req.userId
             },
             orderBy: { balance: 'desc' }
         });
@@ -34,7 +35,8 @@ router.get('/creditors', async (req, res) => {
     try {
         const suppliers = await prisma.supplier.findMany({
             where: {
-                balance: { lt: 0 }
+                balance: { lt: 0 },
+                userId: req.userId
             },
             orderBy: { balance: 'asc' }
         });
@@ -62,11 +64,11 @@ router.post('/:id/pay', async (req, res) => {
     try {
         const result = await prisma.$transaction(async (tx) => {
             // Check if it's a customer
-            let entity = await tx.customer.findUnique({ where: { id } });
+            let entity = await tx.customer.findFirst({ where: { id, userId: req.userId } });
             let type = 'CUSTOMER';
 
             if (!entity) {
-                entity = await tx.supplier.findUnique({ where: { id } });
+                entity = await tx.supplier.findFirst({ where: { id, userId: req.userId } });
                 type = 'SUPPLIER';
             }
 
@@ -95,7 +97,8 @@ router.post('/:id/pay', async (req, res) => {
                     totalAmount: parseFloat(amount),
                     discount: 0,
                     finalAmount: parseFloat(amount),
-                    type: 'PAYMENT'
+                    type: 'PAYMENT',
+                    userId: req.userId
                 }
             });
 

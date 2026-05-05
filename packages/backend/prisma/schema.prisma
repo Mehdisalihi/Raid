@@ -33,9 +33,20 @@ model User {
   storePhone         String?
   storeEmail         String?
   currency           String   @default("MRU")
+  storeLogo          String?
   isVerified         Boolean  @default(false)
   verificationCode   String?
   createdAt          DateTime @default(now())
+
+  // Relations to owned data
+  Products           Product[]
+  Customers          Customer[]
+  Suppliers          Supplier[]
+  Invoices           Invoice[]
+  Expenses           Expense[]
+  ExpenseCategories  ExpenseCategory[]
+  Warehouses         Warehouse[]
+  Staff              Staff[]
 }
 
 model Product {
@@ -46,10 +57,14 @@ model Product {
   sellPrice          Float
   stockQty           Int                  @default(0)
   minStockAlert      Int                  @default(5)
+  userId             String
   createdAt          DateTime             @default(now())
+  user               User                 @relation(fields: [userId], references: [id])
   Sales              SaleItem[]
   Movements          StockMovement[]
   WarehouseInventory WarehouseInventory[]
+
+  @@index([userId])
 }
 
 model Warehouse {
@@ -58,10 +73,14 @@ model Warehouse {
   location      String?
   manager       String?
   isActive      Boolean              @default(true)
+  userId        String
   createdAt     DateTime             @default(now())
+  user          User                 @relation(fields: [userId], references: [id])
   MovementsTo   StockMovement[]      @relation("destination")
   MovementsFrom StockMovement[]      @relation("source")
   Inventory     WarehouseInventory[]
+
+  @@index([userId])
 }
 
 model WarehouseInventory {
@@ -102,8 +121,12 @@ model Customer {
   phone     String?
   email     String?
   balance   Float     @default(0)
+  userId    String
   createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
   Invoices  Invoice[]
+
+  @@index([userId])
 }
 
 model Supplier {
@@ -113,8 +136,12 @@ model Supplier {
   email     String?
   company   String?
   balance   Float     @default(0)
+  userId    String
   createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
   Invoices  Invoice[]
+
+  @@index([userId])
 }
 
 model Expense {
@@ -124,12 +151,20 @@ model Expense {
   category    String
   date        DateTime @default(now())
   description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model ExpenseCategory {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String
+  userId    String?
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Invoice {
@@ -145,11 +180,14 @@ model Invoice {
   type          String     @default("SALE")
   isDebt        Boolean    @default(false)
   paymentMethod String     @default("cash")
+  userId        String
   createdAt     DateTime   @default(now())
+  user          User       @relation(fields: [userId], references: [id])
   supplier      Supplier?  @relation(fields: [supplierId], references: [id])
   customer      Customer?  @relation(fields: [customerId], references: [id])
   items         SaleItem[]
 
+  @@index([userId])
   @@index([customerId])
   @@index([supplierId])
   @@index([createdAt])
@@ -176,23 +214,26 @@ model Staff {
   phone        String?
   role         String?
   baseSalary   Float               @default(0)
-  balance      Float               @default(0) // Total Salary Earned - Total Paid/Advances
+  balance      Float               @default(0)
   isActive     Boolean             @default(true)
-  joinedAt     DateTime            @default(now()) // New field: Start date
+  userId       String
+  joinedAt     DateTime            @default(now())
   createdAt    DateTime            @default(now())
+  user         User                @relation(fields: [userId], references: [id])
   Transactions SalaryTransaction[]
+
+  @@index([userId])
 }
 
 model SalaryTransaction {
   id           String   @id @default(uuid())
   staffId      String
-  type         String // "SALARY" (Credit), "PAYMENT" (Debit), "ADVANCE" (Debit)
+  type         String
   amount       Float
-  balanceAfter Float    @default(0) // The staff's balance after this specific transaction
+  balanceAfter Float    @default(0)
   date         DateTime @default(now())
   description  String?
   staff        Staff    @relation(fields: [staffId], references: [id])
 
   @@index([staffId])
 }
-

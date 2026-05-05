@@ -11,8 +11,8 @@ router.post('/', async (req, res) => {
     try {
         const result = await prisma.$transaction(async (tx) => {
             // 1. Find original sale
-            const sale = await tx.invoice.findUnique({
-                where: { id: saleId },
+            const sale = await tx.invoice.findFirst({
+                where: { id: saleId, userId: req.userId },
                 include: { customer: true }
             });
 
@@ -27,6 +27,7 @@ router.post('/', async (req, res) => {
                     discount: 0,
                     finalAmount: parseFloat(total),
                     type: 'RETURN',
+                    userId: req.userId,
                     items: {
                         create: items.map(item => ({
                             productId: item.productId,
@@ -41,7 +42,7 @@ router.post('/', async (req, res) => {
             // 3. Update stock (Global and Warehouse specific)
             let targetWarehouseId = warehouseId;
             if (!targetWarehouseId) {
-                const defaultWarehouse = await tx.warehouse.findFirst({ where: { isActive: true } });
+                const defaultWarehouse = await tx.warehouse.findFirst({ where: { isActive: true, userId: req.userId } });
                 targetWarehouseId = defaultWarehouse?.id;
             }
 
@@ -78,6 +79,7 @@ router.post('/', async (req, res) => {
                             destinationId: targetWarehouseId,
                             qty: parseInt(item.quantity),
                             type: 'RETURN',
+                            userId: req.userId,
                             notes: `Return to Sale: ${sale.invoiceNo}`
                         }
                     });
@@ -106,7 +108,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const returns = await prisma.invoice.findMany({
-            where: { type: 'RETURN' },
+            where: { type: 'RETURN', userId: req.userId },
             include: { customer: true, supplier: true, items: { include: { product: true } } },
             orderBy: { createdAt: 'desc' }
         });
@@ -121,8 +123,8 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         await prisma.$transaction(async (tx) => {
-            const returnInvoice = await tx.invoice.findUnique({
-                where: { id },
+            const returnInvoice = await tx.invoice.findFirst({
+                where: { id, userId: req.userId },
                 include: { items: true }
             });
 

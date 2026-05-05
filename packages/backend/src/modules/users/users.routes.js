@@ -9,6 +9,7 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
     try {
         const users = await prisma.user.findMany({
+            where: { id: req.userId },
             select: {
                 id: true,
                 name: true,
@@ -101,6 +102,9 @@ router.post('/', async (req, res) => {
 // Update user
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
+    if (id !== req.userId) {
+        return res.status(403).json({ error: 'غير مصرح لك بتعديل بيانات مستخدم آخر' });
+    }
     const { 
         name, email, phone, role, isActive, password,
         canAccessSales, canCreateInvoices, canManageInventory,
@@ -158,6 +162,9 @@ router.put('/:id', async (req, res) => {
 // Delete user
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
+    if (id !== req.userId) {
+        return res.status(403).json({ error: 'غير مصرح لك بحذف مستخدم آخر' });
+    }
     try {
         await prisma.user.delete({ where: { id } });
         res.json({ message: 'تم حذف المستخدم بنجاح' });

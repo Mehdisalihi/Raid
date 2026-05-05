@@ -18,8 +18,147 @@ import { formatInvoiceTotalWords } from '@/lib/numberToWords';
 import { db } from '@/lib/db';
 
 export default function InvoicesPage() {
-    const { t, isRTL, fmtNumber, fmtDate, fmtTime } = useLanguage();
+    const { t, isRTL, lang, fmtNumber, fmtDate, fmtTime } = useLanguage();
     
+    // ─── REUSABLE PRINT TEMPLATE ───
+    const InvoicePrintContent = ({ inv, settings, isRTL, t, fmtNumber, fmtDate, fmtTime }) => {
+        if (!inv) return null;
+        return (
+            <div className="flex flex-col h-full bg-white text-slate-900" style={{ fontFamily: "'Cairo', sans-serif" }}>
+                {/* 1. Brand & Store Header */}
+                <div className="mb-4 border-b-2 border-slate-900 pb-4">
+                    <div className={`flex items-center gap-1.5 mb-2 text-[8px] font-bold text-emerald-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <img src="/Raed.png" alt="App Logo" className="w-3.5 h-3.5 opacity-80" />
+                        <span>{isRTL ? 'رائد المحاسبي • Raid Comptabilité' : 'Raid Comptabilité'}</span>
+                    </div>
+
+                    <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden p-1">
+                                {settings?.store?.logo ? (
+                                    <img src={settings.store.logo} alt="Logo" className="w-full h-full object-contain" />
+                                ) : (
+                                    <span className="text-[9px] text-slate-400 text-center font-bold">{isRTL ? 'شعار المؤسسة' : 'Logo'}</span>
+                                )}
+                            </div>
+                            <div className="flex flex-col gap-0.5">
+                                <h1 className="text-xl font-black text-slate-900 tracking-tight">
+                                    {settings?.store?.name || 'SYSTÈME RAID'}
+                                </h1>
+                                <div className="flex flex-col text-[8px] font-bold text-slate-600 uppercase tracking-tight">
+                                    {settings?.store?.address && <span>{isRTL ? 'العنوان: ' : 'Adresse: '}{settings.store.address}</span>}
+                                    {settings?.store?.phone && <span>{isRTL ? 'الهاتف: ' : 'Tél: '}{settings.store.phone}</span>}
+                                    {settings?.store?.email && <span>{isRTL ? 'الإيميل: ' : 'E-mail: '}{settings.store.email}</span>}
+                                    {settings?.store?.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'NIF: '}{settings.store.taxId}</span>}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-2">
+                            <h2 className="text-2xl font-black text-emerald-700 uppercase leading-none">
+                                {t(inv.type.toLowerCase())}
+                            </h2>
+                            <div className="text-right">
+                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                                    {inv.type === 'QUOTATION' ? t('quotation_number') : t('invoice_number')}
+                                </p>
+                                <p className="text-base font-black text-slate-900">#{inv.invoiceNo.split('-')[1] || inv.invoiceNo}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 2. Customer & Date Meta */}
+                <div className="flex justify-between items-start mb-6">
+                    <div className="flex flex-col border border-slate-300 w-full max-w-[50%]">
+                        <div className="bg-sky-600 text-white font-bold text-[9px] px-2 py-1 uppercase tracking-wider print-exact">
+                            {inv.supplier ? t('supplier_label') : t('customer_label')}
+                        </div>
+                        <div className="p-2 text-[10px] font-bold text-slate-800 leading-relaxed">
+                            <p className="text-xs font-black mb-0.5">{inv.customer?.name || inv.supplier?.name || t('cash_customer')}</p>
+                            {(inv.customer?.phone || inv.supplier?.phone) && <p dir="ltr">{inv.customer?.phone || inv.supplier?.phone}</p>}
+                            {inv.isDebt && (
+                                <div className="mt-1 inline-flex items-center gap-2 px-1.5 py-0.5 bg-red-50 text-red-500 rounded text-[8px] font-black uppercase border border-red-100">
+                                    {t('debt')}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                            {inv.type === 'QUOTATION' ? t('quotation_date') : t('invoice_date')}
+                        </p>
+                        <p className="text-sm font-black text-slate-900">{fmtDate(inv.createdAt)}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{fmtTime(inv.createdAt)}</p>
+                    </div>
+                </div>
+
+                {/* 3. Items Table */}
+                <table className="w-full border-collapse border border-slate-300 text-[10px] mb-6">
+                    <thead>
+                        <tr className="bg-sky-600 text-white print-exact">
+                            <th className="p-1.5 border border-slate-300 text-right">{isRTL ? 'البيان' : 'Désignation'}</th>
+                            <th className="p-1.5 border border-slate-300 text-center w-16">{isRTL ? 'الكمية' : 'Qté'}</th>
+                            <th className="p-1.5 border border-slate-300 text-left w-24">{isRTL ? 'السعر' : 'Prix'}</th>
+                            <th className="p-1.5 border border-slate-300 text-left w-28">{isRTL ? 'الإجمالي' : 'Total'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {inv.items?.map((item, idx) => (
+                            <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                                <td className="p-1.5 border border-slate-300 font-bold">{item.product?.name}</td>
+                                <td className="p-1.5 border border-slate-300 text-center font-black">{item.qty}</td>
+                                <td className="p-1.5 border border-slate-300 text-left">{fmtNumber(item.price)}</td>
+                                <td className="p-1.5 border border-slate-300 text-left font-black">{fmtNumber(item.total)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                {/* 4. Totals & Signature Section */}
+                <div className="flex justify-between items-start mt-auto pt-6 border-t border-slate-200">
+                    <div className="flex flex-col gap-4">
+                        <div className="p-2 bg-slate-50 border border-slate-200 rounded max-w-[250px]">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{isRTL ? 'المبلغ بالحروف' : 'Montant en lettres'}</p>
+                            <p className="text-[10px] font-bold text-slate-900 leading-tight">
+                                {formatInvoiceTotalWords(inv.finalAmount, isRTL, 'MRU', inv.type)}
+                            </p>
+                        </div>
+                        {inv.notes && (
+                            <div className="p-2 border-l-2 border-sky-500 bg-sky-50/30 max-w-[250px]">
+                                <p className="text-[8px] font-black text-sky-700 uppercase tracking-widest mb-1">{t('notes')}</p>
+                                <p className="text-[10px] font-bold text-slate-700 italic">{inv.notes}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col gap-1 w-56">
+                        <div className="flex justify-between items-center py-1.5 px-3 bg-slate-50 border border-slate-200">
+                            <span className="text-[9px] font-black text-slate-400 uppercase">{isRTL ? 'المجموع الصافي' : 'Total HT'}</span>
+                            <span className="text-sm font-black text-slate-900">{fmtNumber(inv.totalAmount)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1.5 px-3 bg-slate-50 border border-slate-200">
+                            <span className="text-[9px] font-black text-slate-400 uppercase">{isRTL ? 'الضريبة' : 'TVA'} ({inv.taxRate}%)</span>
+                            <span className="text-sm font-black text-emerald-600">{fmtNumber(inv.taxAmount)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 px-3 bg-sky-600 text-white shadow-md print-exact">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{isRTL ? 'الإجمالي النهائي' : 'Total TTC'}</span>
+                            <span className="text-lg font-black">{fmtNumber(inv.finalAmount)}</span>
+                        </div>
+                        <div className="mt-8 pt-4 border-t border-slate-200 text-center">
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-8">{isRTL ? 'الختم والتوقيع' : 'Cachet et Signature'}</p>
+                            <div className="h-16 flex items-center justify-center italic text-slate-300 text-xs">{isRTL ? 'موقع الكترونياً' : 'Signé électroniquement'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-auto pt-6 text-center text-[8px] font-black text-slate-300 uppercase tracking-[0.4em]">
+                    Généré par RAID • {new Date().getFullYear()}
+                </div>
+            </div>
+        );
+    };
+
     // View state
     const [view, setView] = useState('list'); // 'list' or 'create'
     const [loading, setLoading] = useState(true);
@@ -65,6 +204,7 @@ export default function InvoicesPage() {
 
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [isPrinting, setIsPrinting] = useState(false);
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
     useEffect(() => {
         const loadAll = async () => {
@@ -111,17 +251,36 @@ export default function InvoicesPage() {
                 api.get('/warehouses').catch(() => null)
             ]);
 
-            if (p) setProducts(p.data);
-            else setProducts(await db.products.toArray());
+            // Products
+            if (p && Array.isArray(p.data) && p.data.length > 0) {
+                setProducts(p.data);
+            } else {
+                try { setProducts(await db.products.toArray()); } catch {}
+            }
 
-            if (c) setCustomers(c.data);
-            else setCustomers(await db.clients.where('role').notEqual('supplier').toArray());
+            // Customers
+            if (c && Array.isArray(c.data) && c.data.length > 0) {
+                setCustomers(c.data);
+            } else {
+                try { setCustomers(await db.clients.filter(x => x.role !== 'supplier').toArray()); } catch {}
+            }
 
-            if (s) setSuppliers(s.data);
-            else setSuppliers(await db.clients.where('role').equals('supplier').toArray());
+            // Suppliers
+            if (s && Array.isArray(s.data) && s.data.length > 0) {
+                setSuppliers(s.data);
+            } else {
+                try { setSuppliers(await db.clients.filter(x => x.role === 'supplier').toArray()); } catch {}
+            }
 
-            if (w) setWarehouses(w.data);
-            else setWarehouses(await db.organizations.toArray()); // Using organizations as a rough proxy for warehouses if missing
+            // Warehouses
+            if (w && Array.isArray(w.data) && w.data.length > 0) {
+                setWarehouses(w.data);
+            } else {
+                try { 
+                    const localWh = await db.warehouses.toArray();
+                    setWarehouses(localWh.length > 0 ? localWh : [{ id: 'default', name: 'Default' }]);
+                } catch { setWarehouses([{ id: 'default', name: 'Default' }]); }
+            }
 
             // Load settings
             const userStr = localStorage.getItem('user');
@@ -141,6 +300,14 @@ export default function InvoicesPage() {
             }
         } catch (err) {
             console.error('Common data fetch error:', err);
+            // Last resort: load everything from IndexedDB
+            try {
+                setProducts(await db.products.toArray());
+                setCustomers(await db.clients.filter(x => x.role !== 'supplier').toArray());
+                setSuppliers(await db.clients.filter(x => x.role === 'supplier').toArray());
+                const wh = await db.warehouses.toArray();
+                setWarehouses(wh.length > 0 ? wh : [{ id: 'default', name: 'Default' }]);
+            } catch {}
         }
     };
 
@@ -333,6 +500,11 @@ export default function InvoicesPage() {
 
     const handlePrint = (inv) => {
         setSelectedInvoice(inv);
+        setIsPreviewModalOpen(true);
+    };
+
+    const executePrint = () => {
+        setIsPreviewModalOpen(false);
         setIsPrinting(true);
         // Give React time to re-render with invoice data before printing
         setTimeout(() => {
@@ -346,182 +518,19 @@ export default function InvoicesPage() {
 
     return (
         <div className="space-y-8 animate-fade-in pb-20">
-            {/* ─── PRINT TEMPLATE (Statement Style) ─── */}
-            <div id="print-area" className={`${isPrinting ? 'block' : 'hidden'} print:block bg-white p-0 text-slate-900`} dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: "'Cairo', sans-serif" }}>
-                {selectedInvoice && (
-                    <>
-                    <table className="w-full">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div className="max-w-[210mm] mx-auto bg-white px-12 pt-3 pb-8 flex flex-col">
-                        {/* 1. Brand & Store Header (Statement Style) */}
-                        <div className="mb-4 border-b-2 border-slate-900 pb-4">
-                            {/* Top row: Very small app branding */}
-                            <div className={`flex items-center gap-1.5 mb-2 text-[8px] font-bold text-emerald-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                                <img src="/Raed.png" alt="App Logo" className="w-3.5 h-3.5 opacity-80" />
-                                <span>{isRTL ? 'رائد المحاسبي • Raid Comptabilité' : 'Raid Comptabilité'}</span>
-                            </div>
-
-                            <div className="flex justify-between items-start">
-                                {/* Left: Institution Info & Logo */}
-                                <div className="flex items-center gap-4">
-                                    <div className="w-20 h-20 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden p-1">
-                                        {settings?.store?.logo ? (
-                                            <img src={settings.store.logo} alt="Logo" className="w-full h-full object-contain" />
-                                        ) : (
-                                            <span className="text-[9px] text-slate-400 text-center font-bold">{isRTL ? 'شعار المؤسسة' : 'Logo de l\'Institution'}</span>
-                                        )}
-                                    </div>
-                                    <div className="flex flex-col gap-0.5">
-                                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                                            {settings?.store?.name || 'RAID SYSTEM'}
-                                        </h1>
-                                        <div className="flex flex-col text-[9px] font-bold text-slate-600 uppercase tracking-tight">
-                                            {settings?.store?.address && <span>{isRTL ? 'العنوان: ' : 'Address: '}{settings.store.address}</span>}
-                                            {settings?.store?.phone && <span>{isRTL ? 'الهاتف: ' : 'Tel: '}{settings.store.phone}</span>}
-                                            {settings?.store?.email && <span>{isRTL ? 'الإيميل: ' : 'Email: '}{settings.store.email}</span>}
-                                            {settings?.store?.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'Tax ID: '}{settings.store.taxId}</span>}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Right: Invoice Title & Meta */}
-                                <div className="flex flex-col items-end gap-3">
-                                    <h2 className="text-3xl font-black text-emerald-700 uppercase tracking-widest leading-none">
-                                        {t(selectedInvoice.type.toLowerCase())}
-                                    </h2>
-                                    <div className="text-right space-y-0.5">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                            {selectedInvoice.type === 'QUOTATION' ? t('quotation_number') : t('invoice_number')}
-                                        </p>
-                                        <p className="text-lg font-black text-slate-900">#{selectedInvoice.invoiceNo.split('-')[1] || selectedInvoice.invoiceNo}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 2. Customer & Date Meta (Statement Style) */}
-                        <div className="flex justify-between items-start mb-12">
-                            <div className="flex flex-col border border-slate-300 w-full max-w-[50%]">
-                                <div className="bg-emerald-700 text-white font-bold text-[11px] px-3 py-1.5 uppercase tracking-wider">
-                                    {selectedInvoice.supplier ? t('supplier_label') : t('customer_label')}
-                                </div>
-                                <div className="p-3 text-[11px] font-bold text-slate-800 leading-relaxed">
-                                    <p className="text-sm font-black mb-1">{selectedInvoice.customer?.name || selectedInvoice.supplier?.name || t('cash_customer')}</p>
-                                    {(selectedInvoice.customer?.phone || selectedInvoice.supplier?.phone) && <p dir="ltr">{selectedInvoice.customer?.phone || selectedInvoice.supplier?.phone}</p>}
-                                    {selectedInvoice.isDebt && (
-                                        <div className="mt-2 inline-flex items-center gap-2 px-2 py-0.5 bg-red-50 text-red-500 rounded text-[9px] font-black uppercase border border-red-100">
-                                            {t('debt')}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                                    {selectedInvoice.type === 'QUOTATION' ? t('quotation_date') : t('invoice_date')}
-                                </p>
-                                <p className="text-base font-black text-slate-900">{fmtDate(selectedInvoice.createdAt)}</p>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{fmtTime(selectedInvoice.createdAt)}</p>
-                            </div>
-                        </div>
-
-                        {/* 3. Items Table */}
-                        <div className="w-full">
-                            <table className="w-full border-collapse border border-slate-900">
-                                <thead>
-                                    <tr className="bg-slate-50 text-[11px] font-black uppercase tracking-widest text-slate-900 border-b border-slate-900">
-                                        <th className={`py-4 px-4 border-r border-slate-900 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'البيان / المنتج' : 'Description'}</th>
-                                        <th className="py-4 px-4 text-center w-24 border-r border-slate-900">{isRTL ? 'الكمية' : 'Qté'}</th>
-                                        <th className={`py-4 px-4 border-r border-slate-900 w-32 ${isRTL ? 'text-left' : 'text-right'}`}>{isRTL ? 'السعر' : 'Prix'}</th>
-                                        <th className={`py-4 px-4 w-40 ${isRTL ? 'text-left' : 'text-right'}`}>{isRTL ? 'الإجمالي' : 'Total'}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {selectedInvoice.items?.map((item, idx) => (
-                                        <tr key={idx} className="border-b border-slate-300">
-                                            <td className={`py-4 px-4 font-bold text-sm text-slate-700 border-r border-slate-300 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                                {item.product?.name}
-                                            </td>
-                                            <td className="py-4 px-4 text-center font-black text-xs text-slate-500 border-r border-slate-300">
-                                                {item.qty}
-                                            </td>
-                                            <td className={`py-4 px-4 font-bold text-slate-500 text-sm border-r border-slate-300 ${isRTL ? 'text-left' : 'text-right'}`}>
-                                                {fmtNumber(item.price)}
-                                            </td>
-                                            <td className={`py-4 px-4 font-black text-slate-900 text-sm ${isRTL ? 'text-left' : 'text-right'}`}>
-                                                {fmtNumber(item.total)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* 4. Summary */}
-                        {(() => {
-                            const subTotal = selectedInvoice.totalAmount || 0;
-                            const taxAmt = selectedInvoice.taxAmount || 0;
-                            const rate = selectedInvoice.taxRate || 0;
-                            const grandTotal = selectedInvoice.finalAmount || subTotal;
-                            return (
-                                <div className="mt-6 pt-4 border-t border-slate-200 flex justify-between items-end gap-8">
-                                    {/* Left: Amount in Words + Signature */}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[10px] font-bold text-slate-700 mb-6 leading-relaxed italic border-l-2 border-emerald-600 pl-3">
-                                            {formatInvoiceTotalWords(grandTotal, isRTL, settings?.store?.currency, selectedInvoice.type)}
-                                        </p>
-                                        <div className="mt-16">
-                                            <div className="border-t border-slate-300 w-44 pt-2">
-                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                                                    {isRTL ? 'توقيع المستلم والاعتماد' : 'Signature & Approbation'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Right: Tax Breakdown + Total */}
-                                    <div className="w-64 shrink-0">
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between items-center text-xs font-bold text-slate-400">
-                                                <span>{isRTL ? 'المجموع الفرعي (HT)' : 'Sous-total HT'}</span>
-                                                <span>{fmtNumber(subTotal)}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
-                                                <span>{isRTL ? `ض.ق.م (TVA ${rate}%)` : `TVA (${rate}%)`}</span>
-                                                <span>{fmtNumber(taxAmt)}</span>
-                                            </div>
-                                            <div className="h-px bg-slate-200 w-full my-1" />
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">
-                                                    {isRTL ? 'الإجمالي (TTC)' : 'TOTAL TTC'}
-                                                </span>
-                                                <div className="text-right">
-                                                    <span className="text-xl font-black text-slate-900">{fmtNumber(grandTotal)}</span>
-                                                    <span className="text-[9px] font-black text-slate-400 ml-1">{settings?.store?.currency || 'MRU'}</span>
-                                                </div>
-                                            </div>
-                                            <div className="h-1.5 bg-slate-900 w-full rounded-sm" />
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })()}
-
-                        {/* Footer */}
-                        <div className="mt-8 pt-4 border-t border-slate-100 text-center">
-                            <p className="text-[7px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                                {settings?.store?.name || 'RAID SYSTEM'} • {new Date().getFullYear()} • {isRTL ? 'مشغل بواسطة RAID CORE' : 'PROPULSÉ PAR RAID CORE'}
-                            </p>
-                        </div>
-
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    </>
-                )}
+            {/* ─── PRINT TEMPLATE ─── */}
+            <div id="print-area" className={`${isPrinting ? 'block' : 'hidden'} print:block bg-white p-0 text-slate-900`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <div className="max-w-[210mm] mx-auto bg-white p-12">
+                    <InvoicePrintContent 
+                        inv={selectedInvoice} 
+                        settings={settings} 
+                        isRTL={isRTL} 
+                        t={t} 
+                        fmtNumber={fmtNumber} 
+                        fmtDate={fmtDate} 
+                        fmtTime={fmtTime} 
+                    />
+                </div>
             </div>
 
             {/* ─── MAIN CONTENT (Hidden during print) ─── */}
@@ -658,7 +667,7 @@ export default function InvoicesPage() {
                                                         className="p-2 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm group/print" 
                                                         title={t('print_invoice')}
                                                     >
-                                                        <Printer size={18} className="group-hover/print:scale-110 transition-transform" />
+                                                        <Printer size={18} className="group-hover/print:scale-110 transition-transform"  color="#10b981" />
                                                     </button>
                                                     <button 
                                                         onClick={() => startEditing(inv)}
@@ -891,6 +900,46 @@ export default function InvoicesPage() {
                     type={dialog.type}
                     onConfirm={dialog.onConfirm}
                 />
+
+                {/* ─── PRINT PREVIEW MODAL ─── */}
+                <RaidModal
+                    isOpen={isPreviewModalOpen}
+                    onClose={() => setIsPreviewModalOpen(false)}
+                    title={isRTL ? 'معاينة الفاتورة قبل الطباعة' : 'Aperçu avant impression'}
+                    maxWidth="max-w-5xl"
+                >
+                    <div className="flex flex-col gap-6">
+                        <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200 overflow-y-auto max-h-[70vh] shadow-inner">
+                            <div className="bg-white shadow-2xl mx-auto p-12" style={{ width: '210mm', minHeight: '297mm' }}>
+                                <InvoicePrintContent 
+                                    inv={selectedInvoice} 
+                                    settings={settings} 
+                                    isRTL={isRTL} 
+                                    t={t} 
+                                    fmtNumber={fmtNumber} 
+                                    fmtDate={fmtDate} 
+                                    fmtTime={fmtTime} 
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setIsPreviewModalOpen(false)}
+                                className="flex-1 h-14 rounded-2xl bg-slate-100 text-slate-600 font-black hover:bg-slate-200 transition-all"
+                            >
+                                {t('cancel')}
+                            </button>
+                            <button
+                                onClick={executePrint}
+                                className="flex-[2] h-14 rounded-2xl bg-emerald-600 text-white font-black shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3"
+                            >
+                                <Printer size={20} />
+                                {isRTL ? 'تأكيد وطباعة الفاتورة' : 'Confirmer et Imprimer'}
+                            </button>
+                        </div>
+                    </div>
+                </RaidModal>
             </div>
         </div>
     );

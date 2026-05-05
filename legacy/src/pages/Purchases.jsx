@@ -201,7 +201,7 @@ const Purchases = () => {
                     </div>
 
                     <div style={{ display: 'flex', gap: '1.25rem' }}>
-                        <button className="btn btn-primary" style={{ flex: 1, height: '60px', borderRadius: '18px', fontSize: '1rem', background: 'var(--info)', border: 'none' }} onClick={() => window.print()}><Printer size={22} /> {t.printInvoice}</button>
+                        <button className="btn btn-primary" style={{ flex: 1, height: '60px', borderRadius: '18px', fontSize: '1rem', background: 'var(--info)', border: 'none' }} onClick={() => window.print()}><Printer size={22} color="green" /> {t.printInvoice}</button>
                         <button className="btn btn-outline" style={{ flex: 1, height: '60px', borderRadius: '18px', fontSize: '1rem' }} onClick={() => setIsSuccess(false)}>{t.close}</button>
                     </div>
                 </motion.div>

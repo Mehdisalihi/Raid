@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
     console.log(`GET /v1/products - request received. Warehouse: ${warehouseId || 'ALL'}`);
     try {
         const query = {
+            where: { userId: req.userId },
             orderBy: { createdAt: 'desc' },
             include: {
                 WarehouseInventory: true
@@ -50,6 +51,7 @@ router.post('/', async (req, res) => {
                     sellPrice: parseFloat(sellPrice),
                     stockQty: parseInt(stockQty || 0),
                     minStockAlert: parseInt(minStockAlert || 5),
+                    userId: req.userId,
                 },
             });
 
@@ -68,6 +70,7 @@ router.post('/', async (req, res) => {
                         destinationId: warehouseId,
                         qty: parseInt(stockQty),
                         type: 'ADD',
+                        userId: req.userId,
                         notes: 'Initial stock'
                     }
                 });
@@ -87,6 +90,9 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert } = req.body;
     try {
+        const existing = await prisma.product.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Product not found' });
+
         const product = await prisma.product.update({
             where: { id },
             data: {
@@ -141,9 +147,9 @@ router.post('/import', async (req, res) => {
             else newProductsWithoutBarcode.push(p);
         }
 
-        // 3. Find which ones already exist in the database
+        // 3. Find which ones already exist in the database for this user
         const existingProducts = await prisma.product.findMany({
-            where: { barcode: { in: incomingBarcodes } },
+            where: { barcode: { in: incomingBarcodes }, userId: req.userId },
             select: { id: true, barcode: true }
         });
         const existingBarcodesIds = {};
@@ -169,12 +175,12 @@ router.post('/import', async (req, res) => {
 
         await prisma.$transaction(async (tx) => {
             // Find default warehouse
-            const defaultWarehouse = await tx.warehouse.findFirst({ orderBy: { createdAt: 'asc' } });
+            const defaultWarehouse = await tx.warehouse.findFirst({ where: { userId: req.userId }, orderBy: { createdAt: 'asc' } });
             
             // Bulk Create
             if (toCreate.length > 0) {
                 for (const p of toCreate) {
-                    const newProduct = await tx.product.create({ data: p });
+                    const newProduct = await tx.product.create({ data: { ...p, userId: req.userId } });
                     createdCount++;
                     
                     if (defaultWarehouse && p.stockQty > 0) {
@@ -192,6 +198,7 @@ router.post('/import', async (req, res) => {
                                 destinationId: defaultWarehouse.id,
                                 qty: p.stockQty,
                                 type: 'IMPORT',
+                                userId: req.userId,
                                 notes: 'Excel Import'
                             }
                         });
@@ -247,6 +254,9 @@ router.post('/import', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
+        const existing = await prisma.product.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Product not found' });
+
         // 1. Check if the product has any sales associated with it
         const saleCount = await prisma.saleItem.count({
             where: { productId: id }

@@ -10,24 +10,26 @@ router.get('/stats', async (req, res) => {
     try {
         const totalSales = await prisma.invoice.aggregate({
             _sum: { finalAmount: true },
-            where: { type: 'SALE' }
+            where: { type: 'SALE', userId: req.userId }
         });
 
         const totalExpenses = await prisma.expense.aggregate({
-            _sum: { amount: true }
+            _sum: { amount: true },
+            where: { userId: req.userId }
         });
 
-        const productCount = await prisma.product.count();
-        const customerCount = await prisma.customer.count();
+        const productCount = await prisma.product.count({ where: { userId: req.userId } });
+        const customerCount = await prisma.customer.count({ where: { userId: req.userId } });
 
         // Optimized: Database count for low stock
         const lowStockCount = await prisma.product.count({
             where: {
-                stockQty: { lte: 5 } // Default alert threshold, ideally should use per-product alert but this is 100x faster for large DBs
+                stockQty: { lte: 5 }, // Default alert threshold, ideally should use per-product alert but this is 100x faster for large DBs
+                userId: req.userId
             }
         });
 
-        const transactionCount = await prisma.invoice.count({ where: { type: 'SALE' } });
+        const transactionCount = await prisma.invoice.count({ where: { type: 'SALE', userId: req.userId } });
 
         res.json({
             sales: totalSales._sum.finalAmount || 0,
@@ -53,12 +55,13 @@ router.get('/activities', async (req, res) => {
             prisma.invoice.findMany({
                 take: 10,
                 orderBy: { createdAt: 'desc' },
-                where: { type: 'SALE' },
+                where: { type: 'SALE', userId: req.userId },
                 select: { id: true, finalAmount: true, createdAt: true, customer: { select: { name: true } } }
             }),
             prisma.expense.findMany({
                 take: 10,
                 orderBy: { date: 'desc' },
+                where: { userId: req.userId },
                 select: { id: true, amount: true, date: true, category: true }
             })
         ]);
@@ -92,7 +95,7 @@ router.get('/top-products', async (req, res) => {
     try {
         const items = await prisma.saleItem.groupBy({
             by: ['productId'],
-            where: { invoice: { type: 'SALE' } },
+            where: { invoice: { type: 'SALE', userId: req.userId } },
             _sum: { qty: true, total: true },
             orderBy: { _sum: { qty: 'desc' } },
             take: 5
@@ -133,6 +136,7 @@ router.get('/charts', async (req, res) => {
                 _sum: { finalAmount: true },
                 where: {
                     type: 'SALE',
+                    userId: req.userId,
                     createdAt: { gte: d, lt: nextD }
                 }
             });

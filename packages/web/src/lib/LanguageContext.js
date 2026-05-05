@@ -678,7 +678,7 @@ export const translations = {
         register_error: 'Erreur lors de l\'inscription. Veuillez réessayer.',
 
         // Premium Login/Register
-        system_name_full: 'Raid Financial & Warehouse Manager',
+        system_name_full: 'Gestionnaire Financier & de Stock Raid',
         smart_reports: 'Rapports Intelligents',
         smart_reports_desc: 'Analyses avancées pour la croissance de votre entreprise.',
         secure_cloud: 'Cloud Sécurisé',
@@ -865,6 +865,55 @@ export const LanguageProvider = ({ children }) => {
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     }, [lang]);
 
+    const [pdfPreview, setPdfPreview] = useState(null);
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+    // Override window.print to use native Electron print ONLY if silent is requested
+    useEffect(() => {
+        if (typeof window !== 'undefined' && !window._printOverridden) {
+            const originalPrint = window.print;
+            window.print = async (options) => {
+                // If silent printing is explicitly requested, use Electron's native print API to bypass dialog
+                if (options && options.silent && window.electronAPI && window.electronAPI.print) {
+                    try {
+                        const result = await window.electronAPI.print({ ...options, printBackground: true });
+                        if (!result.success) {
+                            console.warn('Native silent print failed, falling back to browser print:', result.error);
+                            originalPrint();
+                        }
+                    } catch (err) {
+                        console.error('Electron print failed, falling back', err);
+                        originalPrint();
+                    }
+                } else if (window.electronAPI && window.electronAPI.printToPDF) {
+                    // For non-silent Electron prints, generate a PDF and show it in our custom preview modal!
+                    try {
+                        setIsGeneratingPdf(true);
+                        // Give the DOM a tiny bit of time to ensure print-specific CSS is ready
+                        setTimeout(async () => {
+                            const pdfResult = await window.electronAPI.printToPDF({ printBackground: true });
+                            if (pdfResult.success) {
+                                setPdfPreview(pdfResult.data);
+                            } else {
+                                console.error('Failed to generate PDF:', pdfResult.error);
+                                originalPrint(); // Fallback
+                            }
+                            setIsGeneratingPdf(false);
+                        }, 50);
+                    } catch (e) {
+                        console.error(e);
+                        setIsGeneratingPdf(false);
+                        originalPrint();
+                    }
+                } else {
+                    // For normal web environment
+                    originalPrint();
+                }
+            };
+            window._printOverridden = true;
+        }
+    }, []);
+
     const toggleLang = useCallback((newLang) => {
         if (newLang !== 'ar' && newLang !== 'fr') return;
         setLangState(newLang);
@@ -927,6 +976,57 @@ export const LanguageProvider = ({ children }) => {
             <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={lang === 'ar' ? 'font-arabic' : 'font-sans'}>
                 {children}
             </div>
+
+            {/* Print Loading Overlay */}
+            {isGeneratingPdf && (
+                <div className="fixed inset-0 z-[99999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center">
+                        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+                        <p className="text-slate-700 font-bold">{lang === 'ar' ? 'جاري تجهيز الفاتورة للطباعة...' : 'Préparation de la facture...'}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Print Preview Modal for Electron */}
+            {pdfPreview && (
+                <div className="fixed inset-0 z-[99999] bg-slate-900 flex flex-col">
+                    {/* Toolbar */}
+                    <div className="h-16 bg-slate-800 flex items-center justify-between px-6 shrink-0 shadow-lg">
+                        <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            {lang === 'ar' ? 'معاينة الطباعة المتقدمة' : 'Aperçu avant impression'}
+                        </h2>
+                        <div className="flex gap-4">
+                            <button 
+                                onClick={() => setPdfPreview(null)}
+                                className="px-6 py-2 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors"
+                            >
+                                {lang === 'ar' ? 'إلغاء' : 'Annuler'}
+                            </button>
+                            <button 
+                                onClick={async () => {
+                                    if (window.electronAPI && window.electronAPI.print) {
+                                        await window.electronAPI.print({ silent: false, printBackground: true });
+                                        setPdfPreview(null);
+                                    }
+                                }}
+                                className="px-8 py-2 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                {lang === 'ar' ? 'طباعة عبر نظام ويندوز' : 'Imprimer (Système)'}
+                            </button>
+                        </div>
+                    </div>
+                    {/* PDF Viewer */}
+                    <div className="flex-1 p-8 overflow-hidden flex justify-center bg-slate-900">
+                        <iframe 
+                            src={`data:application/pdf;base64,${pdfPreview}`} 
+                            className="w-full max-w-5xl h-full rounded-xl shadow-2xl bg-white"
+                            title="Print Preview"
+                        />
+                    </div>
+                </div>
+            )}
         </LanguageContext.Provider>
     );
 };

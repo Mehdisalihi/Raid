@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
     try {
         const warehouses = await prisma.warehouse.findMany({
+            where: { userId: req.userId },
             include: {
                 _count: {
                     select: { Inventory: true }
@@ -26,7 +27,7 @@ router.post('/', async (req, res) => {
     const { name, location, manager } = req.body;
     try {
         const warehouse = await prisma.warehouse.create({
-            data: { name, location, manager }
+            data: { name, location, manager, userId: req.userId }
         });
         res.json(warehouse);
     } catch (error) {
@@ -39,6 +40,9 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, location, manager, isActive } = req.body;
     try {
+        const existing = await prisma.warehouse.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Warehouse not found' });
+
         const warehouse = await prisma.warehouse.update({
             where: { id },
             data: { name, location, manager, isActive }
@@ -53,6 +57,9 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
+        const existing = await prisma.warehouse.findFirst({ where: { id, userId: req.userId } });
+        if (!existing) return res.status(404).json({ error: 'Warehouse not found' });
+
         // We should check for inventory before deleting, but keeping it simple for now
         await prisma.warehouse.delete({ where: { id } });
         res.json({ message: 'warehouse deleted' });
@@ -120,6 +127,7 @@ router.post('/transfer', async (req, res) => {
                     destinationId: destinationWarehouseId,
                     qty: transferQty,
                     type: 'TRANSFER',
+                    userId: req.userId,
                     notes: notes || `Transfer from ${sourceWarehouseId} to ${destinationWarehouseId}`
                 }
             });

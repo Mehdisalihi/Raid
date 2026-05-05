@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +9,7 @@ import 'database_service.dart';
 const String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
 
 class ApiService {
-  static const _timeout = Duration(seconds: 15); // Slightly shorter timeout for better UX
+  static const _timeout = Duration(seconds: 15);
 
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -31,7 +33,7 @@ class ApiService {
       return jsonDecode(res.body);
     } catch (e) {
       if (kDebugMode) print('API GET Error ($path): $e');
-      rethrow; // Re-throw to be handled by the specific service (fallback to DB)
+      rethrow;
     }
   }
 
@@ -45,6 +47,9 @@ class ApiService {
       return jsonDecode(res.body);
     } catch (e) {
       if (kDebugMode) print('API POST Error ($path): $e');
+      if (e is SocketException || e is TimeoutException || e.toString().contains('Network')) {
+        return await _handleOfflineWrite('INSERT', path, body);
+      }
       rethrow;
     }
   }
@@ -59,20 +64,45 @@ class ApiService {
       return jsonDecode(res.body);
     } catch (e) {
       if (kDebugMode) print('API PUT Error ($path): $e');
+      if (e is SocketException || e is TimeoutException || e.toString().contains('Network')) {
+        return await _handleOfflineWrite('UPDATE', path, body);
+      }
       rethrow;
     }
   }
 
-  static Future<void> delete(String path) async {
+  static Future<dynamic> delete(String path) async {
     try {
       final res = await http
           .delete(Uri.parse('$_baseUrl$path'), headers: await _headers())
           .timeout(_timeout);
       _check(res);
+      return {'success': true};
     } catch (e) {
       if (kDebugMode) print('API DELETE Error ($path): $e');
+      if (e is SocketException || e is TimeoutException || e.toString().contains('Network')) {
+        return await _handleOfflineWrite('DELETE', path, null);
+      }
       rethrow;
     }
+  }
+
+  static Future<dynamic> _handleOfflineWrite(String method, String path, Map<String, dynamic>? body) async {
+    final db = DatabaseService();
+    final id = 'local_sync_${DateTime.now().millisecondsSinceEpoch}';
+    
+    final segments = path.split('/').where((s) => s.isNotEmpty).toList();
+    final resource = segments.isNotEmpty ? segments[0] : 'unknown';
+
+    await db.insert('pending_sync', {
+      'id': id,
+      'tableName': resource,
+      'operation': method,
+      'data': jsonEncode(body ?? {}),
+      'createdAt': DateTime.now().toIso8601String(),
+    });
+    
+    return {'id': id, 'offline': true};
   }
 
   static void _check(http.Response res) {
@@ -95,9 +125,7 @@ class DataSync {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('last_sync', DateTime.now().toIso8601String());
     
-    // Sync offline records
     await SyncService.syncPending();
-    
     notify();
   }
 

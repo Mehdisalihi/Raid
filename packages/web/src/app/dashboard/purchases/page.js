@@ -11,6 +11,8 @@ import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 
+import { db } from '@/lib/db';
+
 export default function PurchasesPage() {
     const { t, isRTL, fmtNumber } = useLanguage();
     const [purchases, setPurchases] = useState([]);
@@ -53,9 +55,18 @@ export default function PurchasesPage() {
                 api.get('/suppliers').catch(() => ({ data: [] })),
                 api.get('/warehouses').catch(() => ({ data: [] })),
             ]);
-            const purchasesData = Array.isArray(purchRes.data) ? purchRes.data : [];
-            const suppliersData = Array.isArray(supRes.data) ? supRes.data : [];
-            const warehousesData = Array.isArray(warRes.data) ? warRes.data : [];
+            let purchasesData = Array.isArray(purchRes.data) ? purchRes.data : [];
+            let suppliersData = Array.isArray(supRes.data) ? supRes.data : [];
+            let warehousesData = Array.isArray(warRes.data) ? warRes.data : [];
+
+            // If all empty, try local fallback
+            if (purchasesData.length === 0 && suppliersData.length === 0 && !navigator.onLine) {
+                try {
+                    purchasesData = await db.purchases.toArray();
+                    suppliersData = await db.suppliers.toArray();
+                    warehousesData = await db.warehouses.toArray();
+                } catch {}
+            }
 
             setPurchases(purchasesData);
             setSuppliers(suppliersData);
@@ -65,6 +76,14 @@ export default function PurchasesPage() {
             }
         } catch (err) {
             console.error(err);
+            // Full offline fallback
+            try {
+                setPurchases(await db.purchases.toArray());
+                setSuppliers(await db.suppliers.toArray());
+                const wh = await db.warehouses.toArray();
+                setWarehouses(wh);
+                if (wh.length > 0) setFormData(prev => ({ ...prev, warehouseId: wh[0].id }));
+            } catch {}
         } finally {
             setLoading(false);
         }

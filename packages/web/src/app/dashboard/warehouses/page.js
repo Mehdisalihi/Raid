@@ -52,7 +52,11 @@ export default function WarehousesPage() {
             setWarehouses(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Warehouses fetch error:', err);
-            setWarehouses([]);
+            // Offline fallback: load from IndexedDB
+            try {
+                const local = await db.warehouses.toArray();
+                setWarehouses(local);
+            } catch { setWarehouses([]); }
         } finally {
             setLoading(false);
         }

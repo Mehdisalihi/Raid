@@ -17,6 +17,7 @@ import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import invoicesRoutes from './modules/invoices/invoices.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
 import staffRoutes from './modules/staff/staff.routes.js';
+import authMiddleware from './lib/authMiddleware.js';
 
 dotenv.config();
 
@@ -38,20 +39,20 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 
 app.use('/v1/auth', authRoutes);
-app.use('/v1/users', usersRoutes);
-app.use('/v1/products', productsRoutes);
-app.use('/v1/sales', salesRoutes);
-app.use('/v1/customers', customersRoutes);
-app.use('/v1/suppliers', suppliersRoutes);
-app.use('/v1/expenses', expensesRoutes);
-app.use('/v1/reports', reportsRoutes);
-app.use('/v1/purchases', purchasesRoutes);
-app.use('/v1/debts', debtsRoutes);
-app.use('/v1/returns', returnsRoutes);
-app.use('/v1/warehouses', warehousesRoutes);
-app.use('/v1/inventory', inventoryRoutes);
-app.use('/v1/invoices', invoicesRoutes);
-app.use('/v1/staff', staffRoutes);
+app.use('/v1/users', authMiddleware, usersRoutes);
+app.use('/v1/products', authMiddleware, productsRoutes);
+app.use('/v1/sales', authMiddleware, salesRoutes);
+app.use('/v1/customers', authMiddleware, customersRoutes);
+app.use('/v1/suppliers', authMiddleware, suppliersRoutes);
+app.use('/v1/expenses', authMiddleware, expensesRoutes);
+app.use('/v1/reports', authMiddleware, reportsRoutes);
+app.use('/v1/purchases', authMiddleware, purchasesRoutes);
+app.use('/v1/debts', authMiddleware, debtsRoutes);
+app.use('/v1/returns', authMiddleware, returnsRoutes);
+app.use('/v1/warehouses', authMiddleware, warehousesRoutes);
+app.use('/v1/inventory', authMiddleware, inventoryRoutes);
+app.use('/v1/invoices', authMiddleware, invoicesRoutes);
+app.use('/v1/staff', authMiddleware, staffRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', service: 'mohassibe-backend' });

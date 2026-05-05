@@ -136,7 +136,7 @@ const CustomerStatement = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button className="btn btn-outline" onClick={() => window.print()} disabled={!entity}>
-                        <Printer size={18} /> {t.printStatement}
+                        <Printer size={18} color="green" /> {t.printStatement}
                     </button>
                     <button className="btn btn-outline" disabled={!entity}>
                         <Download size={18} /> {t.exportPDF}

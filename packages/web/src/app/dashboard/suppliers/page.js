@@ -51,7 +51,11 @@ export default function SuppliersPage() {
             setSuppliers(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Suppliers fetch error:', err);
-            setSuppliers([]);
+            // Offline fallback: load from IndexedDB
+            try {
+                const local = await db.suppliers.toArray();
+                setSuppliers(local);
+            } catch { setSuppliers([]); }
         } finally {
             setLoading(false);
         }

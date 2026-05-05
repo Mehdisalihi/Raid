@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import SummaryBox from '@/components/SummaryBox';
 import TxRow from '@/components/TxRow';
+import RaidModal from '@/components/RaidModal';
 
 // ─── TYPE LABELS ─────────────────────────────────────
 const TYPE_MAP = {
@@ -24,6 +25,64 @@ const TYPE_MAP = {
 };
 
 // ─── BUILD TRANSACTIONS ──────────────────────────
+const StatementPrintContent = ({ entityInfo, fmtDate, customerId, cid, summary, filteredTxns, isRTL, lang, fmtNumber, paginated }) => {
+    return (
+        <div className="space-y-4 bg-white text-slate-900" style={{ fontFamily: "'Cairo', sans-serif" }}>
+            <CorporateHeader 
+                isRTL={isRTL} 
+                printDate={fmtDate(new Date())} 
+                customerId={entityInfo?.customerId || entityInfo?.supplierId || cid}
+            />
+
+            <CustomerSection 
+                customer={entityInfo} 
+                fmtDate={fmtDate} 
+                isRTL={isRTL} 
+                fmtNumber={fmtNumber} 
+                summary={summary}
+            />
+
+            <div className="mb-2">
+                <table className="w-full border-collapse border border-slate-300">
+                    <thead>
+                        <tr className="bg-sky-600 print-exact">
+                            <th className={`border-x border-white py-1.5 px-3 text-[10px] font-bold text-white w-[12%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
+                            <th className={`border-x border-white py-1.5 px-3 text-[10px] font-bold text-white w-[15%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'رقم الفاتورة' : 'N° Facture'}</th>
+                            <th className={`border-x border-white py-1.5 px-3 text-[10px] font-bold text-white w-[37%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'البيان' : 'Désignation'}</th>
+                            <th className={`border-x border-white py-1.5 px-3 text-[10px] font-bold text-white w-[12%] text-right`}>{isRTL ? 'مدين' : 'Débit'}</th>
+                            <th className={`border-x border-white py-1.5 px-3 text-[10px] font-bold text-white w-[12%] text-right`}>{isRTL ? 'دائن' : 'Crédit'}</th>
+                            <th className={`border-x border-white py-1.5 px-3 text-[10px] font-bold text-white w-[12%] text-right`}>{isRTL ? 'الرصيد' : 'Solde'}</th>
+                        </tr>
+                    </thead>
+                    <tbody className="print-zebra">
+                        {filteredTxns.map((tx, idx) => (
+                            <TxRow 
+                                key={`print-${tx.id || idx}`} 
+                                tx={tx} 
+                                isRTL={isRTL} 
+                                lang={lang} 
+                                fmt={fmtNumber} 
+                                fmtDate={fmtDate} 
+                                className={`text-[10px] border border-slate-200 ${idx % 2 === 0 ? 'bg-slate-50' : 'bg-white'}`}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+                
+                <div className="flex items-center justify-between bg-sky-600 text-white font-bold text-[11px] mt-0 border border-slate-300 border-t-0 print-exact">
+                    <div className="flex-1 px-3 py-1 text-right uppercase tracking-wider">
+                        {isRTL ? 'إجمالي الرصيد الحالي' : 'Solde actuel du compte'} MRU
+                    </div>
+                    <div className="px-3 py-1 font-black text-right w-32 border-l border-white bg-sky-700 print-exact">
+                        {fmtNumber(summary.finalBalance)}
+                    </div>
+                </div>
+            </div>
+
+            <PrintFooter isRTL={isRTL} finalBalance={summary.finalBalance} fmt={fmtNumber} />
+        </div>
+    );
+};
 
 
 const ROWS_PER_PAGE = 10;
@@ -51,6 +110,7 @@ function StatementInner() {
     const [sortField, setSortField] = useState('date');
     const [sortDir, setSortDir] = useState('asc');
     const [page, setPage] = useState(1);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
     // Initial load
     useEffect(() => {
@@ -314,7 +374,7 @@ function StatementInner() {
             {/* ── TOP BAR (SCREEN ONLY) ── */}
             <div className="flex items-center justify-between flex-wrap gap-3 print:hidden">
                 <div className="flex items-center gap-2">
-                    <Btn onClick={() => window.print()} icon={<Printer size={15} />} label={isRTL ? 'طباعة' : 'Imprimer'} />
+                    <Btn onClick={() => setIsPreviewOpen(true)} icon={<Printer size={15}   color="#10b981" />} label={isRTL ? 'طباعة' : 'Imprimer'} />
                     <Btn onClick={exportCSV} icon={<FileSpreadsheet size={15} />} label={isRTL ? 'تصدير CSV' : 'Exporter CSV'} ghost />
                 </div>
                 <h1 className="text-2xl font-black text-[var(--text-primary)]">
@@ -411,42 +471,19 @@ function StatementInner() {
                         </div>
 
                         {/* ─── TRANSACTION TABLE (PRINT ONLY) ─── */}
-                        <div className="hidden print:block mb-2">
-                            <table className="w-full border-collapse border border-slate-300">
-                                <thead>
-                                    <tr className="bg-emerald-700 print-exact">
-                                        <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[12%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'التاريخ' : 'Date'}</th>
-                                        <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[15%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'رقم الفاتورة' : 'N° Facture'}</th>
-                                        <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[37%] ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'البيان' : 'Description'}</th>
-                                        <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[12%] text-right`}>{isRTL ? 'مدين' : 'Débit'}</th>
-                                        <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[12%] text-right`}>{isRTL ? 'دائن' : 'Crédit'}</th>
-                                        <th className={`border-x border-white py-1.5 px-3 text-[11px] font-bold text-white w-[12%] text-right`}>{isRTL ? 'الرصيد' : 'Solde'}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="print-zebra">
-                                    {filteredTxns.map((tx, idx) => (
-                                        <TxRow 
-                                            key={`print-${tx.id || idx}`} 
-                                            tx={tx} 
-                                            isRTL={isRTL} 
-                                            lang={lang} 
-                                            fmt={fmtNumber} 
-                                            fmtDate={fmtDate} 
-                                            className={`print-exact ${idx % 2 === 0 ? 'print:bg-slate-50' : 'print:bg-white'}`}
-                                        />
-                                    ))}
-                                </tbody>
-                            </table>
-                            
-                            {/* ─── PRINT ONLY: FULL WIDTH TOTALS BAR ─── */}
-                            <div className="hidden print:flex items-center justify-between bg-emerald-700 text-white font-bold text-[12px] print-exact mt-0 border border-slate-300 border-t-0 break-inside-avoid">
-                                <div className="flex-1 px-3 py-1.5 text-right">
-                                    {isRTL ? 'إجمالي الرصيد الحالي' : 'Solde actuel du compte'} MRU
-                                </div>
-                                <div className="px-3 py-1.5 font-black text-right w-32 border-l border-white bg-emerald-800">
-                                    {fmtNumber(summary.finalBalance)}
-                                </div>
-                            </div>
+                        <div className="hidden print:block">
+                            <StatementPrintContent 
+                                entityInfo={entityInfo}
+                                fmtDate={fmtDate}
+                                customerId={entityInfo?.customerId || entityInfo?.supplierId || cid}
+                                cid={cid}
+                                summary={summary}
+                                filteredTxns={filteredTxns}
+                                isRTL={isRTL}
+                                lang={lang}
+                                fmtNumber={fmtNumber}
+                                paginated={paginated}
+                            />
                         </div>
 
                         <div className="print:hidden break-inside-avoid">
@@ -469,10 +506,56 @@ function StatementInner() {
                     <div className="p-4 bg-[var(--surface-2)] rounded-2xl text-[var(--text-muted)]"><Users size={40} /></div>
                     <div className="text-center">
                         <h3 className="text-lg font-black text-[var(--text-primary)]">{isRTL ? 'بانتظار اختيار الاسم' : 'En attente de sélection'}</h3>
-                        <p className="text-sm font-bold text-[var(--text-muted)]">{isRTL ? 'يرجى اختيار اسم لعرض كشف الحساب الموحد' : 'Veuillez choisir un اسم'}</p>
+                        <p className="text-sm font-bold text-[var(--text-muted)]">{isRTL ? 'يرجى اختيار اسم لعرض كشف الحساب الموحد' : 'Veuillez choisir un nom'}</p>
                     </div>
                 </div>
             )}
+
+            {/* ─── PRINT PREVIEW MODAL ─── */}
+            <RaidModal
+                isOpen={isPreviewOpen}
+                onClose={() => setIsPreviewOpen(false)}
+                title={isRTL ? 'معاينة كشف الحساب قبل الطباعة' : 'Aperçu du relevé avant impression'}
+                maxWidth="max-w-5xl"
+            >
+                <div className="flex flex-col gap-6">
+                    <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200 overflow-y-auto max-h-[70vh] shadow-inner">
+                        <div className="bg-white shadow-2xl mx-auto p-12" style={{ width: '210mm', minHeight: '297mm' }}>
+                            <StatementPrintContent 
+                                entityInfo={entityInfo}
+                                fmtDate={fmtDate}
+                                customerId={entityInfo?.customerId || entityInfo?.supplierId || cid}
+                                cid={cid}
+                                summary={summary}
+                                filteredTxns={filteredTxns}
+                                isRTL={isRTL}
+                                lang={lang}
+                                fmtNumber={fmtNumber}
+                                paginated={paginated}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setIsPreviewOpen(false)}
+                            className="flex-1 h-14 rounded-2xl bg-slate-100 text-slate-600 font-black hover:bg-slate-200 transition-all"
+                        >
+                            {isRTL ? 'إلغاء' : 'Annuler'}
+                        </button>
+                        <button
+                            onClick={() => {
+                                setIsPreviewOpen(false);
+                                setTimeout(() => window.print(), 300);
+                            }}
+                            className="flex-[2] h-14 rounded-2xl bg-emerald-600 text-white font-black shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3"
+                        >
+                            <Printer size={20} />
+                            {isRTL ? 'تأكيد وطباعة الكشف' : 'Confirmer et Imprimer'}
+                        </button>
+                    </div>
+                </div>
+            </RaidModal>
         </div>
     );
 }
@@ -488,9 +571,9 @@ function CorporateHeader({ isRTL, printDate, customerId }) {
         if (savedUser) {
             const user = JSON.parse(savedUser);
             setStoreInfo({
-                name: user.storeName || (isRTL ? 'اسم مؤسستك' : 'Your Institution Name'),
+                name: user.storeName || (isRTL ? 'اسم مؤسستك' : 'Établissement Raid'),
                 logo: user.storeLogo || null,
-                slogan: user.storeSlogan || (isRTL ? 'لإدارة أموالك بذكاء' : 'Smart Financial Management'),
+                slogan: user.storeSlogan || (isRTL ? 'لإدارة أموالك بذكاء' : 'Gestion financière intelligente'),
                 address: user.storeAddress || '',
                 phone: user.storePhone || '',
                 email: user.storeEmail || '',
@@ -503,8 +586,8 @@ function CorporateHeader({ isRTL, printDate, customerId }) {
         <div className="hidden print:block mb-4 border-b-2 border-slate-900 pb-4">
             {/* Top row: Very small app branding */}
             <div className={`flex items-center gap-1.5 mb-2 text-[8px] font-bold text-slate-400 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <img src="/Raed.png" alt="App Logo" className="w-3.5 h-3.5 grayscale opacity-40" />
-                <span>{isRTL ? 'رائد المحاسبي' : 'Raid Accounting'}</span>
+                <img src="/Raed.png" alt="App Logo" className="w-4 h-4 opacity-80" />
+                <span>{isRTL ? 'رائد المحاسبي' : 'Raid Comptabilité'}</span>
             </div>
 
             <div className="flex justify-between items-start">
@@ -514,7 +597,7 @@ function CorporateHeader({ isRTL, printDate, customerId }) {
                         {storeInfo.logo ? (
                             <img src={storeInfo.logo} alt="Logo" className="w-full h-full object-contain" />
                         ) : (
-                            <span className="text-[9px] text-slate-400 text-center font-bold">{isRTL ? 'شعار المؤسسة' : 'Institution Logo'}</span>
+                            <span className="text-[9px] text-slate-400 text-center font-bold">{isRTL ? 'شعار المؤسسة' : 'Logo Institution'}</span>
                         )}
                     </div>
                     <div className="flex flex-col gap-0.5">
@@ -522,10 +605,10 @@ function CorporateHeader({ isRTL, printDate, customerId }) {
                             {storeInfo.name}
                         </h1>
                         <div className="flex flex-col text-[9px] font-bold text-slate-600 uppercase tracking-tight">
-                            {storeInfo.address && <span>{isRTL ? 'العنوان: ' : 'Address: '}{storeInfo.address}</span>}
-                            {storeInfo.phone && <span>{isRTL ? 'الهاتف: ' : 'Tel: '}{storeInfo.phone}</span>}
-                            {storeInfo.email && <span>{isRTL ? 'الإيميل: ' : 'Email: '}{storeInfo.email}</span>}
-                            {storeInfo.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'Tax ID: '}{storeInfo.taxId}</span>}
+                            {storeInfo.address && <span>{isRTL ? 'العنوان: ' : 'Adresse: '}{storeInfo.address}</span>}
+                            {storeInfo.phone && <span>{isRTL ? 'الهاتف: ' : 'Tél: '}{storeInfo.phone}</span>}
+                            {storeInfo.email && <span>{isRTL ? 'الإيميل: ' : 'E-mail: '}{storeInfo.email}</span>}
+                            {storeInfo.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'NIF: '}{storeInfo.taxId}</span>}
                         </div>
                     </div>
                 </div>
@@ -533,7 +616,7 @@ function CorporateHeader({ isRTL, printDate, customerId }) {
                 {/* Right: Statement Title & Details Table */}
                 <div className="flex flex-col items-end gap-3">
                     <h2 className="text-3xl font-black text-emerald-700 uppercase tracking-widest leading-none">
-                        {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'Statement')}
+                        {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'RELEVÉ DE COMPTE')}
                     </h2>
                     <table className="text-[10px] font-bold text-slate-800 border-collapse">
                         <tbody>
@@ -558,10 +641,10 @@ function PrintFooter({ isRTL, finalBalance, fmt }) {
                     ? `رصيد حسابك هو ${fmt(finalBalance)} MRU. يرجى تسديد المبلغ المتبقي في أقرب وقت.`
                     : (lang === 'fr' 
                         ? `Le solde de votre compte est de ${fmt(finalBalance)} MRU. Veuillez régler le solde restant dès que possible.`
-                        : `Your account balance is ${fmt(finalBalance)} MRU. Please make your payment to cover the balance by the due date.`)}
+                        : `Le solde de votre compte est de ${fmt(finalBalance)} MRU. Veuillez régler le solde restant dès que possible.`)}
             </p>
             <h4 className="text-base font-black mb-4">
-                {isRTL ? 'شكراً لتعاملكم معنا!' : (lang === 'fr' ? 'Merci de votre confiance !' : 'Thank you for your business!')}
+                {isRTL ? 'شكراً لتعاملكم معنا!' : (lang === 'fr' ? 'Merci de votre confiance !' : 'Merci de votre confiance !')}
             </h4>
             
             <div className="w-full border-t border-slate-300 pt-3 text-center space-y-1 text-[10px]">
@@ -570,7 +653,7 @@ function PrintFooter({ isRTL, finalBalance, fmt }) {
                         ? 'إذا كان لديك أي استفسارات بخصوص كشف الحساب، يرجى التواصل معنا'
                         : (lang === 'fr' 
                             ? 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter'
-                            : 'Should you have any enquiries concerning this statement, please contact us')}
+                            : 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter')}
                 </p>
             </div>
         </div>
@@ -585,7 +668,7 @@ function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
             {/* Left: Bill To */}
             <div className="flex flex-col border border-slate-300">
                 <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
-                    {isRTL ? 'فاتورة إلى:' : (lang === 'fr' ? 'FACTURER À :' : 'Bill To:')}
+                    {isRTL ? 'فاتورة إلى:' : (lang === 'fr' ? 'FACTURER À :' : 'FACTURER À :')}
                 </div>
                 <div className="p-3 text-[11px] font-bold text-slate-800 leading-relaxed">
                     <p>{customer.name}</p>
@@ -598,20 +681,20 @@ function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
             {/* Right: Account Summary */}
             <div className="flex flex-col border border-slate-300">
                 <div className="bg-emerald-700 text-white font-bold text-[12px] px-3 py-1 uppercase">
-                    {isRTL ? 'ملخص الحساب' : (lang === 'fr' ? 'RÉSUMÉ DU COMPTE' : 'Account Summary')}
+                    {isRTL ? 'ملخص الحساب' : (lang === 'fr' ? 'RÉSUMÉ DU COMPTE' : 'RÉSUMÉ DU COMPTE')}
                 </div>
                 <table className="w-full text-[11px] font-bold text-slate-800 border-collapse">
                     <tbody>
                         <tr className="border-b border-slate-100">
-                            <td className="px-3 py-1.5">{isRTL ? 'المدفوعات (دائن)' : (lang === 'fr' ? 'Paiements (Crédit)' : 'Credits')}</td>
+                            <td className="px-3 py-1.5">{isRTL ? 'المدفوعات (دائن)' : (lang === 'fr' ? 'Paiements (Crédit)' : 'Paiements (Crédit)')}</td>
                             <td className="px-3 py-1.5 text-right">{fmtNumber(summary.totalCredit)}</td>
                         </tr>
                         <tr className="border-b border-slate-100">
-                            <td className="px-3 py-1.5">{isRTL ? 'الفواتير (مدين)' : (lang === 'fr' ? 'Factures (Débit)' : 'New Charges')}</td>
+                            <td className="px-3 py-1.5">{isRTL ? 'الفواتير (مدين)' : (lang === 'fr' ? 'Factures (Débit)' : 'Factures (Débit)')}</td>
                             <td className="px-3 py-1.5 text-right">{fmtNumber(summary.totalDebit)}</td>
                         </tr>
                         <tr className="border-b border-slate-100">
-                            <td className="px-3 py-1.5 font-black text-slate-900">{isRTL ? 'إجمالي الرصيد المستحق' : (lang === 'fr' ? 'Solde total dû' : 'Total Balance Due')}</td>
+                            <td className="px-3 py-1.5 font-black text-slate-900">{isRTL ? 'إجمالي الرصيد المستحق' : (lang === 'fr' ? 'Solde total dû' : 'Solde total dû')}</td>
                             <td className="px-3 py-1.5 text-right font-black text-slate-900">{fmtNumber(summary.finalBalance)}</td>
                         </tr>
                     </tbody>

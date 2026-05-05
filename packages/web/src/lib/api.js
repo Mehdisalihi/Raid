@@ -59,107 +59,140 @@ function resolveTableFromUrl(url) {
 // SHARED OFFLINE WRITE HANDLER
 // ────────────────────────────────────────────
 async function handleOfflineWrite(config) {
-    console.log(`📡 Handling ${config.method.toUpperCase()} offline/network failure for ${config.url}`);
-    
-    const { table: dexieTable } = resolveTableFromUrl(config.url);
-    const path = config.url.split('?')[0];
-    const segments = path.split('/').filter(Boolean);
-    const recordId = config.method === 'post' ? null : segments[segments.length - 1];
-    
-    // Generate a temporary local ID for POST requests if needed
-    let mockResponseData = { id: recordId || 'local_' + Date.now(), ...config.data };
+    try {
+        console.log(`📡 Handling ${config.method.toUpperCase()} offline/network failure for ${config.url}`);
+        
+        let payload = config.data;
+        if (typeof payload === 'string') {
+            try { payload = JSON.parse(payload); } catch { payload = {}; }
+        }
+        if (!payload || typeof payload !== 'object') payload = {};
 
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    const user = userStr ? JSON.parse(userStr) : null;
-    const orgId = user?.organizationId || 1;
+        const { table: dexieTable } = resolveTableFromUrl(config.url);
+        
+        const path = config.url.split('?')[0];
+        const segments = path.split('/').filter(Boolean);
+        const idx = segments.indexOf('v1');
+        const relevant = idx !== -1 ? segments.slice(idx + 1) : segments;
+        
+        const method = (config.method || '').toLowerCase();
+        const recordId = method === 'post' ? null : relevant[relevant.length - 1];
+        const resource = relevant[0] || dexieTable;
+        
+        let mockResponseData = { id: recordId || 'local_' + Date.now(), ...payload };
 
-    const resource = segments[0] || dexieTable;
+        const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+        const user = userStr ? JSON.parse(userStr) : null;
+        const orgId = user?.organizationId || 1;
 
-    await addToOutbox(
-        resource, // Store the resource path for SyncService
-        recordId || mockResponseData.id, 
-        config.method.toUpperCase() === 'POST' ? 'INSERT' : config.method.toUpperCase() === 'PUT' ? 'UPDATE' : 'DELETE', 
-        config.data,
-        orgId
-    );
-
-    // Update local database immediately
-    if (dexieTable && db[dexieTable]) {
-        try {
-            if (config.method === 'post') {
-                const newRecord = { ...config.data, id: mockResponseData.id, sync_status: 'pending_push', createdAt: new Date().toISOString() };
-                await db[dexieTable].add(newRecord);
-                
-                // SPECIAL LOGIC: Sales/Purchases/Returns should also appear in 'invoices' table for the UI list
-                const resource = segments[0] || '';
-                if (resource === 'sales' || resource === 'purchases' || resource === 'returns') {
-                    // Try to resolve customer/supplier names from local DB for better UI display
-                    let customer = null;
-                    if (newRecord.customerName) {
-                        customer = { name: newRecord.customerName };
-                    } else if (newRecord.customerId) {
-                        const localCust = await db.clients.get(newRecord.customerId);
-                        customer = localCust ? { name: localCust.name, id: localCust.id } : { id: newRecord.customerId };
-                    }
-
-                    let supplier = null;
-                    if (newRecord.supplierId) {
-                        const localSupp = await db.clients.get(newRecord.supplierId);
-                        supplier = localSupp ? { name: localSupp.name, id: localSupp.id } : { id: newRecord.supplierId };
-                    }
-
-                    const invRecord = {
-                        ...newRecord,
-                        invoiceNo: newRecord.invoiceNo || `LOCAL-${Date.now()}`,
-                        type: resource === 'sales' ? 'SALE' : resource === 'purchases' ? 'PURCHASE' : 'RETURN',
-                        customer,
-                        supplier,
+        // Update local database immediately
+        if (dexieTable && db[dexieTable]) {
+            try {
+                if (method === 'post') {
+                    // Remove string ID to let Dexie generate a valid auto-increment integer ID
+                    const { id: _temp, ...recordData } = payload;
+                    const newRecord = { 
+                        ...recordData, 
+                        sync_status: 'pending_push', 
+                        createdAt: new Date().toISOString() 
                     };
                     
-                    // Add to invoices table if not already there (it might be if dexieTable is invoices)
-                    if (dexieTable !== 'invoices') {
-                        await db.invoices.add(invRecord);
-                    }
+                    const localId = await db[dexieTable].add(newRecord);
+                    mockResponseData.id = localId; // Return the correct integer ID to the UI
+                    
+                    // SPECIAL LOGIC: Update UI tables and stock
+                    if (['sales', 'purchases', 'returns'].includes(resource)) {
+                        let customer = null;
+                        if (newRecord.customerName) {
+                            customer = { name: newRecord.customerName };
+                        } else if (newRecord.customerId) {
+                            const localCust = await db.clients.get(Number(newRecord.customerId));
+                            customer = localCust ? { name: localCust.name, id: localCust.id } : { id: newRecord.customerId };
+                        }
 
-                    // UPDATE PRODUCT STOCK LOCALLY
-                    if (newRecord.items && Array.isArray(newRecord.items)) {
-                        for (const item of newRecord.items) {
-                            const productId = item.id || item.productId;
-                            if (productId) {
-                                const product = await db.products.get(productId);
-                                if (product) {
-                                    // Sale: subtract, Purchase: add, Return: add
-                                    const qtyChange = resource === 'sales' ? -item.quantity : (resource === 'purchases' || resource === 'returns') ? item.quantity : 0;
-                                    await db.products.update(productId, { 
-                                        stockQty: (product.stockQty || 0) + qtyChange 
-                                    });
+                        let supplier = null;
+                        if (newRecord.supplierId) {
+                            const localSupp = await db.clients.get(Number(newRecord.supplierId));
+                            supplier = localSupp ? { name: localSupp.name, id: localSupp.id } : { id: newRecord.supplierId };
+                        }
+
+                        const invRecord = {
+                            ...newRecord,
+                            id: localId, // Ensure it has the same ID
+                            invoiceNo: newRecord.invoiceNo || `LOCAL-${Date.now()}`,
+                            type: resource === 'sales' ? 'SALE' : resource === 'purchases' ? 'PURCHASE' : 'RETURN',
+                            customer,
+                            supplier,
+                        };
+                        
+                        if (dexieTable !== 'invoices') {
+                            await db.invoices.put(invRecord);
+                        }
+
+                        // Update stock locally
+                        if (newRecord.items && Array.isArray(newRecord.items)) {
+                            for (const item of newRecord.items) {
+                                const productId = item.id || item.productId;
+                                if (productId) {
+                                    const product = await db.products.get(Number(productId));
+                                    if (product) {
+                                        const qtyChange = resource === 'sales' ? -item.quantity : (resource === 'purchases' || resource === 'returns') ? item.quantity : 0;
+                                        await db.products.update(Number(productId), { 
+                                            stockQty: (product.stockQty || 0) + qtyChange 
+                                        });
+                                    }
                                 }
                             }
                         }
                     }
+                } else if (method === 'put') {
+                    const numericId = Number(recordId);
+                    if (!isNaN(numericId)) {
+                        await db[dexieTable].update(numericId, { ...payload, sync_status: 'pending_push' });
+                        if (db.invoices) {
+                            const exists = await db.invoices.get(numericId);
+                            if (exists) await db.invoices.update(numericId, { ...payload });
+                        }
+                    }
+                } else if (method === 'delete') {
+                    const numericId = Number(recordId);
+                    if (!isNaN(numericId)) {
+                        await db[dexieTable].delete(numericId);
+                        if (db.invoices) await db.invoices.delete(numericId);
+                    }
                 }
-            } else if (config.method === 'put') {
-                await db[dexieTable].update(recordId, { ...config.data, sync_status: 'pending_push' });
-                if (db.invoices) {
-                    const exists = await db.invoices.get(recordId);
-                    if (exists) await db.invoices.update(recordId, { ...config.data });
-                }
-            } else if (config.method === 'delete') {
-                await db[dexieTable].delete(recordId);
-                if (db.invoices) await db.invoices.delete(recordId);
+            } catch (e) {
+                console.error('Failed to update local DB logic:', e);
             }
-        } catch (e) {
-            console.warn('Failed to update local DB logic:', e);
         }
-    }
 
-    return { 
-        data: mockResponseData, 
-        status: 200, 
-        statusText: 'OK (Offline/Queued)', 
-        headers: {}, 
-        config 
-    };
+        // Add to outbox AFTER local DB so we use the actual localId if it was a POST
+        await addToOutbox(
+            resource,
+            mockResponseData.id, 
+            method === 'post' ? 'INSERT' : method === 'put' ? 'UPDATE' : 'DELETE', 
+            payload,
+            orgId
+        );
+
+        return { 
+            data: { ...mockResponseData, offline: true }, 
+            status: 200, 
+            statusText: 'OK (Offline/Queued)', 
+            headers: {}, 
+            config 
+        };
+    } catch (criticalError) {
+        console.error('CRITICAL ERROR in handleOfflineWrite:', criticalError);
+        // Fallback response to avoid crashing the app
+        return { 
+            data: { error: 'Offline save failed internally', offline: true }, 
+            status: 500, 
+            statusText: 'Internal Error', 
+            headers: {}, 
+            config 
+        };
+    }
 }
 
 // ────────────────────────────────────────────
@@ -267,8 +300,27 @@ export const authService = {
 
             const response = await api.post('/auth/login', { email, password });
             
-            // Cache user data for offline login
             if (response.data.user) {
+                // DATA ISOLATION: Check if this is a DIFFERENT user than the last one cached.
+                // If yes, or if no old user exists, we MUST clear the local business database.
+                try {
+                    const oldUserStr = localStorage.getItem('user');
+                    let isDifferentUser = true;
+                    if (oldUserStr) {
+                        const oldUser = JSON.parse(oldUserStr);
+                        if (oldUser.id === response.data.user.id) {
+                            isDifferentUser = false;
+                        }
+                    }
+                    if (isDifferentUser) {
+                        const { clearBusinessData } = await import('@/lib/db');
+                        await clearBusinessData();
+                    }
+                } catch (e) {
+                    console.error('Error during data isolation check:', e);
+                }
+
+                // Cache user data for offline login
                 await db.users.put({
                     ...response.data.user,
                     password_hash: btoa(password), // Caching a simple hash for offline comparison
@@ -281,6 +333,16 @@ export const authService = {
             if (!navigator.onLine && error.message !== 'OFFLINE_QUEUED') throw new Error('لا يوجد اتصال بالإنترنت وبيانات الدخول غير مخزنة.');
             throw error;
         }
+    },
+    loginGuest: async () => {
+        // Guest login is basically a fresh isolated session
+        try {
+            const { clearBusinessData } = await import('@/lib/db');
+            await clearBusinessData();
+        } catch (e) {}
+
+        const response = await api.post('/auth/guest');
+        return response.data;
     },
     register: async (name, email, password, phone) => {
         const response = await api.post('/auth/register', { name, email, password, phone });

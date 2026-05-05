@@ -127,9 +127,18 @@ function DashboardContent({ children }) {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        
+        // Ensure the local database is completely wiped to prevent data leaks between accounts!
+        try {
+            const { clearBusinessData } = await import('@/lib/db');
+            await clearBusinessData();
+        } catch (e) {
+            console.error('Failed to clear DB on logout:', e);
+        }
+
         router.push('/login');
     };
 
