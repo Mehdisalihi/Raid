@@ -156,9 +156,10 @@ export default function ProductsPage() {
             );
         } catch (err) {
             console.error('Save error:', err);
+            const backendError = err.response?.data?.error;
             triggerDialog(
                 isRTL ? 'خطأ ❌' : 'Erreur ❌', 
-                isRTL ? 'حدث خطأ أثناء حفظ المنتج' : 'Erreur lors de l\'enregistrement', 
+                backendError || (isRTL ? 'حدث خطأ أثناء حفظ المنتج' : 'Erreur lors de l\'enregistrement'), 
                 'danger'
             );
         }

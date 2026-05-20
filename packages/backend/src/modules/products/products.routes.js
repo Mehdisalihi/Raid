@@ -93,6 +93,9 @@ router.post('/', async (req, res) => {
         res.json(product);
     } catch (error) {
         console.error('POST /products - error:', error);
+        if (error.code === 'P2002' && error.meta && error.meta.target && error.meta.target.includes('barcode')) {
+            return res.status(400).json({ error: 'الباركود مسجل لمنتج آخر', details: 'Barcode already exists' });
+        }
         res.status(500).json({ error: 'error creating product', details: error.message });
     }
 });
@@ -170,6 +173,9 @@ router.put('/:id', async (req, res) => {
         res.json(product);
     } catch (error) {
         console.error('PUT /products/:id - error:', error);
+        if (error.code === 'P2002' && error.meta && error.meta.target && error.meta.target.includes('barcode')) {
+            return res.status(400).json({ error: 'الباركود مسجل لمنتج آخر', details: 'Barcode already exists' });
+        }
         res.status(500).json({ error: 'error updating product', details: error.message });
     }
 });
