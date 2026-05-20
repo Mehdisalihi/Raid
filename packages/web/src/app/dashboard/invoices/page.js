@@ -187,6 +187,7 @@ export default function InvoicesPage() {
     const [settings, setSettings] = useState(null);
     const [taxRate, setTaxRate] = useState(16);
     const [editingInvoiceId, setEditingInvoiceId] = useState(null);
+    const [manualItem, setManualItem] = useState({ name: '', price: '', qty: 1 });
 
     const [dialog, setDialog] = useState({
         isOpen: false,
@@ -336,6 +337,29 @@ export default function InvoicesPage() {
 
     const removeFromCart = (id) => {
         setCart(cart.filter(item => item.id !== id));
+    };
+    
+    const removeCustomFromCart = (index) => {
+        setCart(cart.filter((_, i) => i !== index));
+    };
+
+    const handleAddManualItem = () => {
+        if (!manualItem.name) return;
+        
+        const q = parseInt(manualItem.qty) || 1;
+        const p = parseFloat(manualItem.price) || 0;
+
+        const newItem = {
+            id: null, // Will trigger auto-creation on the backend
+            name: manualItem.name,
+            qty: q,
+            sellPrice: p,
+            buyPrice: p,
+            stockQty: 0
+        };
+        
+        setCart([...cart, newItem]);
+        setManualItem({ name: '', price: '', qty: 1 });
     };
 
     const calculateTotal = () => cart.reduce((sum, item) => {
@@ -828,9 +852,46 @@ export default function InvoicesPage() {
                                         )}
                                     </div>
 
+                                    {/* Manual Item Entry */}
+                                    <div className="p-4 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl mb-4">
+                                        <label className="text-[10px] font-black text-[var(--text-faint)] uppercase mb-2 block">
+                                            {isRTL ? 'إضافة منتج يدوي (غير موجود بالمخزن)' : 'Ajout Manuel'}
+                                        </label>
+                                        <div className={`flex gap-2 ${isRTL ? '' : 'flex-row-reverse'}`}>
+                                            <input 
+                                                type="text" 
+                                                placeholder={isRTL ? 'الاسم...' : 'Nom...'} 
+                                                className={`flex-1 h-10 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg px-3 text-xs font-bold text-[var(--text-main)] focus:outline-none focus:border-primary/50 shadow-inner ${isRTL ? 'text-right' : 'text-left'}`}
+                                                value={manualItem.name} 
+                                                onChange={e => setManualItem({...manualItem, name: e.target.value})}
+                                            />
+                                            <input 
+                                                type="number" 
+                                                placeholder={isRTL ? 'السعر' : 'Prix'} 
+                                                className={`w-20 h-10 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg px-2 text-xs font-bold text-[var(--text-main)] focus:outline-none focus:border-primary/50 shadow-inner ${isRTL ? 'text-right' : 'text-left'}`}
+                                                value={manualItem.price} 
+                                                onChange={e => setManualItem({...manualItem, price: e.target.value})}
+                                            />
+                                            <input 
+                                                type="number" 
+                                                placeholder={isRTL ? 'الكمية' : 'Qté'} 
+                                                className={`w-16 h-10 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg px-2 text-xs font-bold text-[var(--text-main)] focus:outline-none focus:border-primary/50 shadow-inner text-center`}
+                                                value={manualItem.qty} 
+                                                onChange={e => setManualItem({...manualItem, qty: e.target.value})}
+                                            />
+                                            <button 
+                                                onClick={handleAddManualItem} 
+                                                disabled={!manualItem.name}
+                                                className="w-10 h-10 bg-slate-800 text-white rounded-lg flex items-center justify-center hover:bg-slate-700 transition-colors disabled:opacity-50"
+                                            >
+                                                <Plus size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     <div className="overflow-y-auto space-y-2 mb-6 custom-scroll">
-                                        {cart.map(item => (
-                                            <div key={item.id} className="p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl flex items-center justify-between">
+                                        {cart.map((item, index) => (
+                                            <div key={item.id || `custom-${index}`} className="p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl flex items-center justify-between">
                                                 <div className="w-full min-w-0">
                                                     <div className="text-xs font-black text-[var(--text-main)] truncate">{item.name}</div>
                                                     <div className="text-[10px] font-bold text-[var(--text-faint)]">{fmtNumber(activeTab === 'PURCHASE' ? item.buyPrice : item.sellPrice)}</div>
@@ -839,7 +900,7 @@ export default function InvoicesPage() {
                                                     <button onClick={() => updateQty(item.id, -1)} className="p-1 hover:text-primary text-[var(--text-faint)]"><Minus size={12} strokeWidth={3} /></button>
                                                     <span className="w-4 text-center font-black text-xs text-[var(--text-main)]">{item.qty}</span>
                                                     <button onClick={() => updateQty(item.id, 1)} className="p-1 hover:text-primary text-[var(--text-faint)]"><Plus size={12} strokeWidth={3} /></button>
-                                                    <button onClick={() => removeFromCart(item.id)} className="ml-2 text-red-500/70 hover:text-red-500 transition-colors"><X size={14} /></button>
+                                                    <button onClick={() => item.id ? removeFromCart(item.id) : removeCustomFromCart(index)} className="ml-2 text-red-500/70 hover:text-red-500 transition-colors"><X size={14} /></button>
                                                 </div>
                                             </div>
                                         ))}

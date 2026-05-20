@@ -9,7 +9,12 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
     try {
         const users = await prisma.user.findMany({
-            where: { id: req.userId },
+            where: {
+                OR: [
+                    { id: req.userId },
+                    { ownerId: req.userId }
+                ]
+            },
             select: {
                 id: true,
                 name: true,
@@ -83,7 +88,8 @@ router.post('/', async (req, res) => {
                 storeAddress,
                 storePhone,
                 storeEmail,
-                currency
+                currency,
+                ownerId: req.userId
             }
         });
 
@@ -102,8 +108,20 @@ router.post('/', async (req, res) => {
 // Update user
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    if (id !== req.userId) {
-        return res.status(403).json({ error: 'غير مصرح لك بتعديل بيانات مستخدم آخر' });
+    
+    // Check if the user exists and belongs to the requester
+    const existing = await prisma.user.findFirst({
+        where: {
+            id,
+            OR: [
+                { id: req.userId },
+                { ownerId: req.userId }
+            ]
+        }
+    });
+
+    if (!existing) {
+        return res.status(403).json({ error: 'غير مصرح لك بتعديل هذا المستخدم' });
     }
     const { 
         name, email, phone, role, isActive, password,
@@ -142,16 +160,16 @@ router.put('/:id', async (req, res) => {
             data.passwordHash = await bcrypt.hash(password, 12);
         }
 
-        const user = await prisma.user.update({
+        const updatedUser = await prisma.user.update({
             where: { id },
             data
         });
 
         res.json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role
+            id: updatedUser.id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role
         });
     } catch (error) {
         console.error(error);
@@ -162,8 +180,20 @@ router.put('/:id', async (req, res) => {
 // Delete user
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
-    if (id !== req.userId) {
-        return res.status(403).json({ error: 'غير مصرح لك بحذف مستخدم آخر' });
+    
+    // Check if the user exists and belongs to the requester
+    const existing = await prisma.user.findFirst({
+        where: {
+            id,
+            OR: [
+                { id: req.userId },
+                { ownerId: req.userId }
+            ]
+        }
+    });
+
+    if (!existing) {
+        return res.status(403).json({ error: 'غير مصرح لك بحذف هذا المستخدم' });
     }
     try {
         await prisma.user.delete({ where: { id } });

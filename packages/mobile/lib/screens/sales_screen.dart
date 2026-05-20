@@ -90,6 +90,7 @@ class _SalesScreenState extends State<SalesScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => BarcodeScannerWidget(
+          continuous: true,
           onScan: (code) {
             final p = _products.firstWhere(
               (p) => p['barcode'] == code,
@@ -101,7 +102,9 @@ class _SalesScreenState extends State<SalesScreen> {
                 SnackBar(
                   content: Text('${context.tr('addedToCart')}: ${p['name']}'),
                   backgroundColor: AppColors.success,
-                  duration: const Duration(seconds: 1),
+                  duration: const Duration(milliseconds: 800),
+                  behavior: SnackBarBehavior.floating,
+                  margin: const EdgeInsets.only(bottom: 110, left: 20, right: 20),
                 ),
               );
             } else {
@@ -820,8 +823,8 @@ class _SalesScreenState extends State<SalesScreen> {
         children: [
           _summaryCard(context.tr('total'), grandTotal, AppColors.primary),
           _summaryCard(context.tr('cash'), totals['cash']!, AppColors.success),
-          _summaryCard('Bankily', totals['bankily']!, Colors.amber),
-          _summaryCard('Masrvi', totals['masrvi']!, Colors.indigo),
+          _summaryCard(context.tr('bankily'), totals['bankily']!, Colors.amber),
+          _summaryCard(context.tr('masrvi'), totals['masrvi']!, Colors.indigo),
         ],
       ),
     );
@@ -1202,18 +1205,18 @@ class _SalesScreenState extends State<SalesScreen> {
                 scrollDirection: Axis.horizontal,
                 children: [
                   _paymentMethodItem(context.tr('cash'), 'cash', Icons.money_rounded),
-                  _paymentMethodItem('Bankily', 'bankily',
+                  _paymentMethodItem(context.tr('bankily'), 'bankily',
                       Icons.account_balance_wallet_rounded),
                   _paymentMethodItem(
-                      'Masrvi', 'masrvi', Icons.account_balance_rounded),
+                      context.tr('masrvi'), 'masrvi', Icons.account_balance_rounded),
                   _paymentMethodItem(context.tr('sedad'), 'sedad', Icons.payments_rounded),
                   _paymentMethodItem(
-                      'Bimbank', 'bimbank', Icons.account_balance_rounded),
-                  _paymentMethodItem('Click', 'click', Icons.ads_click_rounded),
+                      context.tr('bimbank'), 'bimbank', Icons.account_balance_rounded),
+                  _paymentMethodItem(context.tr('click'), 'click', Icons.ads_click_rounded),
                   _paymentMethodItem(
-                      'Amanty', 'amanty', Icons.security_rounded),
+                      context.tr('amanty'), 'amanty', Icons.security_rounded),
                   _paymentMethodItem(
-                      'Gimtel', 'gimtel', Icons.account_tree_rounded),
+                      context.tr('gimtel'), 'gimtel', Icons.account_tree_rounded),
                 ],
               ),
             ),

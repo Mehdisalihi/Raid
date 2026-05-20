@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
+import 'database_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   Map<String, dynamic>? _user;
@@ -37,6 +38,10 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> login(String email, String password, {bool rememberMe = false}) async {
     final data = await AuthService.login(email, password);
+    
+    // Clear old data for isolation
+    await DatabaseService().clearAllBusinessData();
+    
     final prefs = await SharedPreferences.getInstance();
     final token = data['token'] as String;
     final user = data['user'] as Map<String, dynamic>;
@@ -49,6 +54,10 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> register(String name, String email, String password, {bool rememberMe = false}) async {
     final data = await AuthService.register(name, email, password);
+    
+    // Clear old data for isolation
+    await DatabaseService().clearAllBusinessData();
+    
     final prefs = await SharedPreferences.getInstance();
     final token = data['token'] as String;
     final user = data['user'] as Map<String, dynamic>;
@@ -60,6 +69,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> loginGuest({bool rememberMe = false}) async {
+    // Clear old data for isolation
+    await DatabaseService().clearAllBusinessData();
+    
     final guestUser = {
       'id': 'guest',
       'name': 'Guest',
@@ -75,6 +87,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    // Clear data on logout for security
+    await DatabaseService().clearAllBusinessData();
+    
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     await prefs.remove('user_json');

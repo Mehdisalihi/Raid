@@ -5,7 +5,7 @@ import api from '@/lib/api';
 import {
     ShoppingBag, Plus, Search, X, Save, Truck, Package,
     Calendar, DollarSign, ChevronDown, Filter, TrendingDown,
-    Receipt, CheckCircle2, Clock, AlertCircle
+    Receipt, CheckCircle2, Clock, AlertCircle, Trash2, ListPlus
 } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
@@ -18,6 +18,7 @@ export default function PurchasesPage() {
     const [purchases, setPurchases] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [warehouses, setWarehouses] = useState([]);
+    const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -29,6 +30,24 @@ export default function PurchasesPage() {
         date: new Date().toISOString().split('T')[0],
         warehouseId: '',
     });
+
+    // Items State
+    const [items, setItems] = useState([]);
+    const [currentProductSearch, setCurrentProductSearch] = useState('');
+    const [currentQty, setCurrentQty] = useState('');
+    const [currentPrice, setCurrentPrice] = useState('');
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = typeof window !== 'undefined' ? require('react').useRef(null) : null;
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropdownRef?.current && !dropdownRef.current.contains(e.target)) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const [dialog, setDialog] = useState({
         isOpen: false,
@@ -50,14 +69,16 @@ export default function PurchasesPage() {
 
     const fetchData = async () => {
         try {
-            const [purchRes, supRes, warRes] = await Promise.all([
+            const [purchRes, supRes, warRes, prodRes] = await Promise.all([
                 api.get('/purchases').catch(() => ({ data: [] })),
                 api.get('/suppliers').catch(() => ({ data: [] })),
                 api.get('/warehouses').catch(() => ({ data: [] })),
+                api.get('/products').catch(() => ({ data: [] })),
             ]);
             let purchasesData = Array.isArray(purchRes.data) ? purchRes.data : [];
             let suppliersData = Array.isArray(supRes.data) ? supRes.data : [];
             let warehousesData = Array.isArray(warRes.data) ? warRes.data : [];
+            let productsData = Array.isArray(prodRes.data) ? prodRes.data : [];
 
             // If all empty, try local fallback
             if (purchasesData.length === 0 && suppliersData.length === 0 && !navigator.onLine) {
@@ -71,6 +92,7 @@ export default function PurchasesPage() {
             setPurchases(purchasesData);
             setSuppliers(suppliersData);
             setWarehouses(warehousesData);
+            setProducts(productsData);
             if (warehousesData.length > 0) {
                 setFormData(prev => ({ ...prev, warehouseId: warehousesData[0].id }));
             }
@@ -80,6 +102,7 @@ export default function PurchasesPage() {
             try {
                 setPurchases(await db.purchases.toArray());
                 setSuppliers(await db.suppliers.toArray());
+                setProducts(await db.products.toArray());
                 const wh = await db.warehouses.toArray();
                 setWarehouses(wh);
                 if (wh.length > 0) setFormData(prev => ({ ...prev, warehouseId: wh[0].id }));
@@ -98,7 +121,7 @@ export default function PurchasesPage() {
                 date: formData.date,
                 notes: formData.notes,
                 warehouseId: formData.warehouseId,
-                items: []
+                items: items
             };
             await api.post('/purchases', payload);
             fetchData();
@@ -126,7 +149,50 @@ export default function PurchasesPage() {
             date: new Date().toISOString().split('T')[0],
             warehouseId: warehouses[0]?.id || '',
         });
+        setItems([]);
+        setCurrentProductSearch('');
+        setCurrentQty('');
+        setCurrentPrice('');
     };
+
+    const handleAddItem = () => {
+        if (!currentProductSearch) return;
+        
+        const existingProduct = products.find(p => p.name.toLowerCase() === currentProductSearch.toLowerCase() || p.barcode === currentProductSearch);
+        
+        const q = parseInt(currentQty) || 1;
+        const p = parseFloat(currentPrice) || 0;
+
+        const newItem = {
+            id: existingProduct ? existingProduct.id : null,
+            name: existingProduct ? existingProduct.name : currentProductSearch,
+            qty: q,
+            price: p,
+            total: q * p
+        };
+        
+        const newItems = [...items, newItem];
+        setItems(newItems);
+        
+        const newTotal = newItems.reduce((sum, item) => sum + item.total, 0);
+        setFormData(prev => ({ ...prev, totalAmount: newTotal }));
+        
+        setCurrentProductSearch('');
+        setCurrentQty('');
+        setCurrentPrice('');
+    };
+
+    const handleRemoveItem = (index) => {
+        const newItems = items.filter((_, i) => i !== index);
+        setItems(newItems);
+        const newTotal = newItems.reduce((sum, item) => sum + item.total, 0);
+        setFormData(prev => ({ ...prev, totalAmount: newTotal }));
+    };
+
+    const filteredProductsSearch = products.filter(p =>
+        p.name?.toLowerCase().includes(currentProductSearch.toLowerCase()) ||
+        (p.barcode && p.barcode.includes(currentProductSearch))
+    );
 
     const totalPurchases = purchases.reduce((sum, p) => sum + (p.totalAmount || 0), 0);
     const thisMonth = purchases.filter(p => {
@@ -368,6 +434,101 @@ export default function PurchasesPage() {
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
                             />
+                        </div>
+                    </div>
+
+                    {/* Products / Items Section */}
+                    <div className="space-y-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--glass-border)]">
+                        <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] tracking-widest flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start flex-row-reverse'}`}>
+                            <Package size={12} /> {isRTL ? 'المنتجات المشتراة' : 'Produits achetés'}
+                        </label>
+                        
+                        {/* Items List */}
+                        {items.length > 0 && (
+                            <div className="space-y-2 mb-4">
+                                {items.map((item, idx) => (
+                                    <div key={idx} className={`flex justify-between items-center bg-[var(--surface-1)] p-3 rounded-xl border border-[var(--glass-border)] shadow-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                        <div className={`flex flex-col ${isRTL ? 'text-left' : 'text-right'}`}>
+                                            <span className="font-bold text-sm text-[var(--text-primary)]">{item.name}</span>
+                                            <span className="text-[10px] text-[var(--text-faint)] font-black">{item.qty} × {fmtNumber(item.price)} MRU</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="font-black text-accent">{fmtNumber(item.total)} MRU</span>
+                                            <button type="button" onClick={() => handleRemoveItem(idx)} className="p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Add Item Form */}
+                        <div className={`grid grid-cols-1 md:grid-cols-12 gap-3 items-end ${isRTL ? '' : 'direction-ltr'}`}>
+                            <div className="md:col-span-5 relative" ref={dropdownRef}>
+                                <label className={`block text-[10px] font-bold text-[var(--text-faint)] mb-1.5 px-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'اسم المنتج (اختر أو اكتب جديد)' : 'Produit (Choisir ou saisir)'}</label>
+                                <input
+                                    type="text"
+                                    placeholder={isRTL ? "مثال: شاي المنى..." : "Ex: Thé..."}
+                                    className={`w-full h-11 bg-white border border-[var(--glass-border)] rounded-xl px-4 text-sm font-bold focus:outline-none focus:border-accent/40 shadow-inner ${isRTL ? 'text-right' : 'text-left'} text-[var(--text-primary)]`}
+                                    value={currentProductSearch}
+                                    onChange={e => {
+                                        setCurrentProductSearch(e.target.value);
+                                        setShowDropdown(true);
+                                    }}
+                                    onFocus={() => setShowDropdown(true)}
+                                />
+                                {showDropdown && currentProductSearch && filteredProductsSearch.length > 0 && (
+                                    <div className="absolute top-full mt-1 left-0 right-0 z-50 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
+                                        {filteredProductsSearch.slice(0, 5).map(p => (
+                                            <button
+                                                key={p.id}
+                                                type="button"
+                                                onClick={() => {
+                                                    setCurrentProductSearch(p.name);
+                                                    setCurrentPrice(p.buyPrice || 0);
+                                                    setShowDropdown(false);
+                                                }}
+                                                className={`w-full flex justify-between items-center px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 ${isRTL ? 'flex-row-reverse' : ''}`}
+                                            >
+                                                <span className="font-bold text-[13px] text-slate-700">{p.name}</span>
+                                                <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-md">{fmtNumber(p.buyPrice)} MRU</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="md:col-span-3">
+                                <label className={`block text-[10px] font-bold text-[var(--text-faint)] mb-1.5 px-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'الكمية' : 'Qté'}</label>
+                                <input
+                                    type="number"
+                                    placeholder="1"
+                                    className={`w-full h-11 bg-white border border-[var(--glass-border)] rounded-xl px-4 text-sm font-bold focus:outline-none focus:border-accent/40 shadow-inner ${isRTL ? 'text-right' : 'text-left'} text-[var(--text-primary)]`}
+                                    value={currentQty}
+                                    onChange={e => setCurrentQty(e.target.value)}
+                                />
+                            </div>
+                            <div className="md:col-span-3">
+                                <label className={`block text-[10px] font-bold text-[var(--text-faint)] mb-1.5 px-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر الوحدة' : 'Prix Unitaire'}</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className={`w-full h-11 bg-white border border-[var(--glass-border)] rounded-xl px-4 text-sm font-bold focus:outline-none focus:border-accent/40 shadow-inner ${isRTL ? 'text-right' : 'text-left'} text-[var(--text-primary)]`}
+                                    value={currentPrice}
+                                    onChange={e => setCurrentPrice(e.target.value)}
+                                />
+                            </div>
+                            <div className="md:col-span-1 flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={handleAddItem}
+                                    disabled={!currentProductSearch}
+                                    className="h-11 w-full bg-slate-800 text-white rounded-xl flex items-center justify-center hover:bg-slate-700 transition-colors disabled:opacity-50"
+                                >
+                                    <ListPlus size={18} />
+                                </button>
+                            </div>
                         </div>
                     </div>
 

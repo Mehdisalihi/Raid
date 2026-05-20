@@ -130,7 +130,7 @@ class InvoiceDetailScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w800),
                               ),
                               Text(
-                                '${FormatUtils.formatQuantity(item['quantity'])} × ${FormatUtils.formatNumber(item['price'])} MRU',
+                                '${FormatUtils.formatQuantity(item['quantity'])} × ${FormatUtils.formatNumber(item['price'])} ${context.tr('currency')}',
                                 style: const TextStyle(
                                     color: AppColors.textLight, fontSize: 12),
                               ),

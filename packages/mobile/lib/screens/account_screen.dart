@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
 import '../core/theme.dart';
 import '../core/app_localizations.dart';
+import '../core/format_utils.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -12,7 +13,7 @@ class AccountScreen extends StatelessWidget {
     final auth = context.watch<AuthProvider>();
     final user = auth.user;
     final name = user?['name']?.toString() ?? context.tr('user');
-    final role = user?['role']?.toString() ?? 'admin';
+    final role = user?['role']?.toString().toLowerCase() ?? 'staff';
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -56,7 +57,7 @@ class AccountScreen extends StatelessWidget {
                       _buildPremiumTile(
                           Icons.verified_user_rounded,
                           context.tr('permissionType'),
-                          role == 'admin' ? context.tr('adminFull') : context.tr('staffLimited'),
+                          role == 'admin' ? context.tr('adminRole') : context.tr('staffLimited'),
                           AppColors.success),
                     ],
                   ),
@@ -151,7 +152,7 @@ class AccountScreen extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                name.isNotEmpty ? name[0].toUpperCase() : FormatUtils.toLatinNumerals('U'),
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 36,

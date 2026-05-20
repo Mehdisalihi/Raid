@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard, Package, ShoppingCart, Users, Truck, Search,
     CreditCard, FileText, LogOut, ShoppingBag, Bell, X,
@@ -59,6 +60,7 @@ function DashboardContent({ children }) {
     const [user, setUser] = useState(null);
     const [showNotif, setShowNotif] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
     const { lang, toggleLang, t, isRTL } = useLanguage();
@@ -190,8 +192,44 @@ function DashboardContent({ children }) {
 
     return (
         <div className="flex h-screen bg-[var(--background)] overflow-hidden print:h-auto print:overflow-visible pb-[40px]" dir={isRTL ? 'rtl' : 'ltr'}>
-            {/* ─── SIDEBAR ─── */}
-            <aside className="w-72 h-full bg-gradient-to-b from-[var(--card-bg)] to-[var(--bg-secondary)]/30 flex flex-col shrink-0 z-20 relative transition-all duration-300 print:hidden no-print-force shadow-[var(--shadow-sidebar)] border-none">
+            {/* ─── MOBILE SIDEBAR OVERLAY ─── */}
+            <AnimatePresence>
+                {isSidebarOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+                        />
+                        <motion.aside
+                            initial={{ x: isRTL ? '100%' : '-100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: isRTL ? '100%' : '-100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className={`fixed top-0 bottom-0 ${isRTL ? 'right-0' : 'left-0'} w-72 bg-gradient-to-b from-[var(--card-bg)] to-[var(--bg-secondary)] z-[101] lg:hidden shadow-2xl flex flex-col`}
+                        >
+                             <div className="p-4 flex justify-between items-center border-b border-white/5">
+                                <img src="/Raed.png" alt="Raid" className="h-8 w-auto" />
+                                <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400 hover:text-white">
+                                    <X size={24} />
+                                </button>
+                            </div>
+                            <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+                                {filteredNavItems.map((item) => (
+                                    <div key={item.href} onClick={() => setIsSidebarOpen(false)}>
+                                        <SidebarLink {...item} pathname={pathname} t={t} isRTL={isRTL} />
+                                    </div>
+                                ))}
+                            </nav>
+                        </motion.aside>
+                    </>
+                )}
+            </AnimatePresence>
+
+            {/* ─── DESKTOP SIDEBAR ─── */}
+            <aside className="hidden lg:flex w-72 h-full bg-gradient-to-b from-[var(--card-bg)] to-[var(--bg-secondary)]/30 flex-col shrink-0 z-20 relative transition-all duration-300 print:hidden no-print-force shadow-[var(--shadow-sidebar)] border-none">
                 {/* Subtle primary tint overlay */}
                 <div className="absolute inset-0 bg-primary/[0.02] pointer-events-none" />
                 
@@ -209,8 +247,16 @@ function DashboardContent({ children }) {
 
             {/* ═══ MAIN CONTENT ═══ */}
             <main className="flex-1 flex flex-col h-full overflow-hidden relative print:overflow-visible print:h-auto">
-                <header className="h-16 px-6 flex justify-between items-center bg-[var(--card-bg)]/80 backdrop-blur-xl sticky top-0 z-30 shrink-0 print:hidden no-print-force shadow-[0_4px_30px_rgba(0,0,0,0.02)] border-none">
-                    <div className="flex items-center gap-4">
+                <header className="h-16 px-4 md:px-6 flex justify-between items-center bg-[var(--card-bg)]/80 backdrop-blur-xl sticky top-0 z-30 shrink-0 print:hidden no-print-force shadow-[0_4px_30px_rgba(0,0,0,0.02)] border-none">
+                    <div className="flex items-center gap-3 md:gap-4">
+                        {/* Mobile Menu Toggle */}
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="lg:hidden w-10 h-10 rounded-xl bg-[var(--bg-secondary)]/80 flex items-center justify-center text-primary border-none"
+                        >
+                            <LayoutDashboard size={20} />
+                        </button>
+
                         {/* Back Button */}
                         {pathname !== '/dashboard' && (
                             <button

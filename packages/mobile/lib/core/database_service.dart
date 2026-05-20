@@ -230,4 +230,25 @@ class DatabaseService {
     final db = await database;
     await db.delete(table);
   }
+
+  Future<void> clearAllBusinessData() async {
+    final db = await database;
+    final tables = [
+      'products',
+      'customers',
+      'suppliers',
+      'invoices',
+      'invoice_items',
+      'expenses',
+      'expense_categories',
+      'returns',
+      'return_items',
+      'debts',
+      'warehouses',
+      'pending_sync'
+    ];
+    for (var table in tables) {
+      await db.delete(table);
+    }
+  }
 }

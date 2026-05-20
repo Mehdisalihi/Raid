@@ -248,8 +248,8 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                   style: TextStyle(
                       color: color, fontWeight: FontWeight.w900, fontSize: 16),
                 ),
-                const Text('MRU',
-                    style: TextStyle(color: AppColors.textLight, fontSize: 10)),
+                Text(context.tr('currency'),
+                    style: const TextStyle(color: AppColors.textLight, fontSize: 10)),
               ],
             ),
           ),

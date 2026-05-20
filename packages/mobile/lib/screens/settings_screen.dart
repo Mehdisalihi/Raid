@@ -89,13 +89,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('تم حفظ الإعدادات بنجاح'), backgroundColor: AppColors.primary),
+          SnackBar(content: Text(context.tr('syncSuccess')), backgroundColor: AppColors.primary),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('فشل حفظ الإعدادات'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.tr('saveFailed')), backgroundColor: AppColors.danger),
         );
       }
     } finally {
@@ -146,6 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
@@ -160,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 28),
           _buildProfileCard(context, user),
           const SizedBox(height: 28),
-          _buildSectionTitle(context, context.watch<LocaleProvider>().isRTL ? 'هوية المتجر' : 'Identité du magasin', Icons.business_rounded),
+          _buildSectionTitle(context, context.tr('storeIdentity'), Icons.business_rounded),
           _buildStoreSettingsCard(context),
           const SizedBox(height: 28),
           _buildSectionTitle(context, context.tr('dataSync'), Icons.sync_rounded),
@@ -216,6 +217,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             iconColor: AppColors.secondary,
             title: context.tr('systemInfo'),
             subtitle: '${context.tr('appName')} v${FormatUtils.toLatinNumerals('1.0.0')}',
+            onTap: () {},
+          ),
+          _buildSettingItem(
+            context,
+            icon: Icons.person_outline_rounded,
+            iconColor: AppColors.primary,
+            title: context.tr('developer'),
+            subtitle: 'Elmehdi Deda Salihi',
             onTap: () {},
           ),
           const SizedBox(height: 40),
@@ -595,7 +604,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
   Widget _buildStoreSettingsCard(BuildContext context) {
-    final isRTL = context.watch<LocaleProvider>().isRTL;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -630,26 +638,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(isRTL ? 'شعار المؤسسة' : 'Logo de l\'entreprise', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text(isRTL ? 'انقر لتغيير الشعار' : 'Cliquez pour changer', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(context.tr('enterpriseLogo'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(context.tr('clickToChange'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _buildTextField(_storeNameController, isRTL ? 'اسم المؤسسة' : 'Nom du magasin', Icons.store_rounded),
-          _buildTextField(_storeTaxIdController, isRTL ? 'الرقم الضريبي' : 'ID Fiscal', Icons.badge_rounded),
-          _buildTextField(_storeAddressController, isRTL ? 'العنوان' : 'Adresse', Icons.location_on_rounded),
-          _buildTextField(_storePhoneController, isRTL ? 'الهاتف' : 'Téléphone', Icons.phone_rounded),
-          _buildTextField(_storeEmailController, isRTL ? 'البريد الإلكتروني' : 'Email', Icons.email_rounded),
+          _buildTextField(_storeNameController, context.tr('storeName'), Icons.store_rounded),
+          _buildTextField(_storeTaxIdController, context.tr('taxId'), Icons.badge_rounded),
+          _buildTextField(_storeAddressController, context.tr('address'), Icons.location_on_rounded),
+          _buildTextField(_storePhoneController, context.tr('phone'), Icons.phone_rounded),
+          _buildTextField(_storeEmailController, context.tr('email'), Icons.email_rounded),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _isSaving ? null : _saveSettings,
               icon: _isSaving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.save_rounded),
-              label: Text(isRTL ? 'حفظ المعلومات' : 'Enregistrer'),
+              label: Text(context.tr('saveInfo')),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,

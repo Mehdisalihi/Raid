@@ -103,7 +103,7 @@ router.get('/top-products', async (req, res) => {
 
         const productIds = items.map(i => i.productId);
         const products = await prisma.product.findMany({
-            where: { id: { in: productIds } }
+            where: { id: { in: productIds }, userId: req.userId }
         });
 
         const enriched = items.map(item => {

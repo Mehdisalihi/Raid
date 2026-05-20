@@ -151,7 +151,12 @@ router.delete('/:id', async (req, res) => {
                         });
                         
                         const movement = await tx.stockMovement.findFirst({
-                            where: { productId: item.productId, type: 'SALE', notes: { contains: invoice.invoiceNo } }
+                            where: { 
+                                productId: item.productId, 
+                                type: 'SALE', 
+                                userId: req.userId,
+                                notes: { contains: invoice.invoiceNo } 
+                            }
                         });
                         if (movement && movement.sourceId) {
                             await tx.warehouseInventory.upsert({
@@ -168,7 +173,12 @@ router.delete('/:id', async (req, res) => {
                     });
 
                     const movement = await tx.stockMovement.findFirst({
-                        where: { productId: item.productId, type: 'PURCHASE', notes: { contains: invoice.invoiceNo } }
+                        where: { 
+                            productId: item.productId, 
+                            type: 'PURCHASE', 
+                            userId: req.userId,
+                            notes: { contains: invoice.invoiceNo } 
+                        }
                     });
                     if (movement && movement.destinationId) {
                         await tx.warehouseInventory.update({
@@ -232,7 +242,14 @@ router.put('/:id', async (req, res) => {
             for (const item of oldInv.items) {
                 if (oldInv.type === 'SALE') {
                     await tx.product.update({ where: { id: item.productId }, data: { stockQty: { increment: item.qty } } });
-                    const mov = await tx.stockMovement.findFirst({ where: { productId: item.productId, type: 'SALE', notes: { contains: oldInv.invoiceNo } } });
+                    const mov = await tx.stockMovement.findFirst({ 
+                        where: { 
+                            productId: item.productId, 
+                            type: 'SALE', 
+                            userId: req.userId,
+                            notes: { contains: oldInv.invoiceNo } 
+                        } 
+                    });
                     if (mov?.sourceId) {
                         await tx.warehouseInventory.update({
                             where: { productId_warehouseId: { productId: item.productId, warehouseId: mov.sourceId } },
@@ -241,7 +258,14 @@ router.put('/:id', async (req, res) => {
                     }
                 } else if (oldInv.type === 'PURCHASE') {
                     await tx.product.update({ where: { id: item.productId }, data: { stockQty: { decrement: item.qty } } });
-                    const mov = await tx.stockMovement.findFirst({ where: { productId: item.productId, type: 'PURCHASE', notes: { contains: oldInv.invoiceNo } } });
+                    const mov = await tx.stockMovement.findFirst({ 
+                        where: { 
+                            productId: item.productId, 
+                            type: 'PURCHASE', 
+                            userId: req.userId,
+                            notes: { contains: oldInv.invoiceNo } 
+                        } 
+                    });
                     if (mov?.destinationId) {
                         await tx.warehouseInventory.update({
                             where: { productId_warehouseId: { productId: item.productId, warehouseId: mov.destinationId } },

@@ -13,12 +13,14 @@ import 'core/app_localizations.dart';
 import 'navigation/main_nav.dart';
 import 'screens/login_screen.dart';
 import 'screens/windows_webview_screen.dart';
+import 'core/api_service.dart';
 
 /// Returns true when running on Windows desktop (not web).
 bool get _isWindowsDesktop => !kIsWeb && Platform.isWindows;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiService.initBaseUrl();
   await initializeDateFormatting('ar', null);
   await initializeDateFormatting('fr', null);
   await initializeDateFormatting('en', null);

@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
   // Sophisticated Premium Palette (Default is Deep Blue)
-  static Color primary = const Color(0xFF1E40AF); 
-  static const secondary = Color(0xFF3B82F6); // Bright Blue
-  static const accent = Color(0xFF60A5FA); // Light Blue
+  static Color primary = const Color(0xFF0284C7); // Sky 600 (Light Blue)
+  static const secondary = Color(0xFF0EA5E9); // Sky 500
+  static const accent = Color(0xFF38BDF8); // Sky 400
   static const success = Color(0xFF059669); // Emerald Green
   static const warning = Color(0xFFD97706); // Amber
   static const danger = Color(0xFFDC2626); // Red

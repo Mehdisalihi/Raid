@@ -192,6 +192,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     if (canAccess('canManageInventory'))
                       _buildAction(context, Icons.warehouse_rounded, context.tr('warehouses'),
                           AppColors.primary, () => widget.onNavigate(14)),
+                    if (canAccess('canViewReports'))
+                      _buildAction(context, Icons.badge_rounded, context.tr('staff'),
+                          AppColors.primary, () => widget.onNavigate(15)),
                   ]),
                 ],
               ),
@@ -212,6 +215,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     if (canAccess('canViewReports'))
                       _buildAction(context, Icons.bar_chart_rounded, context.tr('reportsSummary'), 
                           AppColors.primary, () => widget.onNavigate(12)),
+                    if (canAccess('canViewReports'))
+                      _buildAction(context, Icons.archive_rounded, context.tr('archive'), 
+                          AppColors.primary, () => widget.onNavigate(7)),
                   ]),
                 ],
               ),
@@ -258,14 +264,29 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Widget _buildGridSection(List<Widget> children) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 4,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      childAspectRatio: 0.8,
-      children: children,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        // Adaptive grid: 3-4 on phones, 6-8 on tablets
+        int crossAxisCount = 4;
+        if (width < 350) {
+          crossAxisCount = 3;
+        } else if (width > 900) {
+          crossAxisCount = 8;
+        } else if (width > 600) {
+          crossAxisCount = 6;
+        }
+        
+        return GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: crossAxisCount,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 0.8,
+          children: children,
+        );
+      },
     );
   }
 
@@ -310,7 +331,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 12),
-                Text(FormatUtils.formatCurrency(_stats?['totalSales'] ?? 0),
+                Text(FormatUtils.formatCurrency(_stats?['totalSales'] ?? 0, symbol: context.tr('currency')),
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 32,

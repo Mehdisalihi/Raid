@@ -22,6 +22,39 @@ router.post('/', async (req, res) => {
                 if (!customer) customer = await tx.customer.create({ data: { name: customerName, userId: req.userId } });
             }
 
+            // Pre-process items to auto-create missing products
+            let processedItems = [];
+            for (const item of cart) {
+                let productId = item.id;
+                if (!productId) {
+                    const existing = await tx.product.findFirst({
+                        where: { name: { equals: item.name }, userId: req.userId }
+                    });
+                    if (existing) {
+                        productId = existing.id;
+                    } else {
+                        const newProduct = await tx.product.create({
+                            data: {
+                                name: item.name,
+                                sellPrice: parseFloat(item.sellPrice || item.price || 0),
+                                buyPrice: parseFloat(item.sellPrice || item.price || 0) * 0.8,
+                                stockQty: 0,
+                                userId: req.userId
+                            }
+                        });
+                        productId = newProduct.id;
+                    }
+                }
+                // Overwrite the id so we can use it in the stock updates later
+                item.id = productId; 
+                processedItems.push({
+                    productId,
+                    qty: parseInt(item.qty || 0),
+                    price: parseFloat(item.sellPrice || item.price || 0),
+                    total: parseFloat((item.sellPrice || item.price || 0) * (item.qty || 0))
+                });
+            }
+
             // Create Invoice
             const invoice = await tx.invoice.create({
                 data: {
@@ -39,12 +72,7 @@ router.post('/', async (req, res) => {
                     userId: req.userId,
                     createdAt: createdAt ? new Date(createdAt) : new Date(),
                     items: {
-                        create: cart.map(item => ({
-                            productId: item.id,
-                            qty: parseInt(item.qty || 0),
-                            price: parseFloat(item.sellPrice || item.price || 0),
-                            total: parseFloat((item.sellPrice || item.price || 0) * (item.qty || 0))
-                        }))
+                        create: processedItems
                     }
                 }
             });
@@ -147,7 +175,13 @@ router.put('/:id', async (req, res) => {
 
             // Reverse Stock
             for (const item of old.items) {
-                const move = await tx.stockMovement.findFirst({ where: { notes: { contains: old.invoiceNo } } });
+                const move = await tx.stockMovement.findFirst({ 
+                    where: { 
+                        productId: item.productId, 
+                        userId: req.userId,
+                        notes: { contains: old.invoiceNo } 
+                    } 
+                });
                 await tx.product.update({ where: { id: item.productId }, data: { stockQty: { increment: item.qty } } });
                 if (move) {
                     await tx.warehouseInventory.update({
@@ -162,6 +196,38 @@ router.put('/:id', async (req, res) => {
             await tx.saleItem.deleteMany({ where: { invoiceId: id } });
             await tx.stockMovement.deleteMany({ where: { notes: { contains: old.invoiceNo } } });
 
+            // Pre-process items to auto-create missing products
+            let processedItems = [];
+            for (const it of cart) {
+                let productId = it.id || it.productId;
+                if (!productId) {
+                    const existing = await tx.product.findFirst({
+                        where: { name: { equals: it.name }, userId: req.userId }
+                    });
+                    if (existing) {
+                        productId = existing.id;
+                    } else {
+                        const newProduct = await tx.product.create({
+                            data: {
+                                name: it.name,
+                                sellPrice: parseFloat(it.sellPrice || it.price || 0),
+                                buyPrice: parseFloat(it.sellPrice || it.price || 0) * 0.8,
+                                stockQty: 0,
+                                userId: req.userId
+                            }
+                        });
+                        productId = newProduct.id;
+                    }
+                }
+                it.id = productId;
+                processedItems.push({
+                    productId,
+                    qty: parseInt(it.qty),
+                    price: parseFloat(it.sellPrice || it.price),
+                    total: parseFloat((it.sellPrice || it.price) * it.qty)
+                });
+            }
+
             // Apply New
             const updated = await tx.invoice.update({
                 where: { id },
@@ -170,12 +236,7 @@ router.put('/:id', async (req, res) => {
                     paymentMethod,
                     createdAt: createdAt ? new Date(createdAt) : old.createdAt,
                     items: {
-                        create: cart.map(it => ({
-                            productId: it.id || it.productId,
-                            qty: parseInt(it.qty),
-                            price: parseFloat(it.sellPrice || it.price),
-                            total: parseFloat((it.sellPrice || it.price) * it.qty)
-                        }))
+                        create: processedItems
                     }
                 }
             });
@@ -207,7 +268,12 @@ router.delete('/:id', async (req, res) => {
             }
             await tx.saleItem.deleteMany({ where: { invoiceId: id } });
             await tx.invoice.delete({ where: { id } });
-            await tx.stockMovement.deleteMany({ where: { notes: { contains: inv.invoiceNo } } });
+            await tx.stockMovement.deleteMany({ 
+                where: { 
+                    userId: req.userId,
+                    notes: { contains: inv.invoiceNo } 
+                } 
+            });
         });
         res.status(204).send();
     } catch (error) {

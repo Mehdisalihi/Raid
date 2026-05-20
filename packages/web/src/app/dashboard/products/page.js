@@ -651,7 +651,7 @@ export default function ProductsPage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="card-premium rounded-[2.5rem] overflow-hidden border-[var(--glass-border)] bg-[var(--surface-1)] shadow-xl">
+                    <div className="card-premium rounded-[2.5rem] overflow-hidden border-[var(--glass-border)] bg-[var(--surface-1)] shadow-xl table-container">
                         <table className="w-full border-collapse">
                             <thead>
                                 <tr className="bg-[var(--surface-2)] border-b border-[var(--glass-border)]">

@@ -63,7 +63,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
               style: const TextStyle(color: AppColors.text, fontSize: 18),
               textAlign: TextAlign.center,
               decoration: InputDecoration(
-                prefixText: 'MRU ',
+                prefixText: '${context.tr('currency')} ',
                 filled: true,
                 fillColor: AppColors.bg,
                 border: OutlineInputBorder(
@@ -191,7 +191,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
             child: _statCard(
               context.tr('usDebtors'),
               FormatUtils.formatNumber(_totalDebtors),
-              'MRU',
+              context.tr('currency'),
               AppColors.warning,
               Icons.trending_up_rounded,
             ),
@@ -201,7 +201,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
             child: _statCard(
               context.tr('themCreditors'),
               FormatUtils.formatNumber(_totalCreditors),
-              'MRU',
+              context.tr('currency'),
               AppColors.danger,
               Icons.trending_down_rounded,
             ),
@@ -386,8 +386,8 @@ class _DebtsScreenState extends State<DebtsScreen> {
                   style: TextStyle(
                       color: color, fontWeight: FontWeight.w900, fontSize: 18),
                 ),
-                const Text('MRU',
-                    style: TextStyle(color: AppColors.textLight, fontSize: 10)),
+                Text(context.tr('currency'),
+                    style: const TextStyle(color: AppColors.textLight, fontSize: 10)),
                 const SizedBox(height: 8),
                 Container(
                   padding:

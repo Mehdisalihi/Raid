@@ -121,8 +121,15 @@ router.post('/register', async (req, res) => {
                 email,
                 passwordHash,
                 phone,
-                isVerified: true, // Auto-verify in local mode
-                role: 'USER',
+                isVerified: true,
+                role: 'ADMIN',
+                canAccessSales: true,
+                canCreateInvoices: true,
+                canManageInventory: true,
+                canViewReports: true,
+                canManageCustomers: true,
+                canManageExpenses: true,
+                canAccessSettings: true,
             }
         });
 
@@ -135,9 +142,16 @@ router.post('/register', async (req, res) => {
                     name: user.name,
                     email: user.email,
                     passwordHash: passwordHash,
-                    role: 'USER',
+                    role: 'ADMIN',
                     isActive: true,
-                    isVerified: true
+                    isVerified: true,
+                    canAccessSales: true,
+                    canCreateInvoices: true,
+                    canManageInventory: true,
+                    canViewReports: true,
+                    canManageCustomers: true,
+                    canManageExpenses: true,
+                    canAccessSettings: true,
                 });
             if (pgError) console.error('Failed to sync to Supabase PG:', pgError);
             else console.log('User synced to Supabase PostgreSQL successfully');
@@ -146,9 +160,33 @@ router.post('/register', async (req, res) => {
         }
 
         console.log('User registered successfully in local DB:', user.id);
+
+        // Auto-login: generate a token so the client can immediately use the app
+        const token = jwt.sign(
+            { userId: user.id, role: user.role },
+            process.env.JWT_SECRET || 'secret',
+            { expiresIn: '24h' }
+        );
+
         res.status(201).json({
-            message: 'تم التسجيل بنجاح! يمكنك تسجيل الدخول الآن.',
-            user: { id: user.id, email: user.email }
+            message: 'تم التسجيل بنجاح! مرحباً بك.',
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role,
+                isVerified: user.isVerified,
+                isActive: user.isActive,
+                canAccessSales: user.canAccessSales,
+                canCreateInvoices: user.canCreateInvoices,
+                canManageInventory: user.canManageInventory,
+                canViewReports: user.canViewReports,
+                canManageCustomers: user.canManageCustomers,
+                canManageExpenses: user.canManageExpenses,
+                canAccessSettings: user.canAccessSettings,
+            }
         });
 
     } catch (error) {

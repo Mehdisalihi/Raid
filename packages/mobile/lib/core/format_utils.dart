@@ -47,8 +47,8 @@ class FormatUtils {
     return toLatinNumerals(formatted);
   }
 
-  static String formatCurrency(dynamic value, {int decimalPlaces = 0}) {
-    return '${formatNumber(value, decimalPlaces: decimalPlaces)} MRU';
+  static String formatCurrency(dynamic value, {int decimalPlaces = 0, String symbol = 'MRU'}) {
+    return '${formatNumber(value, decimalPlaces: decimalPlaces)} $symbol';
   }
 
   static String formatQuantity(dynamic value) {

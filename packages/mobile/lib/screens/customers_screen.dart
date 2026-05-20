@@ -232,7 +232,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                           sum +
                           (double.tryParse(c['balance']?.toString() ?? '0') ??
                               0))),
-              'MRU',
+              context.tr('currency'),
               AppColors.secondary,
               Icons.account_balance_wallet_rounded,
             ),

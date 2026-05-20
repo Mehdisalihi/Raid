@@ -1,4 +1,5 @@
 {
     "liveServer.settings.port": 5501,
-    "cmake.sourceDirectory": "C:/Users/pc/mohassibe/packages/mobile/linux"
+    "cmake.sourceDirectory": "C:/Users/pc/mohassibe/packages/mobile/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

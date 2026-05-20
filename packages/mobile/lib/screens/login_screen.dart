@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
 import '../core/theme.dart';
 import '../core/app_localizations.dart';
+import '../core/api_service.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -63,6 +64,40 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _showApiSettings() {
+    final controller = TextEditingController(text: ApiService.baseUrl);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(context.tr('serverSettings')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(context.tr('enterApiUrl')),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'https://...',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.tr('cancel'))),
+          ElevatedButton(
+            onPressed: () async {
+              await ApiService.setBaseUrl(controller.text.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child: Text(context.tr('save')),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.bg, Color(0xFF1E293B)],
+                colors: [AppColors.bg, Color(0xFFE0F2FE)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -146,8 +181,28 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 80,
           decoration: BoxDecoration(
               gradient: AppColors.primaryGradient, shape: BoxShape.circle),
-          child: const Icon(Icons.account_balance_wallet_rounded,
-              color: Colors.white, size: 40),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              const Icon(Icons.account_balance_wallet_rounded,
+                  color: Colors.white, size: 40),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: GestureDetector(
+                  onTap: _showApiSettings,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.settings, size: 16, color: AppColors.primary),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         Text(context.tr('appName'),

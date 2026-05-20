@@ -142,20 +142,22 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
                 </button>
                 <div className="w-2" />
 
-                {activeShortcuts.map((sc) => {
-                    const Icon = ICON_MAP[sc.icon];
-                    return (
-                        <Link
-                            key={sc.href}
-                            href={sc.href}
-                            className={`${btnBase} ${sc.color} ${theme === 'dark' ? btnDark : btnLight}`}
-                            title={lang === 'ar' ? sc.label : sc.labelFr}
-                        >
-                            {Icon && <Icon size={14} />}
-                            <span>{lang === 'ar' ? sc.label : sc.labelFr}</span>
-                        </Link>
-                    );
-                })}
+                <div className="flex items-center gap-0.5 overflow-x-auto no-scrollbar max-w-[40vw] sm:max-w-none">
+                    {activeShortcuts.map((sc) => {
+                        const Icon = ICON_MAP[sc.icon];
+                        return (
+                            <Link
+                                key={sc.href}
+                                href={sc.href}
+                                className={`${btnBase} ${sc.color} ${theme === 'dark' ? btnDark : btnLight} whitespace-nowrap`}
+                                title={lang === 'ar' ? sc.label : sc.labelFr}
+                            >
+                                {Icon && <Icon size={14} />}
+                                <span className="hidden md:inline">{lang === 'ar' ? sc.label : sc.labelFr}</span>
+                            </Link>
+                        );
+                    })}
+                </div>
 
                 {/* Add Shortcut Button */}
                 <div className="relative" ref={panelRef}>
@@ -239,12 +241,15 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
                             ? (pendingCount > 0 ? 'bg-amber-500' : 'bg-emerald-500')
                             : 'bg-red-500'
                     }`} />
-                    <span>
+                    <span className="hidden sm:inline">
                         {isOnline 
                             ? (pendingCount > 0 
                                 ? (lang === 'ar' ? `جاري المزامنة (${pendingCount})` : `Syncing (${pendingCount})`)
                                 : (lang === 'ar' ? 'متصل بالسحابة' : 'Cloud Connected'))
                             : (lang === 'ar' ? 'وضع الأوفلاين' : 'Offline Mode')}
+                    </span>
+                    <span className="sm:hidden">
+                        {pendingCount > 0 ? `(${pendingCount})` : ''}
                     </span>
                     {isOnline && pendingCount > 0 && (
                         <button 
@@ -300,7 +305,7 @@ export default function GlobalStatusBar({ t, isRTL, lang, theme, toggleTheme, on
                 </div>
 
                 <div className="flex items-center gap-3 ps-2 pe-1">
-                    <div className="flex items-center gap-1.5 font-black uppercase text-[11px] tracking-widest opacity-90">
+                    <div className="hidden lg:flex items-center gap-1.5 font-black uppercase text-[11px] tracking-widest opacity-90">
                         <span>RAID SMART</span>
                     </div>
                     <div className={`px-2.5 rounded font-mono text-[11px] py-1 ${theme === 'dark' ? 'bg-white/20' : 'bg-black/10'}`}>

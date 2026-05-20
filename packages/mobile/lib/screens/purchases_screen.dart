@@ -3,6 +3,7 @@ import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
+import '../widgets/barcode_scanner_widget.dart';
 
 class PurchasesScreen extends StatefulWidget {
   final Map<String, dynamic>? invoiceToEdit;
@@ -68,6 +69,42 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       }
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
+  }
+
+  void _openScanner() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BarcodeScannerWidget(
+          continuous: true,
+          onScan: (code) {
+            final p = _products.firstWhere(
+              (p) => p['barcode'] == code,
+              orElse: () => null,
+            );
+            if (p != null) {
+              _addToCart(p);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${context.tr('addedToCart')}: ${p['name']}'),
+                  backgroundColor: AppColors.success,
+                  duration: const Duration(milliseconds: 800),
+                  behavior: SnackBarBehavior.floating,
+                  margin: const EdgeInsets.only(bottom: 110, left: 20, right: 20),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('productNotFound')),
+                  backgroundColor: AppColors.danger,
+                ),
+              );
+            }
+          },
+        ),
+      ),
+    );
   }
 
   List<dynamic> get _filtered => _products.where((p) {
@@ -299,7 +336,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                           sum +
                           (double.tryParse(p['total']?.toString() ?? '0') ??
                               0))),
-              'MRU',
+              context.tr('currency'),
               AppColors.secondary,
               Icons.trending_up_rounded,
             ),
@@ -451,28 +488,46 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       ],
     );
   }
-
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: TextField(
-        onChanged: (v) => setState(() => _search = v),
-        style: const TextStyle(color: AppColors.text),
-        decoration: InputDecoration(
-          hintText: context.tr('purchaseSearchHint'),
-          prefixIcon:
-              const Icon(Icons.search_rounded, color: AppColors.secondary),
-          filled: true,
-          fillColor: AppColors.surface,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: AppColors.border),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              onChanged: (v) => setState(() => _search = v),
+              style: const TextStyle(color: AppColors.text),
+              decoration: InputDecoration(
+                hintText: context.tr('purchaseSearchHint'),
+                prefixIcon:
+                    const Icon(Icons.search_rounded, color: AppColors.secondary),
+                filled: true,
+                fillColor: AppColors.surface,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: AppColors.secondary),
+                ),
+              ),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: AppColors.secondary),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: _openScanner,
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.secondary,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.qr_code_scanner_rounded,
+                  color: Colors.white, size: 24),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -510,7 +565,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                 style: const TextStyle(
                     color: AppColors.text, fontWeight: FontWeight.bold)),
             subtitle: Text(
-                '${context.tr('purchasePrice')}: ${FormatUtils.formatNumber(p['buyPrice'])} MRU | ${context.tr('current')}: ${FormatUtils.formatQuantity(p['stockQty'])}',
+                '${context.tr('purchasePrice')}: ${FormatUtils.formatNumber(p['buyPrice'])} ${context.tr('currency')} | ${context.tr('current')}: ${FormatUtils.formatQuantity(p['stockQty'])}',
                 style:
                     const TextStyle(color: AppColors.textLight, fontSize: 13)),
             trailing: Icon(
@@ -550,7 +605,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
             title: Text(p['supplierName'] ?? context.tr('generalSupplier'),
                 style: const TextStyle(
                     color: AppColors.text, fontWeight: FontWeight.bold)),
-            subtitle: Text('${context.tr('value')}: ${FormatUtils.formatCurrency(p['total'])} | ${FormatUtils.formatDate(p['date'])}',
+            subtitle: Text('${context.tr('value')}: ${FormatUtils.formatCurrency(p['total'], symbol: context.tr('currency'))} | ${FormatUtils.formatDate(p['date'])}',
                 style:
                     const TextStyle(color: AppColors.textLight, fontSize: 13)),
             trailing: const Icon(Icons.info_outline_rounded,
@@ -599,7 +654,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                         style: const TextStyle(
                             color: AppColors.text,
                             fontWeight: FontWeight.bold)),
-                    subtitle: Text('${context.tr('purchasePrice')}: ${FormatUtils.formatCurrency(i['buyPrice'])}'),
+                    subtitle: Text('${context.tr('purchasePrice')}: ${FormatUtils.formatCurrency(i['buyPrice'], symbol: context.tr('currency'))}'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -655,7 +710,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
           children: [
             Text(context.tr('totalDue'),
                 style: const TextStyle(color: AppColors.textMuted)),
-            Text(FormatUtils.formatCurrency(_total),
+            Text(FormatUtils.formatCurrency(_total, symbol: context.tr('currency')),
                 style: const TextStyle(
                     color: AppColors.text,
                     fontWeight: FontWeight.w900,

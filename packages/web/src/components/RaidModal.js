@@ -56,9 +56,9 @@ const RaidModal = ({
             className={`relative w-full ${maxWidth} ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-white'} rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.4)] border ${theme === 'dark' ? 'border-white/5' : 'border-slate-100'} overflow-hidden flex flex-col max-h-[90vh]`}
           >
             {/* Header */}
-            <div className={`p-6 lg:p-8 border-b ${theme === 'dark' ? 'border-white/5 bg-[#1e293b]' : 'border-slate-100 bg-white'} flex items-center justify-between sticky top-0 z-20 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={`p-5 lg:p-8 border-b ${theme === 'dark' ? 'border-white/5 bg-[#1e293b]' : 'border-slate-100 bg-white'} flex items-center justify-between sticky top-0 z-20 ${isRTL ? 'flex-row-reverse' : ''}`}>
                <div>
-                  <h2 className={`text-xl font-black ${theme === 'dark' ? 'text-white' : 'text-slate-900'} tracking-tight ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <h2 className={`text-lg lg:text-xl font-black ${theme === 'dark' ? 'text-white' : 'text-slate-900'} tracking-tight ${isRTL ? 'text-right' : 'text-left'}`}>
                     {title}
                   </h2>
                </div>
@@ -71,7 +71,7 @@ const RaidModal = ({
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-6 lg:p-8 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-5 lg:p-8 custom-scrollbar">
                {children}
             </div>
 

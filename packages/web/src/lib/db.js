@@ -63,6 +63,10 @@ export async function getPendingCount() {
 export async function cacheApiData(tableName, dataArray) {
   if (!db[tableName] || !Array.isArray(dataArray)) return;
   try {
+    // Clear already synced items to reflect server-side deletions
+    // We only keep items that are 'pending_push' (locally created but not yet synced)
+    await db[tableName].where('sync_status').equals('synced').delete().catch(() => {});
+    
     for (const item of dataArray) {
       await db[tableName].put({
         ...item,

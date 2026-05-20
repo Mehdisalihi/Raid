@@ -194,7 +194,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         _statBox(context.tr('stock'), FormatUtils.toLatinNumerals((_product['stockQty'] ?? 0).toString()),
             AppColors.secondary),
         const SizedBox(width: 16),
-        _statBox(context.tr('sellPrice'), '${FormatUtils.toLatinNumerals((_product['sellPrice'] ?? 0).toString())} MRU',
+        _statBox(context.tr('sellPrice'), FormatUtils.formatCurrency(_product['sellPrice'] ?? 0, symbol: context.tr('currency')),
             AppColors.primary),
       ],
     );

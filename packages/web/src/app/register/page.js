@@ -22,11 +22,14 @@ export default function RegisterPage() {
         setError('');
         setLoading(true);
         try {
-            await authService.register(formData.name, formData.email, formData.password);
-            // Instead of verify code page, we can show a success message or a dedicated 'check email' page
-            setFormData({ name: '', email: '', password: '' });
-            alert(isRTL ? 'تم التسجيل بنجاح! يرجى مراجعة بريدك الإلكتروني لتفعيل الحساب.' : 'Inscription réussie ! Veuillez vérifier votre e-mail pour activer votre compte.');
-            router.push('/login');
+            const data = await authService.register(formData.name, formData.email, formData.password);
+            // New accounts are auto-logged in as ADMIN - redirect straight to dashboard
+            if (data.token) {
+                router.push('/dashboard');
+            } else {
+                // Fallback: redirect to login if no token returned
+                router.push('/login');
+            }
         } catch (err) {
             setError(err.response?.data?.error || t('register_error'));
         } finally {

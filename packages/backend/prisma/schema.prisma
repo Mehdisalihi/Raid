@@ -37,6 +37,11 @@ model User {
   isVerified         Boolean  @default(false)
   verificationCode   String?
   createdAt          DateTime @default(now())
+  
+  // Ownership for sub-users
+  ownerId            String?
+  owner              User?    @relation("UserOwnership", fields: [ownerId], references: [id])
+  SubUsers           User[]   @relation("UserOwnership")
 
   // Relations to owned data
   Products           Product[]
@@ -52,7 +57,7 @@ model User {
 model Product {
   id                 String               @id @default(uuid())
   name               String
-  barcode            String?              @unique
+  barcode            String?
   buyPrice           Float
   sellPrice          Float
   stockQty           Int                  @default(0)
@@ -64,6 +69,7 @@ model Product {
   Movements          StockMovement[]
   WarehouseInventory WarehouseInventory[]
 
+  @@unique([barcode, userId])
   @@index([userId])
 }
 
@@ -79,6 +85,7 @@ model Warehouse {
   MovementsTo   StockMovement[]      @relation("destination")
   MovementsFrom StockMovement[]      @relation("source")
   Inventory     WarehouseInventory[]
+
 
   @@index([userId])
 }
@@ -126,6 +133,7 @@ model Customer {
   user      User      @relation(fields: [userId], references: [id])
   Invoices  Invoice[]
 
+
   @@index([userId])
 }
 
@@ -141,6 +149,7 @@ model Supplier {
   user      User      @relation(fields: [userId], references: [id])
   Invoices  Invoice[]
 
+
   @@index([userId])
 }
 
@@ -154,6 +163,7 @@ model Expense {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
 
+
   @@index([userId])
 }
 
@@ -164,12 +174,13 @@ model ExpenseCategory {
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
 
+
   @@index([userId])
 }
 
 model Invoice {
   id            String     @id @default(uuid())
-  invoiceNo     String     @unique
+  invoiceNo     String
   customerId    String?
   supplierId    String?
   totalAmount   Float
@@ -186,6 +197,8 @@ model Invoice {
   supplier      Supplier?  @relation(fields: [supplierId], references: [id])
   customer      Customer?  @relation(fields: [customerId], references: [id])
   items         SaleItem[]
+
+  @@unique([invoiceNo, userId])
 
   @@index([userId])
   @@index([customerId])
@@ -221,6 +234,7 @@ model Staff {
   createdAt    DateTime            @default(now())
   user         User                @relation(fields: [userId], references: [id])
   Transactions SalaryTransaction[]
+
 
   @@index([userId])
 }

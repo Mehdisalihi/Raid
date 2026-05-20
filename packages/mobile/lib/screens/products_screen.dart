@@ -341,7 +341,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             child: _statCard(
               context.tr('inventoryValue'),
               FormatUtils.formatNumber(_totalValue),
-              'MRU',
+              context.tr('currency'),
               AppColors.success,
               Icons.account_balance_wallet_rounded,
             ),
@@ -602,7 +602,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  FormatUtils.formatCurrency(p['sellPrice']),
+                  FormatUtils.formatCurrency(p['sellPrice'], symbol: context.tr('currency')),
                   style: const TextStyle(
                     color: AppColors.success,
                     fontWeight: FontWeight.w900,
@@ -669,7 +669,34 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ),
             const Divider(color: AppColors.border, height: 32),
             _inputField(context.tr('productName'), _name, Icons.label_rounded),
-            _inputField(context.tr('productCode'), _barcode, Icons.qr_code_rounded),
+            Row(
+              children: [
+                Expanded(child: _inputField(context.tr('productCode'), _barcode, Icons.qr_code_rounded)),
+                const SizedBox(width: 8),
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.qr_code_scanner_rounded, color: AppColors.primary),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BarcodeScannerWidget(
+                            onScan: (code) {
+                              setState(() => _barcode.text = code);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
             Row(
               children: [
                 Expanded(

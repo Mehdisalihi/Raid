@@ -284,9 +284,9 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
               if (isCust && isSupp) {
                 suffix = context.watch<LocaleProvider>().isRTL ? ' (عميل ومورد)' : ' (Double)';
               } else if (isCust) {
-                suffix = context.watch<LocaleProvider>().isRTL ? ' (عميل)' : ' (Client)';
+                suffix = ' (${context.tr('customer')})';
               } else {
-                suffix = context.watch<LocaleProvider>().isRTL ? ' (مورد)' : ' (Fourn.)';
+                suffix = ' (${context.tr('supplier')})';
               }
               
               return DropdownMenuItem(value: n, child: Text('$n$suffix'));
@@ -366,7 +366,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
                 children: [
                   _td(_formatDate(item['date'])),
                   _td(item['label']),
-                  _td('${FormatUtils.toLatinNumerals(item['amount'].toStringAsFixed(0))} MRU', isBold: true),
+                  _td('${FormatUtils.toLatinNumerals(item['amount'].toStringAsFixed(0))} ${context.tr('currency')}', isBold: true),
                 ],
               )),
             ],
@@ -447,7 +447,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          '${FormatUtils.toLatinNumerals(value.toStringAsFixed(0))} MRU',
+          '${FormatUtils.toLatinNumerals(value.toStringAsFixed(0))} ${context.tr('currency')}',
           style: TextStyle(
               color: color, fontSize: 20, fontWeight: FontWeight.w900),
         ),
@@ -490,7 +490,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
             border: Border.all(color: color.withValues(alpha: 0.2)),
           ),
           child: Text(
-            '${FormatUtils.toLatinNumerals(balance.abs().toStringAsFixed(0))} MRU',
+            '${FormatUtils.toLatinNumerals(balance.abs().toStringAsFixed(0))} ${context.tr('currency')}',
             style: TextStyle(
                 color: color, fontSize: 18, fontWeight: FontWeight.w900),
           ),
@@ -559,7 +559,7 @@ class _CustomerStatementScreenState extends State<CustomerStatementScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${FormatUtils.toLatinNumerals(act['amount'].toStringAsFixed(0))} MRU',
+              Text('${FormatUtils.toLatinNumerals(act['amount'].toStringAsFixed(0))} ${context.tr('currency')}',
                   style: TextStyle(
                       color: color, fontSize: 16, fontWeight: FontWeight.w900)),
               if (act['isNeutral'] == true)

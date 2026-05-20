@@ -6,10 +6,26 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database_service.dart';
 
-const String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
+String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
 
 class ApiService {
   static const _timeout = Duration(seconds: 15);
+
+  static Future<void> initBaseUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedUrl = prefs.getString('api_base_url');
+    if (savedUrl != null && savedUrl.isNotEmpty) {
+      _baseUrl = savedUrl;
+    }
+  }
+
+  static Future<void> setBaseUrl(String url) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('api_base_url', url);
+    _baseUrl = url;
+  }
+
+  static String get baseUrl => _baseUrl;
 
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -47,7 +63,7 @@ class ApiService {
       return jsonDecode(res.body);
     } catch (e) {
       if (kDebugMode) print('API POST Error ($path): $e');
-      if (e is SocketException || e is TimeoutException || e.toString().contains('Network')) {
+      if (!path.contains('/auth/') && (e is SocketException || e is TimeoutException || e.toString().contains('Network'))) {
         return await _handleOfflineWrite('INSERT', path, body);
       }
       rethrow;
@@ -64,7 +80,7 @@ class ApiService {
       return jsonDecode(res.body);
     } catch (e) {
       if (kDebugMode) print('API PUT Error ($path): $e');
-      if (e is SocketException || e is TimeoutException || e.toString().contains('Network')) {
+      if (!path.contains('/auth/') && (e is SocketException || e is TimeoutException || e.toString().contains('Network'))) {
         return await _handleOfflineWrite('UPDATE', path, body);
       }
       rethrow;
@@ -80,7 +96,7 @@ class ApiService {
       return {'success': true};
     } catch (e) {
       if (kDebugMode) print('API DELETE Error ($path): $e');
-      if (e is SocketException || e is TimeoutException || e.toString().contains('Network')) {
+      if (!path.contains('/auth/') && (e is SocketException || e is TimeoutException || e.toString().contains('Network'))) {
         return await _handleOfflineWrite('DELETE', path, null);
       }
       rethrow;
@@ -166,28 +182,38 @@ class AuthService {
 
       return res as Map<String, dynamic>;
     } catch (e) {
-      if (kDebugMode) print('Falling back to local login...');
-      // Check local DB
-      final users = await _db.queryAll('local_users');
-      final hashedPass = _hashPassword(password);
-      
-      try {
-        final localUser = users.firstWhere(
-            (u) => u['email'] == email && u['passwordHash'] == hashedPass);
+      // Only fallback to local login for network/timeout errors
+      bool isNetworkError = e is SocketException || 
+                            e is TimeoutException || 
+                            e.toString().contains('Connection failed') ||
+                            e.toString().contains('Network is unreachable');
+
+      if (isNetworkError) {
+        if (kDebugMode) print('Network error, falling back to local login...');
+        final users = await _db.queryAll('local_users');
+        final hashedPass = _hashPassword(password);
         
-        return {
-          'token': 'offline_token_${localUser['id']}',
-          'user': {
-            'id': localUser['id'],
-            'name': localUser['name'],
-            'email': localUser['email'],
-            'role': localUser['role'],
-            'storeName': localUser['storeName'],
-          }
-        };
-      } catch (_) {
-        throw Exception('البريد الإلكتروني أو كلمة المرور غير صحيحة (أوفلاين)');
+        try {
+          final localUser = users.firstWhere(
+              (u) => u['email'] == email && u['passwordHash'] == hashedPass);
+          
+          return {
+            'token': 'offline_token_${localUser['id']}',
+            'user': {
+              'id': localUser['id'],
+              'name': localUser['name'],
+              'email': localUser['email'],
+              'role': localUser['role'],
+              'storeName': localUser['storeName'],
+            }
+          };
+        } catch (_) {
+          throw Exception('البريد الإلكتروني أو كلمة المرور غير صحيحة (أوفلاين)');
+        }
       }
+      
+      // If it's a server error (401, 403, etc.), throw it directly
+      rethrow;
     }
   }
 
@@ -239,6 +265,10 @@ class ProductService {
   static Future<List<dynamic>> getAll() async {
     try {
       final products = (await ApiService.get('/products')) as List;
+      // Clear old server-synced data to reflect deletions
+      final db = await _db.database;
+      await db.delete('products', where: "id NOT LIKE 'local_%'");
+      
       // Update local cache
       for (var p in products) {
         await _db.insert('products', {
@@ -333,6 +363,9 @@ class CustomerService {
   static Future<List<dynamic>> getAll() async {
     try {
       final customers = (await ApiService.get('/customers')) as List;
+      final db = await _db.database;
+      await db.delete('customers', where: "id NOT LIKE 'local_%'");
+
       for (var c in customers) {
         await _db.insert('customers', {
           'id': c['id'],
@@ -425,6 +458,9 @@ class SupplierService {
   static Future<List<dynamic>> getAll() async {
     try {
       final suppliers = (await ApiService.get('/suppliers')) as List;
+      final db = await _db.database;
+      await db.delete('suppliers', where: "id NOT LIKE 'local_%'");
+
       for (var s in suppliers) {
         await _db.insert('suppliers', {
           'id': s['id'],
@@ -525,6 +561,9 @@ class SaleService {
       if (params.isNotEmpty) path += '?${params.join('&')}';
 
       final sales = (await ApiService.get(path)) as List;
+      final db = await _db.database;
+      await db.delete('invoices', where: "id NOT LIKE 'local_%'");
+
       for (var s in sales) {
         await _db.insert('invoices', {
           'id': s['id'],
@@ -716,6 +755,12 @@ class SyncService {
             break;
           case 'inventory_add':
             if (operation == 'INSERT') await ApiService.post('/inventory/add', data);
+            break;
+          case 'staff':
+            if (operation == 'INSERT') await ApiService.post('/staff', data);
+            if (operation == 'UPDATE') await ApiService.put('/staff/$recordId', data);
+            if (operation == 'DELETE') await ApiService.delete('/staff/$recordId');
+            if (operation == 'PAY') await ApiService.post('/staff/$recordId/transactions', data);
             break;
         }
 
@@ -1311,5 +1356,92 @@ class InventoryService {
       return {'offline': true};
     }
   }
+}
+
+class StaffService {
+  static final _db = DatabaseService();
+
+  static Future<List<dynamic>> getAll() async {
+    try {
+      final staff = (await ApiService.get('/staff')) as List;
+      return staff;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<dynamic> create(Map<String, dynamic> data) async {
+    try {
+      final res = await ApiService.post('/staff', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      final id = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'staff',
+        'operation': 'INSERT',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
+  }
+
+  static Future<dynamic> update(dynamic id, Map<String, dynamic> data) async {
+    try {
+      final res = await ApiService.put('/staff/$id', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'staff',
+        'operation': 'UPDATE',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'id': id, 'offline': true};
+    }
+  }
+
+  static Future<void> delete(dynamic id) async {
+    try {
+      await ApiService.delete('/staff/$id');
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'staff',
+        'operation': 'DELETE',
+        'data': jsonEncode({'id': id}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } finally {
+      DataSync.notify();
+    }
+  }
+
+  static Future<dynamic> pay(dynamic id, Map<String, dynamic> data) async {
+    try {
+      final res = await ApiService.post('/staff/$id/transactions', data);
+      DataSync.notify();
+      return res;
+    } catch (e) {
+      await _db.insert('pending_sync', {
+        'id': 'sync_${DateTime.now().microsecondsSinceEpoch}',
+        'tableName': 'staff',
+        'operation': 'PAY',
+        'data': jsonEncode({'id': id, ...data}),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      DataSync.notify();
+      return {'offline': true};
+    }
+  }
+
+  static Future<Map<String, dynamic>> getStatement(dynamic id) async =>
+      (await ApiService.get('/staff/$id/statement')) as Map<String, dynamic>;
 }
 

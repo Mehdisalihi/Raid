@@ -232,7 +232,7 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
                           sum +
                           (double.tryParse(s['balance']?.toString() ?? '0') ??
                               0))),
-              'MRU',
+              context.tr('currency'),
               AppColors.success,
               Icons.account_balance_wallet_rounded,
             ),

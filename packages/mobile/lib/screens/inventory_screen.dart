@@ -3,6 +3,7 @@ import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
 import '../core/app_localizations.dart';
+import '../widgets/barcode_scanner_widget.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -19,6 +20,7 @@ class _InventoryScreenState extends State<InventoryScreen>
   int _activeWarehouseIndex = 0;
   late TabController _tabController;
   int _mainTabIndex = 0; // 0: Stock, 1: Movements
+  String _search = '';
 
   @override
   void initState() {
@@ -166,6 +168,7 @@ class _InventoryScreenState extends State<InventoryScreen>
   Widget _buildStockTab() {
     return Column(
       children: [
+        _buildSearchBar(),
         if (_warehouses.isNotEmpty) _buildWarehouseSelector(),
         Expanded(
           child: _loading
@@ -173,6 +176,43 @@ class _InventoryScreenState extends State<InventoryScreen>
               : _buildInventoryList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: TextField(
+        onChanged: (v) => setState(() => _search = v),
+        style: const TextStyle(color: AppColors.text, fontSize: 14),
+        decoration: InputDecoration(
+          hintText: context.tr('search'),
+          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.secondary),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.qr_code_scanner_rounded, color: AppColors.secondary),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BarcodeScannerWidget(
+                    onScan: (code) => setState(() => _search = code),
+                  ),
+                ),
+              );
+            },
+          ),
+          filled: true,
+          fillColor: AppColors.surface,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: AppColors.secondary),
+          ),
+        ),
+      ),
     );
   }
 
@@ -221,7 +261,14 @@ class _InventoryScreenState extends State<InventoryScreen>
   }
 
   Widget _buildInventoryList() {
-    if (_inventory.isEmpty) {
+    final filtered = _inventory.where((item) {
+      final p = item['product'];
+      final name = (p['name'] ?? '').toLowerCase();
+      final barcode = (p['barcode'] ?? '');
+      return name.contains(_search.toLowerCase()) || barcode.contains(_search);
+    }).toList();
+
+    if (filtered.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -238,9 +285,9 @@ class _InventoryScreenState extends State<InventoryScreen>
 
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-      itemCount: _inventory.length,
+      itemCount: filtered.length,
       itemBuilder: (context, index) {
-        final item = _inventory[index];
+        final item = filtered[index];
         final p = item['product'];
         final qty = item['qty'] ?? 0;
         final minAlert = p['minStockAlert'] ?? 0;

@@ -43,32 +43,44 @@ router.post('/', async (req, res) => {
     const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert, warehouseId } = req.body;
     try {
         const product = await prisma.$transaction(async (tx) => {
+            const safeBarcode = barcode ? String(barcode).trim() : '';
+
             const newProduct = await tx.product.create({
                 data: {
                     name,
-                    barcode: barcode && barcode.trim() !== '' ? barcode.trim() : null,
-                    buyPrice: parseFloat(buyPrice),
-                    sellPrice: parseFloat(sellPrice),
-                    stockQty: parseInt(stockQty || 0),
-                    minStockAlert: parseInt(minStockAlert || 5),
+                    barcode: safeBarcode !== '' ? safeBarcode : null,
+                    buyPrice: parseFloat(buyPrice) || 0,
+                    sellPrice: parseFloat(sellPrice) || 0,
+                    stockQty: parseInt(stockQty) || 0,
+                    minStockAlert: parseInt(minStockAlert) || 5,
                     userId: req.userId,
                 },
             });
 
-            if (warehouseId && parseInt(stockQty || 0) > 0) {
+            // Find default warehouse if none provided
+            let targetWarehouseId = warehouseId;
+            if (!targetWarehouseId) {
+                const defaultWarehouse = await tx.warehouse.findFirst({
+                    where: { userId: req.userId },
+                    orderBy: { createdAt: 'asc' }
+                });
+                if (defaultWarehouse) targetWarehouseId = defaultWarehouse.id;
+            }
+
+            if (targetWarehouseId && (parseInt(stockQty) || 0) > 0) {
                 await tx.warehouseInventory.create({
                     data: {
                         productId: newProduct.id,
-                        warehouseId: warehouseId,
-                        qty: parseInt(stockQty)
+                        warehouseId: targetWarehouseId,
+                        qty: parseInt(stockQty) || 0
                     }
                 });
 
                 await tx.stockMovement.create({
                     data: {
                         productId: newProduct.id,
-                        destinationId: warehouseId,
-                        qty: parseInt(stockQty),
+                        destinationId: targetWarehouseId,
+                        qty: parseInt(stockQty) || 0,
                         type: 'ADD',
                         userId: req.userId,
                         notes: 'Initial stock'
@@ -81,32 +93,84 @@ router.post('/', async (req, res) => {
         res.json(product);
     } catch (error) {
         console.error('POST /products - error:', error);
-        res.status(500).json({ error: 'error creating product' });
+        res.status(500).json({ error: 'error creating product', details: error.message });
     }
 });
 
 // Update product
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert } = req.body;
+    const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert, warehouseId } = req.body;
     try {
         const existing = await prisma.product.findFirst({ where: { id, userId: req.userId } });
         if (!existing) return res.status(404).json({ error: 'Product not found' });
 
-        const product = await prisma.product.update({
-            where: { id },
-            data: {
-                name,
-                barcode: barcode && barcode.trim() !== '' ? barcode.trim() : null,
-                buyPrice: parseFloat(buyPrice),
-                sellPrice: parseFloat(sellPrice),
-                stockQty: parseInt(stockQty),
-                minStockAlert: parseInt(minStockAlert),
-            },
+        const product = await prisma.$transaction(async (tx) => {
+            const safeBarcode = barcode ? String(barcode).trim() : '';
+            const newQty = parseInt(stockQty) || 0;
+
+            const updated = await tx.product.update({
+                where: { id },
+                data: {
+                    name,
+                    barcode: safeBarcode !== '' ? safeBarcode : null,
+                    buyPrice: parseFloat(buyPrice) || 0,
+                    sellPrice: parseFloat(sellPrice) || 0,
+                    stockQty: newQty,
+                    minStockAlert: parseInt(minStockAlert) || 5,
+                },
+            });
+
+            // Find default warehouse if none provided
+            let targetWarehouseId = warehouseId;
+            if (!targetWarehouseId) {
+                const defaultWarehouse = await tx.warehouse.findFirst({
+                    where: { userId: req.userId },
+                    orderBy: { createdAt: 'asc' }
+                });
+                if (defaultWarehouse) targetWarehouseId = defaultWarehouse.id;
+            }
+
+            if (targetWarehouseId && stockQty !== undefined) {
+                const oldInv = await tx.warehouseInventory.findUnique({
+                    where: { productId_warehouseId: { productId: id, warehouseId: targetWarehouseId } }
+                });
+
+                await tx.warehouseInventory.upsert({
+                    where: { productId_warehouseId: { productId: id, warehouseId: targetWarehouseId } },
+                    update: { qty: newQty },
+                    create: {
+                        productId: id,
+                        warehouseId: targetWarehouseId,
+                        qty: newQty
+                    }
+                });
+
+                const oldQty = oldInv ? oldInv.qty : 0;
+                const diff = newQty - oldQty;
+
+                if (diff !== 0) {
+                    await tx.stockMovement.create({
+                        data: {
+                            productId: id,
+                            destinationId: diff > 0 ? targetWarehouseId : null,
+                            sourceId: diff < 0 ? targetWarehouseId : null,
+                            qty: Math.abs(diff),
+                            type: 'ADJUSTMENT',
+                            userId: req.userId,
+                            notes: 'Manual stock update via product edit'
+                        }
+                    });
+                }
+            }
+
+            return updated;
         });
+
         res.json(product);
     } catch (error) {
-        res.status(500).json({ error: 'error updating product' });
+        console.error('PUT /products/:id - error:', error);
+        res.status(500).json({ error: 'error updating product', details: error.message });
     }
 });
 

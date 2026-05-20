@@ -292,7 +292,16 @@ export const authService = {
             if (!navigator.onLine) {
                 // Offline Login Logic
                 const user = await db.users.where('email').equals(email).first();
-                if (user && user.password_hash === btoa(password)) { // Simple local hash check
+                if (user && user.password_hash === btoa(password)) {
+                    // DATA ISOLATION (Offline): Check if user changed
+                    const oldUserStr = localStorage.getItem('user');
+                    if (oldUserStr) {
+                        const oldUser = JSON.parse(oldUserStr);
+                        if (oldUser.id !== user.server_id) {
+                            const { clearBusinessData } = await import('./db');
+                            await clearBusinessData();
+                        }
+                    }
                     return { token: 'offline_token', user };
                 }
                 throw new Error('فشل تسجيل الدخول أوفلاين. تحقق من البيانات.');
@@ -313,7 +322,7 @@ export const authService = {
                         }
                     }
                     if (isDifferentUser) {
-                        const { clearBusinessData } = await import('@/lib/db');
+                        const { clearBusinessData } = await import('./db');
                         await clearBusinessData();
                     }
                 } catch (e) {
@@ -337,7 +346,7 @@ export const authService = {
     loginGuest: async () => {
         // Guest login is basically a fresh isolated session
         try {
-            const { clearBusinessData } = await import('@/lib/db');
+            const { clearBusinessData } = await import('./db');
             await clearBusinessData();
         } catch (e) {}
 
@@ -345,8 +354,32 @@ export const authService = {
         return response.data;
     },
     register: async (name, email, password, phone) => {
+        // Clear local data before starting a new registration to ensure no leaks
+        try {
+            const { clearBusinessData } = await import('./db');
+            await clearBusinessData();
+        } catch (e) {
+            console.error('Error clearing data during register:', e);
+        }
+
         const response = await api.post('/auth/register', { name, email, password, phone });
-        return response.data;
+        const data = response.data;
+
+        // Auto-login: store token and user so the new ADMIN account is immediately active
+        if (data.token && data.user) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            // Cache user for offline login
+            try {
+                await db.users.put({
+                    ...data.user,
+                    password_hash: btoa(password),
+                    server_id: data.user.id
+                });
+            } catch (e) { /* ignore indexedDB errors */ }
+        }
+
+        return data;
     },
     getMe: async () => {
         if (!navigator.onLine) {

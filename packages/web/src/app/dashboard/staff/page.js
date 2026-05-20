@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 import { 
     Users, Plus, Search, DollarSign, 
     Calendar, Briefcase, ChevronRight, 
@@ -46,8 +47,7 @@ export default function StaffPage() {
 
     const fetchStaff = async () => {
         try {
-            const res = await fetch('http://localhost:5000/v1/staff');
-            const data = await res.json();
+            const data = await api.get('/staff');
             setStaff(data);
         } catch (error) {
             console.error('Error fetching staff:', error);
@@ -59,12 +59,8 @@ export default function StaffPage() {
     const handleAddStaff = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:5000/v1/staff', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newStaff)
-            });
-            if (res.ok) {
+            const res = await api.post('/staff', newStaff);
+            if (res) {
                 setShowAddModal(false);
                 setNewStaff({ name: '', phone: '', role: '', baseSalary: '', joinedAt: new Date().toISOString().split('T')[0] });
                 fetchStaff();
@@ -77,12 +73,8 @@ export default function StaffPage() {
     const handleEditStaff = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/v1/staff/${selectedStaff.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newStaff)
-            });
-            if (res.ok) {
+            const res = await api.put(`/staff/${selectedStaff.id}`, newStaff);
+            if (res) {
                 setShowEditModal(false);
                 setNewStaff({ name: '', phone: '', role: '', baseSalary: '', joinedAt: new Date().toISOString().split('T')[0] });
                 fetchStaff();
@@ -99,10 +91,8 @@ export default function StaffPage() {
             'danger',
             async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/v1/staff/${id}`, {
-                        method: 'DELETE'
-                    });
-                    if (res.ok) fetchStaff();
+                    await api.delete(`/staff/${id}`);
+                    fetchStaff();
                 } catch (error) {
                     console.error('Error deleting staff:', error);
                 }
@@ -113,12 +103,8 @@ export default function StaffPage() {
     const handlePayment = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/v1/staff/${selectedStaff.id}/transactions`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payment)
-            });
-            if (res.ok) {
+            const res = await api.post(`/staff/${selectedStaff.id}/transactions`, payment);
+            if (res) {
                 setShowPayModal(false);
                 setPayment({ type: 'PAYMENT', amount: '', description: '', date: new Date().toISOString().split('T')[0] });
                 fetchStaff();
@@ -450,8 +436,7 @@ function StaffStatementDrawer({ staffId, onClose, t, lang, isRTL, fmtNumber, fmt
     useEffect(() => {
         const fetchStatement = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/v1/staff/${staffId}/statement`);
-                const json = await res.json();
+                const json = await api.get(`/staff/${staffId}/statement`);
                 setData(json);
             } catch (error) {
                 console.error(error);
