@@ -422,7 +422,7 @@ export default function InvoicesPage() {
                 customerName: customerName || t('cash_customer'),
                 customerId: customerId || null,
                 supplierId: supplierId || null,
-                items: cart.map(i => ({ id: i.id, qty: i.qty, price: activeTab === 'PURCHASE' ? i.buyPrice : i.sellPrice })),
+                items: cart.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: activeTab === 'PURCHASE' ? i.buyPrice : i.sellPrice })),
                 isDebt: isDebt && activeTab !== 'QUOTATION',
                 cart: cart,
                 totalAmount: calculateTotal(),

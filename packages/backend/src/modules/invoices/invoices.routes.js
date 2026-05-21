@@ -293,6 +293,39 @@ router.put('/:id', async (req, res) => {
                 targetWH = def?.id;
             }
 
+            // Pre-process items to auto-create missing products
+            let processedItems = [];
+            for (const item of cleanCart) {
+                let productId = item.id || item.productId;
+                if (!productId && item.name) {
+                    const existing = await tx.product.findFirst({
+                        where: { name: { equals: item.name }, userId: req.userId }
+                    });
+                    if (existing) {
+                        productId = existing.id;
+                    } else {
+                        const newProduct = await tx.product.create({
+                            data: {
+                                name: item.name,
+                                sellPrice: parseFloat(item.sellPrice || item.price || 0),
+                                buyPrice: parseFloat(item.buyPrice || item.price || 0),
+                                stockQty: 0,
+                                userId: req.userId
+                            }
+                        });
+                        productId = newProduct.id;
+                    }
+                }
+                // Override the id so subsequent stock updates use the correct product
+                item.id = productId;
+                processedItems.push({
+                    productId,
+                    qty: parseInt(item.qty || 0),
+                    price: parseFloat(item.sellPrice || item.buyPrice || item.price || 0),
+                    total: parseFloat((item.sellPrice || item.buyPrice || item.price || 0) * (item.qty || 0))
+                });
+            }
+
             // Update Invoice Header
             const updated = await tx.invoice.update({
                 where: { id },
@@ -309,12 +342,7 @@ router.put('/:id', async (req, res) => {
                     type: type || oldInv.type,
                     createdAt: invoiceDate ? new Date(invoiceDate) : oldInv.createdAt,
                     items: {
-                        create: cleanCart.map(item => ({
-                            productId: item.id || item.productId,
-                            qty: parseInt(item.qty || 0),
-                            price: parseFloat(item.sellPrice || item.buyPrice || item.price || 0),
-                            total: parseFloat((item.sellPrice || item.buyPrice || item.price || 0) * (item.qty || 0))
-                        }))
+                        create: processedItems
                     }
                 }
             });
