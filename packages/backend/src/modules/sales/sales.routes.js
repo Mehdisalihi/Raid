@@ -96,16 +96,16 @@ router.post('/', async (req, res) => {
                 for (const item of cart) {
                     await tx.product.update({
                         where: { id: item.id },
-                        data: { stockQty: { decrement: parseInt(item.qty) } }
+                        data: { stockQty: { decrement: parseInt(item.qty || 0) } }
                     });
                     if (targetWH) {
                         await tx.warehouseInventory.upsert({
                             where: { productId_warehouseId: { productId: item.id, warehouseId: targetWH } },
-                            update: { qty: { decrement: parseInt(item.qty) } },
-                            create: { productId: item.id, warehouseId: targetWH, qty: -parseInt(item.qty) }
+                            update: { qty: { decrement: parseInt(item.qty || 0) } },
+                            create: { productId: item.id, warehouseId: targetWH, qty: -parseInt(item.qty || 0) }
                         });
                         await tx.stockMovement.create({
-                            data: { productId: item.id, sourceId: targetWH, qty: parseInt(item.qty), type: 'SALE', userId: req.userId, notes: `Sale: ${invoice.invoiceNo}` }
+                            data: { productId: item.id, sourceId: targetWH, qty: parseInt(item.qty || 0), type: 'SALE', userId: req.userId, notes: `Sale: ${invoice.invoiceNo}` }
                         });
                     }
                 }
@@ -222,9 +222,9 @@ router.put('/:id', async (req, res) => {
                 it.id = productId;
                 processedItems.push({
                     productId,
-                    qty: parseInt(it.qty),
-                    price: parseFloat(it.sellPrice || it.price),
-                    total: parseFloat((it.sellPrice || it.price) * it.qty)
+                    qty: parseInt(it.qty || 0),
+                    price: parseFloat(it.sellPrice || it.price || 0),
+                    total: parseFloat((it.sellPrice || it.price || 0) * (it.qty || 0))
                 });
             }
 
@@ -243,9 +243,10 @@ router.put('/:id', async (req, res) => {
 
             for (const it of cart) {
                 const pid = it.id || it.productId;
-                await tx.product.update({ where: { id: pid }, data: { stockQty: { decrement: it.qty } } });
+                const qty = parseInt(it.qty || 0);
+                await tx.product.update({ where: { id: pid }, data: { stockQty: { decrement: qty } } });
                 await tx.stockMovement.create({
-                    data: { productId: pid, sourceId: warehouseId || (await tx.warehouse.findFirst({where:{isActive:true, userId: req.userId}}))?.id, qty: it.qty, type: 'SALE', userId: req.userId, notes: `Updated: ${updated.invoiceNo}` }
+                    data: { productId: pid, sourceId: warehouseId || (await tx.warehouse.findFirst({where:{isActive:true, userId: req.userId}}))?.id, qty: qty, type: 'SALE', userId: req.userId, notes: `Updated: ${updated.invoiceNo}` }
                 });
             }
             return updated;
