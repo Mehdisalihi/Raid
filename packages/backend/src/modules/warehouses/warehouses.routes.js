@@ -25,13 +25,18 @@ router.get('/', async (req, res) => {
 // Create warehouse
 router.post('/', async (req, res) => {
     const { name, location, manager } = req.body;
+    // Basic validation
+    if (!name || typeof name !== 'string' || !location || typeof location !== 'string') {
+        return res.status(400).json({ error: 'Invalid name or location' });
+    }
     try {
         const warehouse = await prisma.warehouse.create({
-            data: { name, location, manager, userId: req.userId }
+            data: { name: name.trim(), location: location.trim(), manager: manager?.trim(), userId: req.userId }
         });
         res.json(warehouse);
     } catch (error) {
-        res.status(500).json({ error: 'error creating warehouse' });
+        console.error('Create Warehouse Error:', error);
+        res.status(500).json({ error: 'Error creating warehouse' });
     }
 });
 
@@ -39,17 +44,34 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, location, manager, isActive } = req.body;
+    // Validate ID format
+    if (!id || typeof id !== 'string') {
+        return res.status(400).json({ error: 'Invalid warehouse ID' });
+    }
+    // Basic field validation
+    if (name && typeof name !== 'string') {
+        return res.status(400).json({ error: 'Invalid name' });
+    }
+    if (location && typeof location !== 'string') {
+        return res.status(400).json({ error: 'Invalid location' });
+    }
     try {
         const existing = await prisma.warehouse.findFirst({ where: { id, userId: req.userId } });
         if (!existing) return res.status(404).json({ error: 'Warehouse not found' });
 
         const warehouse = await prisma.warehouse.update({
             where: { id },
-            data: { name, location, manager, isActive }
+            data: { 
+                name: name?.trim(),
+                location: location?.trim(),
+                manager: manager?.trim(),
+                isActive
+            }
         });
         res.json(warehouse);
     } catch (error) {
-        res.status(500).json({ error: 'error updating warehouse' });
+        console.error('Update Warehouse Error:', error);
+        res.status(500).json({ error: 'Error updating warehouse' });
     }
 });
 
@@ -60,11 +82,17 @@ router.delete('/:id', async (req, res) => {
         const existing = await prisma.warehouse.findFirst({ where: { id, userId: req.userId } });
         if (!existing) return res.status(404).json({ error: 'Warehouse not found' });
 
-        // We should check for inventory before deleting, but keeping it simple for now
+        // Prevent deletion if inventory exists
+        const inventoryCount = await prisma.warehouseInventory.count({ where: { warehouseId: id } });
+        if (inventoryCount > 0) {
+            return res.status(400).json({ error: 'Cannot delete warehouse with existing inventory' });
+        }
+
         await prisma.warehouse.delete({ where: { id } });
         res.json({ message: 'warehouse deleted' });
     } catch (error) {
-        res.status(500).json({ error: 'error deleting warehouse' });
+        console.error('Delete Warehouse Error:', error);
+        res.status(500).json({ error: 'Error deleting warehouse' });
     }
 });
 
@@ -72,15 +100,14 @@ router.delete('/:id', async (req, res) => {
 router.post('/transfer', async (req, res) => {
     const { productId, sourceWarehouseId, destinationWarehouseId, qty, notes } = req.body;
     
+    // Validate required fields
     if (!productId || !sourceWarehouseId || !destinationWarehouseId || !qty) {
-        return res.status(400).json({ error: 'missing required fields' });
+        return res.status(400).json({ error: 'Missing required fields' });
     }
-
     const transferQty = parseInt(qty);
-    if (transferQty <= 0) {
-        return res.status(400).json({ error: 'quantity must be greater than zero' });
+    if (isNaN(transferQty) || transferQty <= 0) {
+        return res.status(400).json({ error: 'Quantity must be a positive integer' });
     }
-
     try {
         await prisma.$transaction(async (tx) => {
             // 1. Check source inventory
@@ -92,17 +119,14 @@ router.post('/transfer', async (req, res) => {
                     }
                 }
             });
-
             if (!sourceInventory || sourceInventory.qty < transferQty) {
-                throw new Error('insufficient stock in source warehouse');
+                throw new Error('Insufficient stock in source warehouse');
             }
-
             // 2. Decrease from source
             await tx.warehouseInventory.update({
                 where: { id: sourceInventory.id },
                 data: { qty: { decrement: transferQty } }
             });
-
             // 3. Increase in destination
             await tx.warehouseInventory.upsert({
                 where: {
@@ -112,14 +136,9 @@ router.post('/transfer', async (req, res) => {
                     }
                 },
                 update: { qty: { increment: transferQty } },
-                create: {
-                    productId,
-                    warehouseId: destinationWarehouseId,
-                    qty: transferQty
-                }
+                create: { productId, warehouseId: destinationWarehouseId, qty: transferQty }
             });
-
-            // 4. Record movement
+            // 4. Record movement (sanitize notes)
             await tx.stockMovement.create({
                 data: {
                     productId,
@@ -128,15 +147,15 @@ router.post('/transfer', async (req, res) => {
                     qty: transferQty,
                     type: 'TRANSFER',
                     userId: req.userId,
-                    notes: notes || `Transfer from ${sourceWarehouseId} to ${destinationWarehouseId}`
+                    notes: notes ? notes.toString().substring(0, 200) : null
                 }
             });
         });
-
-        res.json({ message: 'transfer successful' });
+        res.json({ message: 'Transfer successful' });
     } catch (error) {
         console.error('Transfer Error:', error);
-        res.status(500).json({ error: error.message || 'error processing transfer' });
+        // Do not expose internal stack traces
+        res.status(500).json({ error: error.message || 'Error processing transfer' });
     }
 });
 

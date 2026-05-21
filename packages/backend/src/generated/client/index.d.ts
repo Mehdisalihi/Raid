@@ -1871,6 +1871,109 @@ export namespace Prisma {
 
 
   /**
+   * Count Type UserCountOutputType
+   */
+
+  export type UserCountOutputType = {
+    SubUsers: number
+    Products: number
+    Customers: number
+    Suppliers: number
+    Invoices: number
+    Expenses: number
+    ExpenseCategories: number
+    Warehouses: number
+    Staff: number
+  }
+
+  export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    SubUsers?: boolean | UserCountOutputTypeCountSubUsersArgs
+    Products?: boolean | UserCountOutputTypeCountProductsArgs
+    Customers?: boolean | UserCountOutputTypeCountCustomersArgs
+    Suppliers?: boolean | UserCountOutputTypeCountSuppliersArgs
+    Invoices?: boolean | UserCountOutputTypeCountInvoicesArgs
+    Expenses?: boolean | UserCountOutputTypeCountExpensesArgs
+    ExpenseCategories?: boolean | UserCountOutputTypeCountExpenseCategoriesArgs
+    Warehouses?: boolean | UserCountOutputTypeCountWarehousesArgs
+    Staff?: boolean | UserCountOutputTypeCountStaffArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     */
+    select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSubUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCustomersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSuppliersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupplierWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountInvoicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: InvoiceWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExpenseWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountExpenseCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExpenseCategoryWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountWarehousesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WarehouseWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountStaffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StaffWhereInput
+  }
+
+
+  /**
    * Count Type ProductCountOutputType
    */
 
@@ -2130,9 +2233,11 @@ export namespace Prisma {
     storePhone: string | null
     storeEmail: string | null
     currency: string | null
+    storeLogo: string | null
     isVerified: boolean | null
     verificationCode: string | null
     createdAt: Date | null
+    ownerId: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2159,9 +2264,11 @@ export namespace Prisma {
     storePhone: string | null
     storeEmail: string | null
     currency: string | null
+    storeLogo: string | null
     isVerified: boolean | null
     verificationCode: string | null
     createdAt: Date | null
+    ownerId: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2188,9 +2295,11 @@ export namespace Prisma {
     storePhone: number
     storeEmail: number
     currency: number
+    storeLogo: number
     isVerified: number
     verificationCode: number
     createdAt: number
+    ownerId: number
     _all: number
   }
 
@@ -2219,9 +2328,11 @@ export namespace Prisma {
     storePhone?: true
     storeEmail?: true
     currency?: true
+    storeLogo?: true
     isVerified?: true
     verificationCode?: true
     createdAt?: true
+    ownerId?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2248,9 +2359,11 @@ export namespace Prisma {
     storePhone?: true
     storeEmail?: true
     currency?: true
+    storeLogo?: true
     isVerified?: true
     verificationCode?: true
     createdAt?: true
+    ownerId?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2277,9 +2390,11 @@ export namespace Prisma {
     storePhone?: true
     storeEmail?: true
     currency?: true
+    storeLogo?: true
     isVerified?: true
     verificationCode?: true
     createdAt?: true
+    ownerId?: true
     _all?: true
   }
 
@@ -2379,9 +2494,11 @@ export namespace Prisma {
     storePhone: string | null
     storeEmail: string | null
     currency: string
+    storeLogo: string | null
     isVerified: boolean
     verificationCode: string | null
     createdAt: Date
+    ownerId: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2425,9 +2542,22 @@ export namespace Prisma {
     storePhone?: boolean
     storeEmail?: boolean
     currency?: boolean
+    storeLogo?: boolean
     isVerified?: boolean
     verificationCode?: boolean
     createdAt?: boolean
+    ownerId?: boolean
+    owner?: boolean | User$ownerArgs<ExtArgs>
+    SubUsers?: boolean | User$SubUsersArgs<ExtArgs>
+    Products?: boolean | User$ProductsArgs<ExtArgs>
+    Customers?: boolean | User$CustomersArgs<ExtArgs>
+    Suppliers?: boolean | User$SuppliersArgs<ExtArgs>
+    Invoices?: boolean | User$InvoicesArgs<ExtArgs>
+    Expenses?: boolean | User$ExpensesArgs<ExtArgs>
+    ExpenseCategories?: boolean | User$ExpenseCategoriesArgs<ExtArgs>
+    Warehouses?: boolean | User$WarehousesArgs<ExtArgs>
+    Staff?: boolean | User$StaffArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2454,9 +2584,12 @@ export namespace Prisma {
     storePhone?: boolean
     storeEmail?: boolean
     currency?: boolean
+    storeLogo?: boolean
     isVerified?: boolean
     verificationCode?: boolean
     createdAt?: boolean
+    ownerId?: boolean
+    owner?: boolean | User$ownerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -2483,15 +2616,44 @@ export namespace Prisma {
     storePhone?: boolean
     storeEmail?: boolean
     currency?: boolean
+    storeLogo?: boolean
     isVerified?: boolean
     verificationCode?: boolean
     createdAt?: boolean
+    ownerId?: boolean
   }
 
+  export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    owner?: boolean | User$ownerArgs<ExtArgs>
+    SubUsers?: boolean | User$SubUsersArgs<ExtArgs>
+    Products?: boolean | User$ProductsArgs<ExtArgs>
+    Customers?: boolean | User$CustomersArgs<ExtArgs>
+    Suppliers?: boolean | User$SuppliersArgs<ExtArgs>
+    Invoices?: boolean | User$InvoicesArgs<ExtArgs>
+    Expenses?: boolean | User$ExpensesArgs<ExtArgs>
+    ExpenseCategories?: boolean | User$ExpenseCategoriesArgs<ExtArgs>
+    Warehouses?: boolean | User$WarehousesArgs<ExtArgs>
+    Staff?: boolean | User$StaffArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    owner?: boolean | User$ownerArgs<ExtArgs>
+  }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
-    objects: {}
+    objects: {
+      owner: Prisma.$UserPayload<ExtArgs> | null
+      SubUsers: Prisma.$UserPayload<ExtArgs>[]
+      Products: Prisma.$ProductPayload<ExtArgs>[]
+      Customers: Prisma.$CustomerPayload<ExtArgs>[]
+      Suppliers: Prisma.$SupplierPayload<ExtArgs>[]
+      Invoices: Prisma.$InvoicePayload<ExtArgs>[]
+      Expenses: Prisma.$ExpensePayload<ExtArgs>[]
+      ExpenseCategories: Prisma.$ExpenseCategoryPayload<ExtArgs>[]
+      Warehouses: Prisma.$WarehousePayload<ExtArgs>[]
+      Staff: Prisma.$StaffPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
@@ -2516,9 +2678,11 @@ export namespace Prisma {
       storePhone: string | null
       storeEmail: string | null
       currency: string
+      storeLogo: string | null
       isVerified: boolean
       verificationCode: string | null
       createdAt: Date
+      ownerId: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2883,6 +3047,16 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    owner<T extends User$ownerArgs<ExtArgs> = {}>(args?: Subset<T, User$ownerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    SubUsers<T extends User$SubUsersArgs<ExtArgs> = {}>(args?: Subset<T, User$SubUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany"> | Null>
+    Products<T extends User$ProductsArgs<ExtArgs> = {}>(args?: Subset<T, User$ProductsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany"> | Null>
+    Customers<T extends User$CustomersArgs<ExtArgs> = {}>(args?: Subset<T, User$CustomersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany"> | Null>
+    Suppliers<T extends User$SuppliersArgs<ExtArgs> = {}>(args?: Subset<T, User$SuppliersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany"> | Null>
+    Invoices<T extends User$InvoicesArgs<ExtArgs> = {}>(args?: Subset<T, User$InvoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany"> | Null>
+    Expenses<T extends User$ExpensesArgs<ExtArgs> = {}>(args?: Subset<T, User$ExpensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany"> | Null>
+    ExpenseCategories<T extends User$ExpenseCategoriesArgs<ExtArgs> = {}>(args?: Subset<T, User$ExpenseCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpenseCategoryPayload<ExtArgs>, T, "findMany"> | Null>
+    Warehouses<T extends User$WarehousesArgs<ExtArgs> = {}>(args?: Subset<T, User$WarehousesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WarehousePayload<ExtArgs>, T, "findMany"> | Null>
+    Staff<T extends User$StaffArgs<ExtArgs> = {}>(args?: Subset<T, User$StaffArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2935,9 +3109,11 @@ export namespace Prisma {
     readonly storePhone: FieldRef<"User", 'String'>
     readonly storeEmail: FieldRef<"User", 'String'>
     readonly currency: FieldRef<"User", 'String'>
+    readonly storeLogo: FieldRef<"User", 'String'>
     readonly isVerified: FieldRef<"User", 'Boolean'>
     readonly verificationCode: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
+    readonly ownerId: FieldRef<"User", 'String'>
   }
     
 
@@ -2950,6 +3126,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * Filter, which User to fetch.
      */
@@ -2965,6 +3145,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where: UserWhereUniqueInput
@@ -2978,6 +3162,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * Filter, which User to fetch.
      */
@@ -3023,6 +3211,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where?: UserWhereInput
@@ -3067,6 +3259,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which Users to fetch.
      */
     where?: UserWhereInput
@@ -3106,6 +3302,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * The data needed to create a User.
      */
     data: XOR<UserCreateInput, UserUncheckedCreateInput>
@@ -3135,6 +3335,10 @@ export namespace Prisma {
      */
     data: UserCreateManyInput | UserCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -3145,6 +3349,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * The data needed to update a User.
      */
@@ -3178,6 +3386,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * The filter to search for the User to update in case it exists.
      */
     where: UserWhereUniqueInput
@@ -3200,6 +3412,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter which User to delete.
      */
     where: UserWhereUniqueInput
@@ -3216,6 +3432,201 @@ export namespace Prisma {
   }
 
   /**
+   * User.owner
+   */
+  export type User$ownerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * User.SubUsers
+   */
+  export type User$SubUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * User.Products
+   */
+  export type User$ProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * User.Customers
+   */
+  export type User$CustomersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    cursor?: CustomerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * User.Suppliers
+   */
+  export type User$SuppliersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Supplier
+     */
+    select?: SupplierSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupplierInclude<ExtArgs> | null
+    where?: SupplierWhereInput
+    orderBy?: SupplierOrderByWithRelationInput | SupplierOrderByWithRelationInput[]
+    cursor?: SupplierWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupplierScalarFieldEnum | SupplierScalarFieldEnum[]
+  }
+
+  /**
+   * User.Invoices
+   */
+  export type User$InvoicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invoice
+     */
+    select?: InvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: InvoiceInclude<ExtArgs> | null
+    where?: InvoiceWhereInput
+    orderBy?: InvoiceOrderByWithRelationInput | InvoiceOrderByWithRelationInput[]
+    cursor?: InvoiceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: InvoiceScalarFieldEnum | InvoiceScalarFieldEnum[]
+  }
+
+  /**
+   * User.Expenses
+   */
+  export type User$ExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    where?: ExpenseWhereInput
+    orderBy?: ExpenseOrderByWithRelationInput | ExpenseOrderByWithRelationInput[]
+    cursor?: ExpenseWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ExpenseScalarFieldEnum | ExpenseScalarFieldEnum[]
+  }
+
+  /**
+   * User.ExpenseCategories
+   */
+  export type User$ExpenseCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExpenseCategory
+     */
+    select?: ExpenseCategorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    where?: ExpenseCategoryWhereInput
+    orderBy?: ExpenseCategoryOrderByWithRelationInput | ExpenseCategoryOrderByWithRelationInput[]
+    cursor?: ExpenseCategoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ExpenseCategoryScalarFieldEnum | ExpenseCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * User.Warehouses
+   */
+  export type User$WarehousesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Warehouse
+     */
+    select?: WarehouseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WarehouseInclude<ExtArgs> | null
+    where?: WarehouseWhereInput
+    orderBy?: WarehouseOrderByWithRelationInput | WarehouseOrderByWithRelationInput[]
+    cursor?: WarehouseWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WarehouseScalarFieldEnum | WarehouseScalarFieldEnum[]
+  }
+
+  /**
+   * User.Staff
+   */
+  export type User$StaffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Staff
+     */
+    select?: StaffSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffInclude<ExtArgs> | null
+    where?: StaffWhereInput
+    orderBy?: StaffOrderByWithRelationInput | StaffOrderByWithRelationInput[]
+    cursor?: StaffWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StaffScalarFieldEnum | StaffScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3223,6 +3634,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
   }
 
 
@@ -3260,6 +3675,7 @@ export namespace Prisma {
     sellPrice: number | null
     stockQty: number | null
     minStockAlert: number | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -3271,6 +3687,7 @@ export namespace Prisma {
     sellPrice: number | null
     stockQty: number | null
     minStockAlert: number | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -3282,6 +3699,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty: number
     minStockAlert: number
+    userId: number
     createdAt: number
     _all: number
   }
@@ -3309,6 +3727,7 @@ export namespace Prisma {
     sellPrice?: true
     stockQty?: true
     minStockAlert?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -3320,6 +3739,7 @@ export namespace Prisma {
     sellPrice?: true
     stockQty?: true
     minStockAlert?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -3331,6 +3751,7 @@ export namespace Prisma {
     sellPrice?: true
     stockQty?: true
     minStockAlert?: true
+    userId?: true
     createdAt?: true
     _all?: true
   }
@@ -3429,6 +3850,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty: number
     minStockAlert: number
+    userId: string
     createdAt: Date
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
@@ -3459,7 +3881,9 @@ export namespace Prisma {
     sellPrice?: boolean
     stockQty?: boolean
     minStockAlert?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Sales?: boolean | Product$SalesArgs<ExtArgs>
     Movements?: boolean | Product$MovementsArgs<ExtArgs>
     WarehouseInventory?: boolean | Product$WarehouseInventoryArgs<ExtArgs>
@@ -3474,7 +3898,9 @@ export namespace Prisma {
     sellPrice?: boolean
     stockQty?: boolean
     minStockAlert?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -3485,20 +3911,25 @@ export namespace Prisma {
     sellPrice?: boolean
     stockQty?: boolean
     minStockAlert?: boolean
+    userId?: boolean
     createdAt?: boolean
   }
 
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Sales?: boolean | Product$SalesArgs<ExtArgs>
     Movements?: boolean | Product$MovementsArgs<ExtArgs>
     WarehouseInventory?: boolean | Product$WarehouseInventoryArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Product"
     objects: {
+      user: Prisma.$UserPayload<ExtArgs>
       Sales: Prisma.$SaleItemPayload<ExtArgs>[]
       Movements: Prisma.$StockMovementPayload<ExtArgs>[]
       WarehouseInventory: Prisma.$WarehouseInventoryPayload<ExtArgs>[]
@@ -3511,6 +3942,7 @@ export namespace Prisma {
       sellPrice: number
       stockQty: number
       minStockAlert: number
+      userId: string
       createdAt: Date
     }, ExtArgs["result"]["product"]>
     composites: {}
@@ -3876,6 +4308,7 @@ export namespace Prisma {
    */
   export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     Sales<T extends Product$SalesArgs<ExtArgs> = {}>(args?: Subset<T, Product$SalesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SaleItemPayload<ExtArgs>, T, "findMany"> | Null>
     Movements<T extends Product$MovementsArgs<ExtArgs> = {}>(args?: Subset<T, Product$MovementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany"> | Null>
     WarehouseInventory<T extends Product$WarehouseInventoryArgs<ExtArgs> = {}>(args?: Subset<T, Product$WarehouseInventoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WarehouseInventoryPayload<ExtArgs>, T, "findMany"> | Null>
@@ -3915,6 +4348,7 @@ export namespace Prisma {
     readonly sellPrice: FieldRef<"Product", 'Float'>
     readonly stockQty: FieldRef<"Product", 'Int'>
     readonly minStockAlert: FieldRef<"Product", 'Int'>
+    readonly userId: FieldRef<"Product", 'String'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
   }
     
@@ -4137,6 +4571,10 @@ export namespace Prisma {
      */
     data: ProductCreateManyInput | ProductCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4320,6 +4758,7 @@ export namespace Prisma {
     location: string | null
     manager: string | null
     isActive: boolean | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -4329,6 +4768,7 @@ export namespace Prisma {
     location: string | null
     manager: string | null
     isActive: boolean | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -4338,6 +4778,7 @@ export namespace Prisma {
     location: number
     manager: number
     isActive: number
+    userId: number
     createdAt: number
     _all: number
   }
@@ -4349,6 +4790,7 @@ export namespace Prisma {
     location?: true
     manager?: true
     isActive?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -4358,6 +4800,7 @@ export namespace Prisma {
     location?: true
     manager?: true
     isActive?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -4367,6 +4810,7 @@ export namespace Prisma {
     location?: true
     manager?: true
     isActive?: true
+    userId?: true
     createdAt?: true
     _all?: true
   }
@@ -4449,6 +4893,7 @@ export namespace Prisma {
     location: string | null
     manager: string | null
     isActive: boolean
+    userId: string
     createdAt: Date
     _count: WarehouseCountAggregateOutputType | null
     _min: WarehouseMinAggregateOutputType | null
@@ -4475,7 +4920,9 @@ export namespace Prisma {
     location?: boolean
     manager?: boolean
     isActive?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     MovementsTo?: boolean | Warehouse$MovementsToArgs<ExtArgs>
     MovementsFrom?: boolean | Warehouse$MovementsFromArgs<ExtArgs>
     Inventory?: boolean | Warehouse$InventoryArgs<ExtArgs>
@@ -4488,7 +4935,9 @@ export namespace Prisma {
     location?: boolean
     manager?: boolean
     isActive?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["warehouse"]>
 
   export type WarehouseSelectScalar = {
@@ -4497,20 +4946,25 @@ export namespace Prisma {
     location?: boolean
     manager?: boolean
     isActive?: boolean
+    userId?: boolean
     createdAt?: boolean
   }
 
   export type WarehouseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     MovementsTo?: boolean | Warehouse$MovementsToArgs<ExtArgs>
     MovementsFrom?: boolean | Warehouse$MovementsFromArgs<ExtArgs>
     Inventory?: boolean | Warehouse$InventoryArgs<ExtArgs>
     _count?: boolean | WarehouseCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type WarehouseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type WarehouseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $WarehousePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Warehouse"
     objects: {
+      user: Prisma.$UserPayload<ExtArgs>
       MovementsTo: Prisma.$StockMovementPayload<ExtArgs>[]
       MovementsFrom: Prisma.$StockMovementPayload<ExtArgs>[]
       Inventory: Prisma.$WarehouseInventoryPayload<ExtArgs>[]
@@ -4521,6 +4975,7 @@ export namespace Prisma {
       location: string | null
       manager: string | null
       isActive: boolean
+      userId: string
       createdAt: Date
     }, ExtArgs["result"]["warehouse"]>
     composites: {}
@@ -4886,6 +5341,7 @@ export namespace Prisma {
    */
   export interface Prisma__WarehouseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     MovementsTo<T extends Warehouse$MovementsToArgs<ExtArgs> = {}>(args?: Subset<T, Warehouse$MovementsToArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany"> | Null>
     MovementsFrom<T extends Warehouse$MovementsFromArgs<ExtArgs> = {}>(args?: Subset<T, Warehouse$MovementsFromArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany"> | Null>
     Inventory<T extends Warehouse$InventoryArgs<ExtArgs> = {}>(args?: Subset<T, Warehouse$InventoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WarehouseInventoryPayload<ExtArgs>, T, "findMany"> | Null>
@@ -4923,6 +5379,7 @@ export namespace Prisma {
     readonly location: FieldRef<"Warehouse", 'String'>
     readonly manager: FieldRef<"Warehouse", 'String'>
     readonly isActive: FieldRef<"Warehouse", 'Boolean'>
+    readonly userId: FieldRef<"Warehouse", 'String'>
     readonly createdAt: FieldRef<"Warehouse", 'DateTime'>
   }
     
@@ -5145,6 +5602,10 @@ export namespace Prisma {
      */
     data: WarehouseCreateManyInput | WarehouseCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WarehouseIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -7356,6 +7817,7 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     balance: number | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -7365,6 +7827,7 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     balance: number | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -7374,6 +7837,7 @@ export namespace Prisma {
     phone: number
     email: number
     balance: number
+    userId: number
     createdAt: number
     _all: number
   }
@@ -7393,6 +7857,7 @@ export namespace Prisma {
     phone?: true
     email?: true
     balance?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -7402,6 +7867,7 @@ export namespace Prisma {
     phone?: true
     email?: true
     balance?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -7411,6 +7877,7 @@ export namespace Prisma {
     phone?: true
     email?: true
     balance?: true
+    userId?: true
     createdAt?: true
     _all?: true
   }
@@ -7507,6 +7974,7 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     balance: number
+    userId: string
     createdAt: Date
     _count: CustomerCountAggregateOutputType | null
     _avg: CustomerAvgAggregateOutputType | null
@@ -7535,7 +8003,9 @@ export namespace Prisma {
     phone?: boolean
     email?: boolean
     balance?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Invoices?: boolean | Customer$InvoicesArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["customer"]>
@@ -7546,7 +8016,9 @@ export namespace Prisma {
     phone?: boolean
     email?: boolean
     balance?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["customer"]>
 
   export type CustomerSelectScalar = {
@@ -7555,18 +8027,23 @@ export namespace Prisma {
     phone?: boolean
     email?: boolean
     balance?: boolean
+    userId?: boolean
     createdAt?: boolean
   }
 
   export type CustomerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Invoices?: boolean | Customer$InvoicesArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $CustomerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Customer"
     objects: {
+      user: Prisma.$UserPayload<ExtArgs>
       Invoices: Prisma.$InvoicePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -7575,6 +8052,7 @@ export namespace Prisma {
       phone: string | null
       email: string | null
       balance: number
+      userId: string
       createdAt: Date
     }, ExtArgs["result"]["customer"]>
     composites: {}
@@ -7940,6 +8418,7 @@ export namespace Prisma {
    */
   export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     Invoices<T extends Customer$InvoicesArgs<ExtArgs> = {}>(args?: Subset<T, Customer$InvoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7975,6 +8454,7 @@ export namespace Prisma {
     readonly phone: FieldRef<"Customer", 'String'>
     readonly email: FieldRef<"Customer", 'String'>
     readonly balance: FieldRef<"Customer", 'Float'>
+    readonly userId: FieldRef<"Customer", 'String'>
     readonly createdAt: FieldRef<"Customer", 'DateTime'>
   }
     
@@ -8197,6 +8677,10 @@ export namespace Prisma {
      */
     data: CustomerCreateManyInput | CustomerCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -8351,6 +8835,7 @@ export namespace Prisma {
     email: string | null
     company: string | null
     balance: number | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -8361,6 +8846,7 @@ export namespace Prisma {
     email: string | null
     company: string | null
     balance: number | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -8371,6 +8857,7 @@ export namespace Prisma {
     email: number
     company: number
     balance: number
+    userId: number
     createdAt: number
     _all: number
   }
@@ -8391,6 +8878,7 @@ export namespace Prisma {
     email?: true
     company?: true
     balance?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -8401,6 +8889,7 @@ export namespace Prisma {
     email?: true
     company?: true
     balance?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -8411,6 +8900,7 @@ export namespace Prisma {
     email?: true
     company?: true
     balance?: true
+    userId?: true
     createdAt?: true
     _all?: true
   }
@@ -8508,6 +8998,7 @@ export namespace Prisma {
     email: string | null
     company: string | null
     balance: number
+    userId: string
     createdAt: Date
     _count: SupplierCountAggregateOutputType | null
     _avg: SupplierAvgAggregateOutputType | null
@@ -8537,7 +9028,9 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     balance?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Invoices?: boolean | Supplier$InvoicesArgs<ExtArgs>
     _count?: boolean | SupplierCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["supplier"]>
@@ -8549,7 +9042,9 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     balance?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["supplier"]>
 
   export type SupplierSelectScalar = {
@@ -8559,18 +9054,23 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     balance?: boolean
+    userId?: boolean
     createdAt?: boolean
   }
 
   export type SupplierInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Invoices?: boolean | Supplier$InvoicesArgs<ExtArgs>
     _count?: boolean | SupplierCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type SupplierIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SupplierIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $SupplierPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Supplier"
     objects: {
+      user: Prisma.$UserPayload<ExtArgs>
       Invoices: Prisma.$InvoicePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -8580,6 +9080,7 @@ export namespace Prisma {
       email: string | null
       company: string | null
       balance: number
+      userId: string
       createdAt: Date
     }, ExtArgs["result"]["supplier"]>
     composites: {}
@@ -8945,6 +9446,7 @@ export namespace Prisma {
    */
   export interface Prisma__SupplierClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     Invoices<T extends Supplier$InvoicesArgs<ExtArgs> = {}>(args?: Subset<T, Supplier$InvoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8981,6 +9483,7 @@ export namespace Prisma {
     readonly email: FieldRef<"Supplier", 'String'>
     readonly company: FieldRef<"Supplier", 'String'>
     readonly balance: FieldRef<"Supplier", 'Float'>
+    readonly userId: FieldRef<"Supplier", 'String'>
     readonly createdAt: FieldRef<"Supplier", 'DateTime'>
   }
     
@@ -9203,6 +9706,10 @@ export namespace Prisma {
      */
     data: SupplierCreateManyInput | SupplierCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupplierIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9357,6 +9864,7 @@ export namespace Prisma {
     category: string | null
     date: Date | null
     description: string | null
+    userId: string | null
   }
 
   export type ExpenseMaxAggregateOutputType = {
@@ -9366,6 +9874,7 @@ export namespace Prisma {
     category: string | null
     date: Date | null
     description: string | null
+    userId: string | null
   }
 
   export type ExpenseCountAggregateOutputType = {
@@ -9375,6 +9884,7 @@ export namespace Prisma {
     category: number
     date: number
     description: number
+    userId: number
     _all: number
   }
 
@@ -9394,6 +9904,7 @@ export namespace Prisma {
     category?: true
     date?: true
     description?: true
+    userId?: true
   }
 
   export type ExpenseMaxAggregateInputType = {
@@ -9403,6 +9914,7 @@ export namespace Prisma {
     category?: true
     date?: true
     description?: true
+    userId?: true
   }
 
   export type ExpenseCountAggregateInputType = {
@@ -9412,6 +9924,7 @@ export namespace Prisma {
     category?: true
     date?: true
     description?: true
+    userId?: true
     _all?: true
   }
 
@@ -9508,6 +10021,7 @@ export namespace Prisma {
     category: string
     date: Date
     description: string | null
+    userId: string
     _count: ExpenseCountAggregateOutputType | null
     _avg: ExpenseAvgAggregateOutputType | null
     _sum: ExpenseSumAggregateOutputType | null
@@ -9536,6 +10050,8 @@ export namespace Prisma {
     category?: boolean
     date?: boolean
     description?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
 
   export type ExpenseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9545,6 +10061,8 @@ export namespace Prisma {
     category?: boolean
     date?: boolean
     description?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
 
   export type ExpenseSelectScalar = {
@@ -9554,12 +10072,21 @@ export namespace Prisma {
     category?: boolean
     date?: boolean
     description?: boolean
+    userId?: boolean
   }
 
+  export type ExpenseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ExpenseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $ExpensePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Expense"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
@@ -9567,6 +10094,7 @@ export namespace Prisma {
       category: string
       date: Date
       description: string | null
+      userId: string
     }, ExtArgs["result"]["expense"]>
     composites: {}
   }
@@ -9931,6 +10459,7 @@ export namespace Prisma {
    */
   export interface Prisma__ExpenseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9966,6 +10495,7 @@ export namespace Prisma {
     readonly category: FieldRef<"Expense", 'String'>
     readonly date: FieldRef<"Expense", 'DateTime'>
     readonly description: FieldRef<"Expense", 'String'>
+    readonly userId: FieldRef<"Expense", 'String'>
   }
     
 
@@ -9978,6 +10508,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Expense
      */
     select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
     /**
      * Filter, which Expense to fetch.
      */
@@ -9993,6 +10527,10 @@ export namespace Prisma {
      */
     select?: ExpenseSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    /**
      * Filter, which Expense to fetch.
      */
     where: ExpenseWhereUniqueInput
@@ -10006,6 +10544,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Expense
      */
     select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
     /**
      * Filter, which Expense to fetch.
      */
@@ -10051,6 +10593,10 @@ export namespace Prisma {
      */
     select?: ExpenseSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    /**
      * Filter, which Expense to fetch.
      */
     where?: ExpenseWhereInput
@@ -10095,6 +10641,10 @@ export namespace Prisma {
      */
     select?: ExpenseSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    /**
      * Filter, which Expenses to fetch.
      */
     where?: ExpenseWhereInput
@@ -10134,6 +10684,10 @@ export namespace Prisma {
      */
     select?: ExpenseSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    /**
      * The data needed to create a Expense.
      */
     data: XOR<ExpenseCreateInput, ExpenseUncheckedCreateInput>
@@ -10163,6 +10717,10 @@ export namespace Prisma {
      */
     data: ExpenseCreateManyInput | ExpenseCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -10173,6 +10731,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Expense
      */
     select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
     /**
      * The data needed to update a Expense.
      */
@@ -10206,6 +10768,10 @@ export namespace Prisma {
      */
     select?: ExpenseSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    /**
      * The filter to search for the Expense to update in case it exists.
      */
     where: ExpenseWhereUniqueInput
@@ -10227,6 +10793,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Expense
      */
     select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
     /**
      * Filter which Expense to delete.
      */
@@ -10251,6 +10821,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Expense
      */
     select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
   }
 
 
@@ -10267,18 +10841,21 @@ export namespace Prisma {
   export type ExpenseCategoryMinAggregateOutputType = {
     id: string | null
     name: string | null
+    userId: string | null
     createdAt: Date | null
   }
 
   export type ExpenseCategoryMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    userId: string | null
     createdAt: Date | null
   }
 
   export type ExpenseCategoryCountAggregateOutputType = {
     id: number
     name: number
+    userId: number
     createdAt: number
     _all: number
   }
@@ -10287,18 +10864,21 @@ export namespace Prisma {
   export type ExpenseCategoryMinAggregateInputType = {
     id?: true
     name?: true
+    userId?: true
     createdAt?: true
   }
 
   export type ExpenseCategoryMaxAggregateInputType = {
     id?: true
     name?: true
+    userId?: true
     createdAt?: true
   }
 
   export type ExpenseCategoryCountAggregateInputType = {
     id?: true
     name?: true
+    userId?: true
     createdAt?: true
     _all?: true
   }
@@ -10378,6 +10958,7 @@ export namespace Prisma {
   export type ExpenseCategoryGroupByOutputType = {
     id: string
     name: string
+    userId: string | null
     createdAt: Date
     _count: ExpenseCategoryCountAggregateOutputType | null
     _min: ExpenseCategoryMinAggregateOutputType | null
@@ -10401,28 +10982,42 @@ export namespace Prisma {
   export type ExpenseCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | ExpenseCategory$userArgs<ExtArgs>
   }, ExtArgs["result"]["expenseCategory"]>
 
   export type ExpenseCategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | ExpenseCategory$userArgs<ExtArgs>
   }, ExtArgs["result"]["expenseCategory"]>
 
   export type ExpenseCategorySelectScalar = {
     id?: boolean
     name?: boolean
+    userId?: boolean
     createdAt?: boolean
   }
 
+  export type ExpenseCategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | ExpenseCategory$userArgs<ExtArgs>
+  }
+  export type ExpenseCategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | ExpenseCategory$userArgs<ExtArgs>
+  }
 
   export type $ExpenseCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ExpenseCategory"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      userId: string | null
       createdAt: Date
     }, ExtArgs["result"]["expenseCategory"]>
     composites: {}
@@ -10788,6 +11383,7 @@ export namespace Prisma {
    */
   export interface Prisma__ExpenseCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends ExpenseCategory$userArgs<ExtArgs> = {}>(args?: Subset<T, ExpenseCategory$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10819,6 +11415,7 @@ export namespace Prisma {
   interface ExpenseCategoryFieldRefs {
     readonly id: FieldRef<"ExpenseCategory", 'String'>
     readonly name: FieldRef<"ExpenseCategory", 'String'>
+    readonly userId: FieldRef<"ExpenseCategory", 'String'>
     readonly createdAt: FieldRef<"ExpenseCategory", 'DateTime'>
   }
     
@@ -10832,6 +11429,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExpenseCategory
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
     /**
      * Filter, which ExpenseCategory to fetch.
      */
@@ -10847,6 +11448,10 @@ export namespace Prisma {
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    /**
      * Filter, which ExpenseCategory to fetch.
      */
     where: ExpenseCategoryWhereUniqueInput
@@ -10860,6 +11465,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExpenseCategory
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
     /**
      * Filter, which ExpenseCategory to fetch.
      */
@@ -10905,6 +11514,10 @@ export namespace Prisma {
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    /**
      * Filter, which ExpenseCategory to fetch.
      */
     where?: ExpenseCategoryWhereInput
@@ -10949,6 +11562,10 @@ export namespace Prisma {
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    /**
      * Filter, which ExpenseCategories to fetch.
      */
     where?: ExpenseCategoryWhereInput
@@ -10988,6 +11605,10 @@ export namespace Prisma {
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    /**
      * The data needed to create a ExpenseCategory.
      */
     data: XOR<ExpenseCategoryCreateInput, ExpenseCategoryUncheckedCreateInput>
@@ -11017,6 +11638,10 @@ export namespace Prisma {
      */
     data: ExpenseCategoryCreateManyInput | ExpenseCategoryCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -11027,6 +11652,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExpenseCategory
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
     /**
      * The data needed to update a ExpenseCategory.
      */
@@ -11060,6 +11689,10 @@ export namespace Prisma {
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    /**
      * The filter to search for the ExpenseCategory to update in case it exists.
      */
     where: ExpenseCategoryWhereUniqueInput
@@ -11082,6 +11715,10 @@ export namespace Prisma {
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
+    /**
      * Filter which ExpenseCategory to delete.
      */
     where: ExpenseCategoryWhereUniqueInput
@@ -11098,6 +11735,21 @@ export namespace Prisma {
   }
 
   /**
+   * ExpenseCategory.user
+   */
+  export type ExpenseCategory$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * ExpenseCategory without action
    */
   export type ExpenseCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11105,6 +11757,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExpenseCategory
      */
     select?: ExpenseCategorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseCategoryInclude<ExtArgs> | null
   }
 
 
@@ -11149,6 +11805,7 @@ export namespace Prisma {
     type: string | null
     isDebt: boolean | null
     paymentMethod: string | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -11165,6 +11822,7 @@ export namespace Prisma {
     type: string | null
     isDebt: boolean | null
     paymentMethod: string | null
+    userId: string | null
     createdAt: Date | null
   }
 
@@ -11181,6 +11839,7 @@ export namespace Prisma {
     type: number
     isDebt: number
     paymentMethod: number
+    userId: number
     createdAt: number
     _all: number
   }
@@ -11215,6 +11874,7 @@ export namespace Prisma {
     type?: true
     isDebt?: true
     paymentMethod?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -11231,6 +11891,7 @@ export namespace Prisma {
     type?: true
     isDebt?: true
     paymentMethod?: true
+    userId?: true
     createdAt?: true
   }
 
@@ -11247,6 +11908,7 @@ export namespace Prisma {
     type?: true
     isDebt?: true
     paymentMethod?: true
+    userId?: true
     createdAt?: true
     _all?: true
   }
@@ -11350,6 +12012,7 @@ export namespace Prisma {
     type: string
     isDebt: boolean
     paymentMethod: string
+    userId: string
     createdAt: Date
     _count: InvoiceCountAggregateOutputType | null
     _avg: InvoiceAvgAggregateOutputType | null
@@ -11385,7 +12048,9 @@ export namespace Prisma {
     type?: boolean
     isDebt?: boolean
     paymentMethod?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     supplier?: boolean | Invoice$supplierArgs<ExtArgs>
     customer?: boolean | Invoice$customerArgs<ExtArgs>
     items?: boolean | Invoice$itemsArgs<ExtArgs>
@@ -11405,7 +12070,9 @@ export namespace Prisma {
     type?: boolean
     isDebt?: boolean
     paymentMethod?: boolean
+    userId?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     supplier?: boolean | Invoice$supplierArgs<ExtArgs>
     customer?: boolean | Invoice$customerArgs<ExtArgs>
   }, ExtArgs["result"]["invoice"]>
@@ -11423,16 +12090,19 @@ export namespace Prisma {
     type?: boolean
     isDebt?: boolean
     paymentMethod?: boolean
+    userId?: boolean
     createdAt?: boolean
   }
 
   export type InvoiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     supplier?: boolean | Invoice$supplierArgs<ExtArgs>
     customer?: boolean | Invoice$customerArgs<ExtArgs>
     items?: boolean | Invoice$itemsArgs<ExtArgs>
     _count?: boolean | InvoiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type InvoiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     supplier?: boolean | Invoice$supplierArgs<ExtArgs>
     customer?: boolean | Invoice$customerArgs<ExtArgs>
   }
@@ -11440,6 +12110,7 @@ export namespace Prisma {
   export type $InvoicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Invoice"
     objects: {
+      user: Prisma.$UserPayload<ExtArgs>
       supplier: Prisma.$SupplierPayload<ExtArgs> | null
       customer: Prisma.$CustomerPayload<ExtArgs> | null
       items: Prisma.$SaleItemPayload<ExtArgs>[]
@@ -11457,6 +12128,7 @@ export namespace Prisma {
       type: string
       isDebt: boolean
       paymentMethod: string
+      userId: string
       createdAt: Date
     }, ExtArgs["result"]["invoice"]>
     composites: {}
@@ -11822,6 +12494,7 @@ export namespace Prisma {
    */
   export interface Prisma__InvoiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     supplier<T extends Invoice$supplierArgs<ExtArgs> = {}>(args?: Subset<T, Invoice$supplierArgs<ExtArgs>>): Prisma__SupplierClient<$Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     customer<T extends Invoice$customerArgs<ExtArgs> = {}>(args?: Subset<T, Invoice$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     items<T extends Invoice$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Invoice$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SaleItemPayload<ExtArgs>, T, "findMany"> | Null>
@@ -11866,6 +12539,7 @@ export namespace Prisma {
     readonly type: FieldRef<"Invoice", 'String'>
     readonly isDebt: FieldRef<"Invoice", 'Boolean'>
     readonly paymentMethod: FieldRef<"Invoice", 'String'>
+    readonly userId: FieldRef<"Invoice", 'String'>
     readonly createdAt: FieldRef<"Invoice", 'DateTime'>
   }
     
@@ -13272,6 +13946,7 @@ export namespace Prisma {
     baseSalary: number | null
     balance: number | null
     isActive: boolean | null
+    userId: string | null
     joinedAt: Date | null
     createdAt: Date | null
   }
@@ -13284,6 +13959,7 @@ export namespace Prisma {
     baseSalary: number | null
     balance: number | null
     isActive: boolean | null
+    userId: string | null
     joinedAt: Date | null
     createdAt: Date | null
   }
@@ -13296,6 +13972,7 @@ export namespace Prisma {
     baseSalary: number
     balance: number
     isActive: number
+    userId: number
     joinedAt: number
     createdAt: number
     _all: number
@@ -13320,6 +13997,7 @@ export namespace Prisma {
     baseSalary?: true
     balance?: true
     isActive?: true
+    userId?: true
     joinedAt?: true
     createdAt?: true
   }
@@ -13332,6 +14010,7 @@ export namespace Prisma {
     baseSalary?: true
     balance?: true
     isActive?: true
+    userId?: true
     joinedAt?: true
     createdAt?: true
   }
@@ -13344,6 +14023,7 @@ export namespace Prisma {
     baseSalary?: true
     balance?: true
     isActive?: true
+    userId?: true
     joinedAt?: true
     createdAt?: true
     _all?: true
@@ -13443,6 +14123,7 @@ export namespace Prisma {
     baseSalary: number
     balance: number
     isActive: boolean
+    userId: string
     joinedAt: Date
     createdAt: Date
     _count: StaffCountAggregateOutputType | null
@@ -13474,8 +14155,10 @@ export namespace Prisma {
     baseSalary?: boolean
     balance?: boolean
     isActive?: boolean
+    userId?: boolean
     joinedAt?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Transactions?: boolean | Staff$TransactionsArgs<ExtArgs>
     _count?: boolean | StaffCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["staff"]>
@@ -13488,8 +14171,10 @@ export namespace Prisma {
     baseSalary?: boolean
     balance?: boolean
     isActive?: boolean
+    userId?: boolean
     joinedAt?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["staff"]>
 
   export type StaffSelectScalar = {
@@ -13500,19 +14185,24 @@ export namespace Prisma {
     baseSalary?: boolean
     balance?: boolean
     isActive?: boolean
+    userId?: boolean
     joinedAt?: boolean
     createdAt?: boolean
   }
 
   export type StaffInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
     Transactions?: boolean | Staff$TransactionsArgs<ExtArgs>
     _count?: boolean | StaffCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type StaffIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type StaffIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $StaffPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Staff"
     objects: {
+      user: Prisma.$UserPayload<ExtArgs>
       Transactions: Prisma.$SalaryTransactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -13523,6 +14213,7 @@ export namespace Prisma {
       baseSalary: number
       balance: number
       isActive: boolean
+      userId: string
       joinedAt: Date
       createdAt: Date
     }, ExtArgs["result"]["staff"]>
@@ -13889,6 +14580,7 @@ export namespace Prisma {
    */
   export interface Prisma__StaffClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     Transactions<T extends Staff$TransactionsArgs<ExtArgs> = {}>(args?: Subset<T, Staff$TransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalaryTransactionPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -13926,6 +14618,7 @@ export namespace Prisma {
     readonly baseSalary: FieldRef<"Staff", 'Float'>
     readonly balance: FieldRef<"Staff", 'Float'>
     readonly isActive: FieldRef<"Staff", 'Boolean'>
+    readonly userId: FieldRef<"Staff", 'String'>
     readonly joinedAt: FieldRef<"Staff", 'DateTime'>
     readonly createdAt: FieldRef<"Staff", 'DateTime'>
   }
@@ -14149,6 +14842,10 @@ export namespace Prisma {
      */
     data: StaffCreateManyInput | StaffCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -15309,9 +16006,11 @@ export namespace Prisma {
     storePhone: 'storePhone',
     storeEmail: 'storeEmail',
     currency: 'currency',
+    storeLogo: 'storeLogo',
     isVerified: 'isVerified',
     verificationCode: 'verificationCode',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    ownerId: 'ownerId'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -15325,6 +16024,7 @@ export namespace Prisma {
     sellPrice: 'sellPrice',
     stockQty: 'stockQty',
     minStockAlert: 'minStockAlert',
+    userId: 'userId',
     createdAt: 'createdAt'
   };
 
@@ -15337,6 +16037,7 @@ export namespace Prisma {
     location: 'location',
     manager: 'manager',
     isActive: 'isActive',
+    userId: 'userId',
     createdAt: 'createdAt'
   };
 
@@ -15374,6 +16075,7 @@ export namespace Prisma {
     phone: 'phone',
     email: 'email',
     balance: 'balance',
+    userId: 'userId',
     createdAt: 'createdAt'
   };
 
@@ -15387,6 +16089,7 @@ export namespace Prisma {
     email: 'email',
     company: 'company',
     balance: 'balance',
+    userId: 'userId',
     createdAt: 'createdAt'
   };
 
@@ -15399,7 +16102,8 @@ export namespace Prisma {
     amount: 'amount',
     category: 'category',
     date: 'date',
-    description: 'description'
+    description: 'description',
+    userId: 'userId'
   };
 
   export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
@@ -15408,6 +16112,7 @@ export namespace Prisma {
   export const ExpenseCategoryScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    userId: 'userId',
     createdAt: 'createdAt'
   };
 
@@ -15427,6 +16132,7 @@ export namespace Prisma {
     type: 'type',
     isDebt: 'isDebt',
     paymentMethod: 'paymentMethod',
+    userId: 'userId',
     createdAt: 'createdAt'
   };
 
@@ -15453,6 +16159,7 @@ export namespace Prisma {
     baseSalary: 'baseSalary',
     balance: 'balance',
     isActive: 'isActive',
+    userId: 'userId',
     joinedAt: 'joinedAt',
     createdAt: 'createdAt'
   };
@@ -15595,9 +16302,21 @@ export namespace Prisma {
     storePhone?: StringNullableFilter<"User"> | string | null
     storeEmail?: StringNullableFilter<"User"> | string | null
     currency?: StringFilter<"User"> | string
+    storeLogo?: StringNullableFilter<"User"> | string | null
     isVerified?: BoolFilter<"User"> | boolean
     verificationCode?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
+    ownerId?: StringNullableFilter<"User"> | string | null
+    owner?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+    SubUsers?: UserListRelationFilter
+    Products?: ProductListRelationFilter
+    Customers?: CustomerListRelationFilter
+    Suppliers?: SupplierListRelationFilter
+    Invoices?: InvoiceListRelationFilter
+    Expenses?: ExpenseListRelationFilter
+    ExpenseCategories?: ExpenseCategoryListRelationFilter
+    Warehouses?: WarehouseListRelationFilter
+    Staff?: StaffListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -15624,9 +16343,21 @@ export namespace Prisma {
     storePhone?: SortOrderInput | SortOrder
     storeEmail?: SortOrderInput | SortOrder
     currency?: SortOrder
+    storeLogo?: SortOrderInput | SortOrder
     isVerified?: SortOrder
     verificationCode?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
+    owner?: UserOrderByWithRelationInput
+    SubUsers?: UserOrderByRelationAggregateInput
+    Products?: ProductOrderByRelationAggregateInput
+    Customers?: CustomerOrderByRelationAggregateInput
+    Suppliers?: SupplierOrderByRelationAggregateInput
+    Invoices?: InvoiceOrderByRelationAggregateInput
+    Expenses?: ExpenseOrderByRelationAggregateInput
+    ExpenseCategories?: ExpenseCategoryOrderByRelationAggregateInput
+    Warehouses?: WarehouseOrderByRelationAggregateInput
+    Staff?: StaffOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -15656,9 +16387,21 @@ export namespace Prisma {
     storePhone?: StringNullableFilter<"User"> | string | null
     storeEmail?: StringNullableFilter<"User"> | string | null
     currency?: StringFilter<"User"> | string
+    storeLogo?: StringNullableFilter<"User"> | string | null
     isVerified?: BoolFilter<"User"> | boolean
     verificationCode?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
+    ownerId?: StringNullableFilter<"User"> | string | null
+    owner?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+    SubUsers?: UserListRelationFilter
+    Products?: ProductListRelationFilter
+    Customers?: CustomerListRelationFilter
+    Suppliers?: SupplierListRelationFilter
+    Invoices?: InvoiceListRelationFilter
+    Expenses?: ExpenseListRelationFilter
+    ExpenseCategories?: ExpenseCategoryListRelationFilter
+    Warehouses?: WarehouseListRelationFilter
+    Staff?: StaffListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -15685,9 +16428,11 @@ export namespace Prisma {
     storePhone?: SortOrderInput | SortOrder
     storeEmail?: SortOrderInput | SortOrder
     currency?: SortOrder
+    storeLogo?: SortOrderInput | SortOrder
     isVerified?: SortOrder
     verificationCode?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -15720,9 +16465,11 @@ export namespace Prisma {
     storePhone?: StringNullableWithAggregatesFilter<"User"> | string | null
     storeEmail?: StringNullableWithAggregatesFilter<"User"> | string | null
     currency?: StringWithAggregatesFilter<"User"> | string
+    storeLogo?: StringNullableWithAggregatesFilter<"User"> | string | null
     isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     verificationCode?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    ownerId?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type ProductWhereInput = {
@@ -15736,7 +16483,9 @@ export namespace Prisma {
     sellPrice?: FloatFilter<"Product"> | number
     stockQty?: IntFilter<"Product"> | number
     minStockAlert?: IntFilter<"Product"> | number
+    userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Sales?: SaleItemListRelationFilter
     Movements?: StockMovementListRelationFilter
     WarehouseInventory?: WarehouseInventoryListRelationFilter
@@ -15750,7 +16499,9 @@ export namespace Prisma {
     sellPrice?: SortOrder
     stockQty?: SortOrder
     minStockAlert?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
     Sales?: SaleItemOrderByRelationAggregateInput
     Movements?: StockMovementOrderByRelationAggregateInput
     WarehouseInventory?: WarehouseInventoryOrderByRelationAggregateInput
@@ -15758,20 +16509,23 @@ export namespace Prisma {
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    barcode?: string
+    barcode_userId?: ProductBarcodeUserIdCompoundUniqueInput
     AND?: ProductWhereInput | ProductWhereInput[]
     OR?: ProductWhereInput[]
     NOT?: ProductWhereInput | ProductWhereInput[]
     name?: StringFilter<"Product"> | string
+    barcode?: StringNullableFilter<"Product"> | string | null
     buyPrice?: FloatFilter<"Product"> | number
     sellPrice?: FloatFilter<"Product"> | number
     stockQty?: IntFilter<"Product"> | number
     minStockAlert?: IntFilter<"Product"> | number
+    userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Sales?: SaleItemListRelationFilter
     Movements?: StockMovementListRelationFilter
     WarehouseInventory?: WarehouseInventoryListRelationFilter
-  }, "id" | "barcode">
+  }, "id" | "barcode_userId">
 
   export type ProductOrderByWithAggregationInput = {
     id?: SortOrder
@@ -15781,6 +16535,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     stockQty?: SortOrder
     minStockAlert?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
@@ -15800,6 +16555,7 @@ export namespace Prisma {
     sellPrice?: FloatWithAggregatesFilter<"Product"> | number
     stockQty?: IntWithAggregatesFilter<"Product"> | number
     minStockAlert?: IntWithAggregatesFilter<"Product"> | number
+    userId?: StringWithAggregatesFilter<"Product"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
   }
 
@@ -15812,7 +16568,9 @@ export namespace Prisma {
     location?: StringNullableFilter<"Warehouse"> | string | null
     manager?: StringNullableFilter<"Warehouse"> | string | null
     isActive?: BoolFilter<"Warehouse"> | boolean
+    userId?: StringFilter<"Warehouse"> | string
     createdAt?: DateTimeFilter<"Warehouse"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     MovementsTo?: StockMovementListRelationFilter
     MovementsFrom?: StockMovementListRelationFilter
     Inventory?: WarehouseInventoryListRelationFilter
@@ -15824,7 +16582,9 @@ export namespace Prisma {
     location?: SortOrderInput | SortOrder
     manager?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
     MovementsTo?: StockMovementOrderByRelationAggregateInput
     MovementsFrom?: StockMovementOrderByRelationAggregateInput
     Inventory?: WarehouseInventoryOrderByRelationAggregateInput
@@ -15839,7 +16599,9 @@ export namespace Prisma {
     location?: StringNullableFilter<"Warehouse"> | string | null
     manager?: StringNullableFilter<"Warehouse"> | string | null
     isActive?: BoolFilter<"Warehouse"> | boolean
+    userId?: StringFilter<"Warehouse"> | string
     createdAt?: DateTimeFilter<"Warehouse"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     MovementsTo?: StockMovementListRelationFilter
     MovementsFrom?: StockMovementListRelationFilter
     Inventory?: WarehouseInventoryListRelationFilter
@@ -15851,6 +16613,7 @@ export namespace Prisma {
     location?: SortOrderInput | SortOrder
     manager?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     _count?: WarehouseCountOrderByAggregateInput
     _max?: WarehouseMaxOrderByAggregateInput
@@ -15866,6 +16629,7 @@ export namespace Prisma {
     location?: StringNullableWithAggregatesFilter<"Warehouse"> | string | null
     manager?: StringNullableWithAggregatesFilter<"Warehouse"> | string | null
     isActive?: BoolWithAggregatesFilter<"Warehouse"> | boolean
+    userId?: StringWithAggregatesFilter<"Warehouse"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Warehouse"> | Date | string
   }
 
@@ -16017,7 +16781,9 @@ export namespace Prisma {
     phone?: StringNullableFilter<"Customer"> | string | null
     email?: StringNullableFilter<"Customer"> | string | null
     balance?: FloatFilter<"Customer"> | number
+    userId?: StringFilter<"Customer"> | string
     createdAt?: DateTimeFilter<"Customer"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Invoices?: InvoiceListRelationFilter
   }
 
@@ -16027,7 +16793,9 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
     Invoices?: InvoiceOrderByRelationAggregateInput
   }
 
@@ -16040,7 +16808,9 @@ export namespace Prisma {
     phone?: StringNullableFilter<"Customer"> | string | null
     email?: StringNullableFilter<"Customer"> | string | null
     balance?: FloatFilter<"Customer"> | number
+    userId?: StringFilter<"Customer"> | string
     createdAt?: DateTimeFilter<"Customer"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Invoices?: InvoiceListRelationFilter
   }, "id">
 
@@ -16050,6 +16820,7 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     _count?: CustomerCountOrderByAggregateInput
     _avg?: CustomerAvgOrderByAggregateInput
@@ -16067,6 +16838,7 @@ export namespace Prisma {
     phone?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     email?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     balance?: FloatWithAggregatesFilter<"Customer"> | number
+    userId?: StringWithAggregatesFilter<"Customer"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
   }
 
@@ -16080,7 +16852,9 @@ export namespace Prisma {
     email?: StringNullableFilter<"Supplier"> | string | null
     company?: StringNullableFilter<"Supplier"> | string | null
     balance?: FloatFilter<"Supplier"> | number
+    userId?: StringFilter<"Supplier"> | string
     createdAt?: DateTimeFilter<"Supplier"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Invoices?: InvoiceListRelationFilter
   }
 
@@ -16091,7 +16865,9 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     company?: SortOrderInput | SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
     Invoices?: InvoiceOrderByRelationAggregateInput
   }
 
@@ -16105,7 +16881,9 @@ export namespace Prisma {
     email?: StringNullableFilter<"Supplier"> | string | null
     company?: StringNullableFilter<"Supplier"> | string | null
     balance?: FloatFilter<"Supplier"> | number
+    userId?: StringFilter<"Supplier"> | string
     createdAt?: DateTimeFilter<"Supplier"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Invoices?: InvoiceListRelationFilter
   }, "id">
 
@@ -16116,6 +16894,7 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     company?: SortOrderInput | SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     _count?: SupplierCountOrderByAggregateInput
     _avg?: SupplierAvgOrderByAggregateInput
@@ -16134,6 +16913,7 @@ export namespace Prisma {
     email?: StringNullableWithAggregatesFilter<"Supplier"> | string | null
     company?: StringNullableWithAggregatesFilter<"Supplier"> | string | null
     balance?: FloatWithAggregatesFilter<"Supplier"> | number
+    userId?: StringWithAggregatesFilter<"Supplier"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Supplier"> | Date | string
   }
 
@@ -16147,6 +16927,8 @@ export namespace Prisma {
     category?: StringFilter<"Expense"> | string
     date?: DateTimeFilter<"Expense"> | Date | string
     description?: StringNullableFilter<"Expense"> | string | null
+    userId?: StringFilter<"Expense"> | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type ExpenseOrderByWithRelationInput = {
@@ -16156,6 +16938,8 @@ export namespace Prisma {
     category?: SortOrder
     date?: SortOrder
     description?: SortOrderInput | SortOrder
+    userId?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
@@ -16168,6 +16952,8 @@ export namespace Prisma {
     category?: StringFilter<"Expense"> | string
     date?: DateTimeFilter<"Expense"> | Date | string
     description?: StringNullableFilter<"Expense"> | string | null
+    userId?: StringFilter<"Expense"> | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }, "id">
 
   export type ExpenseOrderByWithAggregationInput = {
@@ -16177,6 +16963,7 @@ export namespace Prisma {
     category?: SortOrder
     date?: SortOrder
     description?: SortOrderInput | SortOrder
+    userId?: SortOrder
     _count?: ExpenseCountOrderByAggregateInput
     _avg?: ExpenseAvgOrderByAggregateInput
     _max?: ExpenseMaxOrderByAggregateInput
@@ -16194,6 +16981,7 @@ export namespace Prisma {
     category?: StringWithAggregatesFilter<"Expense"> | string
     date?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
     description?: StringNullableWithAggregatesFilter<"Expense"> | string | null
+    userId?: StringWithAggregatesFilter<"Expense"> | string
   }
 
   export type ExpenseCategoryWhereInput = {
@@ -16202,27 +16990,34 @@ export namespace Prisma {
     NOT?: ExpenseCategoryWhereInput | ExpenseCategoryWhereInput[]
     id?: StringFilter<"ExpenseCategory"> | string
     name?: StringFilter<"ExpenseCategory"> | string
+    userId?: StringNullableFilter<"ExpenseCategory"> | string | null
     createdAt?: DateTimeFilter<"ExpenseCategory"> | Date | string
+    user?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type ExpenseCategoryOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    userId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type ExpenseCategoryWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    name?: string
     AND?: ExpenseCategoryWhereInput | ExpenseCategoryWhereInput[]
     OR?: ExpenseCategoryWhereInput[]
     NOT?: ExpenseCategoryWhereInput | ExpenseCategoryWhereInput[]
+    name?: StringFilter<"ExpenseCategory"> | string
+    userId?: StringNullableFilter<"ExpenseCategory"> | string | null
     createdAt?: DateTimeFilter<"ExpenseCategory"> | Date | string
-  }, "id" | "name">
+    user?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+  }, "id">
 
   export type ExpenseCategoryOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    userId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ExpenseCategoryCountOrderByAggregateInput
     _max?: ExpenseCategoryMaxOrderByAggregateInput
@@ -16235,6 +17030,7 @@ export namespace Prisma {
     NOT?: ExpenseCategoryScalarWhereWithAggregatesInput | ExpenseCategoryScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ExpenseCategory"> | string
     name?: StringWithAggregatesFilter<"ExpenseCategory"> | string
+    userId?: StringNullableWithAggregatesFilter<"ExpenseCategory"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ExpenseCategory"> | Date | string
   }
 
@@ -16254,7 +17050,9 @@ export namespace Prisma {
     type?: StringFilter<"Invoice"> | string
     isDebt?: BoolFilter<"Invoice"> | boolean
     paymentMethod?: StringFilter<"Invoice"> | string
+    userId?: StringFilter<"Invoice"> | string
     createdAt?: DateTimeFilter<"Invoice"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     supplier?: XOR<SupplierNullableRelationFilter, SupplierWhereInput> | null
     customer?: XOR<CustomerNullableRelationFilter, CustomerWhereInput> | null
     items?: SaleItemListRelationFilter
@@ -16273,7 +17071,9 @@ export namespace Prisma {
     type?: SortOrder
     isDebt?: SortOrder
     paymentMethod?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
     supplier?: SupplierOrderByWithRelationInput
     customer?: CustomerOrderByWithRelationInput
     items?: SaleItemOrderByRelationAggregateInput
@@ -16281,10 +17081,11 @@ export namespace Prisma {
 
   export type InvoiceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    invoiceNo?: string
+    invoiceNo_userId?: InvoiceInvoiceNoUserIdCompoundUniqueInput
     AND?: InvoiceWhereInput | InvoiceWhereInput[]
     OR?: InvoiceWhereInput[]
     NOT?: InvoiceWhereInput | InvoiceWhereInput[]
+    invoiceNo?: StringFilter<"Invoice"> | string
     customerId?: StringNullableFilter<"Invoice"> | string | null
     supplierId?: StringNullableFilter<"Invoice"> | string | null
     totalAmount?: FloatFilter<"Invoice"> | number
@@ -16295,11 +17096,13 @@ export namespace Prisma {
     type?: StringFilter<"Invoice"> | string
     isDebt?: BoolFilter<"Invoice"> | boolean
     paymentMethod?: StringFilter<"Invoice"> | string
+    userId?: StringFilter<"Invoice"> | string
     createdAt?: DateTimeFilter<"Invoice"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     supplier?: XOR<SupplierNullableRelationFilter, SupplierWhereInput> | null
     customer?: XOR<CustomerNullableRelationFilter, CustomerWhereInput> | null
     items?: SaleItemListRelationFilter
-  }, "id" | "invoiceNo">
+  }, "id" | "invoiceNo_userId">
 
   export type InvoiceOrderByWithAggregationInput = {
     id?: SortOrder
@@ -16314,6 +17117,7 @@ export namespace Prisma {
     type?: SortOrder
     isDebt?: SortOrder
     paymentMethod?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     _count?: InvoiceCountOrderByAggregateInput
     _avg?: InvoiceAvgOrderByAggregateInput
@@ -16338,6 +17142,7 @@ export namespace Prisma {
     type?: StringWithAggregatesFilter<"Invoice"> | string
     isDebt?: BoolWithAggregatesFilter<"Invoice"> | boolean
     paymentMethod?: StringWithAggregatesFilter<"Invoice"> | string
+    userId?: StringWithAggregatesFilter<"Invoice"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Invoice"> | Date | string
   }
 
@@ -16417,8 +17222,10 @@ export namespace Prisma {
     baseSalary?: FloatFilter<"Staff"> | number
     balance?: FloatFilter<"Staff"> | number
     isActive?: BoolFilter<"Staff"> | boolean
+    userId?: StringFilter<"Staff"> | string
     joinedAt?: DateTimeFilter<"Staff"> | Date | string
     createdAt?: DateTimeFilter<"Staff"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Transactions?: SalaryTransactionListRelationFilter
   }
 
@@ -16430,8 +17237,10 @@ export namespace Prisma {
     baseSalary?: SortOrder
     balance?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     joinedAt?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
     Transactions?: SalaryTransactionOrderByRelationAggregateInput
   }
 
@@ -16446,8 +17255,10 @@ export namespace Prisma {
     baseSalary?: FloatFilter<"Staff"> | number
     balance?: FloatFilter<"Staff"> | number
     isActive?: BoolFilter<"Staff"> | boolean
+    userId?: StringFilter<"Staff"> | string
     joinedAt?: DateTimeFilter<"Staff"> | Date | string
     createdAt?: DateTimeFilter<"Staff"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
     Transactions?: SalaryTransactionListRelationFilter
   }, "id">
 
@@ -16459,6 +17270,7 @@ export namespace Prisma {
     baseSalary?: SortOrder
     balance?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     joinedAt?: SortOrder
     createdAt?: SortOrder
     _count?: StaffCountOrderByAggregateInput
@@ -16479,6 +17291,7 @@ export namespace Prisma {
     baseSalary?: FloatWithAggregatesFilter<"Staff"> | number
     balance?: FloatWithAggregatesFilter<"Staff"> | number
     isActive?: BoolWithAggregatesFilter<"Staff"> | boolean
+    userId?: StringWithAggregatesFilter<"Staff"> | string
     joinedAt?: DateTimeWithAggregatesFilter<"Staff"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Staff"> | Date | string
   }
@@ -16574,9 +17387,20 @@ export namespace Prisma {
     storePhone?: string | null
     storeEmail?: string | null
     currency?: string
+    storeLogo?: string | null
     isVerified?: boolean
     verificationCode?: string | null
     createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -16603,9 +17427,20 @@ export namespace Prisma {
     storePhone?: string | null
     storeEmail?: string | null
     currency?: string
+    storeLogo?: string | null
     isVerified?: boolean
     verificationCode?: string | null
     createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -16632,9 +17467,20 @@ export namespace Prisma {
     storePhone?: NullableStringFieldUpdateOperationsInput | string | null
     storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
     currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -16661,9 +17507,20 @@ export namespace Prisma {
     storePhone?: NullableStringFieldUpdateOperationsInput | string | null
     storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
     currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -16690,9 +17547,11 @@ export namespace Prisma {
     storePhone?: string | null
     storeEmail?: string | null
     currency?: string
+    storeLogo?: string | null
     isVerified?: boolean
     verificationCode?: string | null
     createdAt?: Date | string
+    ownerId?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -16719,6 +17578,7 @@ export namespace Prisma {
     storePhone?: NullableStringFieldUpdateOperationsInput | string | null
     storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
     currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16748,9 +17608,11 @@ export namespace Prisma {
     storePhone?: NullableStringFieldUpdateOperationsInput | string | null
     storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
     currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductCreateInput = {
@@ -16762,6 +17624,7 @@ export namespace Prisma {
     stockQty?: number
     minStockAlert?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutProductsInput
     Sales?: SaleItemCreateNestedManyWithoutProductInput
     Movements?: StockMovementCreateNestedManyWithoutProductInput
     WarehouseInventory?: WarehouseInventoryCreateNestedManyWithoutProductInput
@@ -16775,6 +17638,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty?: number
     minStockAlert?: number
+    userId: string
     createdAt?: Date | string
     Sales?: SaleItemUncheckedCreateNestedManyWithoutProductInput
     Movements?: StockMovementUncheckedCreateNestedManyWithoutProductInput
@@ -16790,6 +17654,7 @@ export namespace Prisma {
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProductsNestedInput
     Sales?: SaleItemUpdateManyWithoutProductNestedInput
     Movements?: StockMovementUpdateManyWithoutProductNestedInput
     WarehouseInventory?: WarehouseInventoryUpdateManyWithoutProductNestedInput
@@ -16803,6 +17668,7 @@ export namespace Prisma {
     sellPrice?: FloatFieldUpdateOperationsInput | number
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Sales?: SaleItemUncheckedUpdateManyWithoutProductNestedInput
     Movements?: StockMovementUncheckedUpdateManyWithoutProductNestedInput
@@ -16817,6 +17683,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty?: number
     minStockAlert?: number
+    userId: string
     createdAt?: Date | string
   }
 
@@ -16839,6 +17706,7 @@ export namespace Prisma {
     sellPrice?: FloatFieldUpdateOperationsInput | number
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16849,6 +17717,7 @@ export namespace Prisma {
     manager?: string | null
     isActive?: boolean
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutWarehousesInput
     MovementsTo?: StockMovementCreateNestedManyWithoutDestinationInput
     MovementsFrom?: StockMovementCreateNestedManyWithoutSourceInput
     Inventory?: WarehouseInventoryCreateNestedManyWithoutWarehouseInput
@@ -16860,6 +17729,7 @@ export namespace Prisma {
     location?: string | null
     manager?: string | null
     isActive?: boolean
+    userId: string
     createdAt?: Date | string
     MovementsTo?: StockMovementUncheckedCreateNestedManyWithoutDestinationInput
     MovementsFrom?: StockMovementUncheckedCreateNestedManyWithoutSourceInput
@@ -16873,6 +17743,7 @@ export namespace Prisma {
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWarehousesNestedInput
     MovementsTo?: StockMovementUpdateManyWithoutDestinationNestedInput
     MovementsFrom?: StockMovementUpdateManyWithoutSourceNestedInput
     Inventory?: WarehouseInventoryUpdateManyWithoutWarehouseNestedInput
@@ -16884,6 +17755,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     MovementsTo?: StockMovementUncheckedUpdateManyWithoutDestinationNestedInput
     MovementsFrom?: StockMovementUncheckedUpdateManyWithoutSourceNestedInput
@@ -16896,6 +17768,7 @@ export namespace Prisma {
     location?: string | null
     manager?: string | null
     isActive?: boolean
+    userId: string
     createdAt?: Date | string
   }
 
@@ -16914,6 +17787,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17052,6 +17926,7 @@ export namespace Prisma {
     email?: string | null
     balance?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutCustomersInput
     Invoices?: InvoiceCreateNestedManyWithoutCustomerInput
   }
 
@@ -17061,6 +17936,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     balance?: number
+    userId: string
     createdAt?: Date | string
     Invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
   }
@@ -17072,6 +17948,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCustomersNestedInput
     Invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
   }
 
@@ -17081,6 +17958,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
   }
@@ -17091,6 +17969,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     balance?: number
+    userId: string
     createdAt?: Date | string
   }
 
@@ -17109,6 +17988,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17120,6 +18000,7 @@ export namespace Prisma {
     company?: string | null
     balance?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSuppliersInput
     Invoices?: InvoiceCreateNestedManyWithoutSupplierInput
   }
 
@@ -17130,6 +18011,7 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     balance?: number
+    userId: string
     createdAt?: Date | string
     Invoices?: InvoiceUncheckedCreateNestedManyWithoutSupplierInput
   }
@@ -17142,6 +18024,7 @@ export namespace Prisma {
     company?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSuppliersNestedInput
     Invoices?: InvoiceUpdateManyWithoutSupplierNestedInput
   }
 
@@ -17152,6 +18035,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Invoices?: InvoiceUncheckedUpdateManyWithoutSupplierNestedInput
   }
@@ -17163,6 +18047,7 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     balance?: number
+    userId: string
     createdAt?: Date | string
   }
 
@@ -17183,6 +18068,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17193,6 +18079,7 @@ export namespace Prisma {
     category: string
     date?: Date | string
     description?: string | null
+    user: UserCreateNestedOneWithoutExpensesInput
   }
 
   export type ExpenseUncheckedCreateInput = {
@@ -17202,6 +18089,7 @@ export namespace Prisma {
     category: string
     date?: Date | string
     description?: string | null
+    userId: string
   }
 
   export type ExpenseUpdateInput = {
@@ -17211,6 +18099,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateInput = {
@@ -17220,6 +18109,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ExpenseCreateManyInput = {
@@ -17229,6 +18119,7 @@ export namespace Prisma {
     category: string
     date?: Date | string
     description?: string | null
+    userId: string
   }
 
   export type ExpenseUpdateManyMutationInput = {
@@ -17247,17 +18138,20 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ExpenseCategoryCreateInput = {
     id?: string
     name: string
     createdAt?: Date | string
+    user?: UserCreateNestedOneWithoutExpenseCategoriesInput
   }
 
   export type ExpenseCategoryUncheckedCreateInput = {
     id?: string
     name: string
+    userId?: string | null
     createdAt?: Date | string
   }
 
@@ -17265,17 +18159,20 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutExpenseCategoriesNestedInput
   }
 
   export type ExpenseCategoryUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ExpenseCategoryCreateManyInput = {
     id?: string
     name: string
+    userId?: string | null
     createdAt?: Date | string
   }
 
@@ -17288,6 +18185,7 @@ export namespace Prisma {
   export type ExpenseCategoryUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17303,6 +18201,7 @@ export namespace Prisma {
     isDebt?: boolean
     paymentMethod?: string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutInvoicesInput
     supplier?: SupplierCreateNestedOneWithoutInvoicesInput
     customer?: CustomerCreateNestedOneWithoutInvoicesInput
     items?: SaleItemCreateNestedManyWithoutInvoiceInput
@@ -17321,6 +18220,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
     items?: SaleItemUncheckedCreateNestedManyWithoutInvoiceInput
   }
@@ -17337,6 +18237,7 @@ export namespace Prisma {
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutInvoicesNestedInput
     supplier?: SupplierUpdateOneWithoutInvoicesNestedInput
     customer?: CustomerUpdateOneWithoutInvoicesNestedInput
     items?: SaleItemUpdateManyWithoutInvoiceNestedInput
@@ -17355,6 +18256,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: SaleItemUncheckedUpdateManyWithoutInvoiceNestedInput
   }
@@ -17372,6 +18274,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
   }
 
@@ -17402,6 +18305,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17476,6 +18380,7 @@ export namespace Prisma {
     isActive?: boolean
     joinedAt?: Date | string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutStaffInput
     Transactions?: SalaryTransactionCreateNestedManyWithoutStaffInput
   }
 
@@ -17487,6 +18392,7 @@ export namespace Prisma {
     baseSalary?: number
     balance?: number
     isActive?: boolean
+    userId: string
     joinedAt?: Date | string
     createdAt?: Date | string
     Transactions?: SalaryTransactionUncheckedCreateNestedManyWithoutStaffInput
@@ -17502,6 +18408,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutStaffNestedInput
     Transactions?: SalaryTransactionUpdateManyWithoutStaffNestedInput
   }
 
@@ -17513,6 +18420,7 @@ export namespace Prisma {
     baseSalary?: FloatFieldUpdateOperationsInput | number
     balance?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Transactions?: SalaryTransactionUncheckedUpdateManyWithoutStaffNestedInput
@@ -17526,6 +18434,7 @@ export namespace Prisma {
     baseSalary?: number
     balance?: number
     isActive?: boolean
+    userId: string
     joinedAt?: Date | string
     createdAt?: Date | string
   }
@@ -17550,6 +18459,7 @@ export namespace Prisma {
     baseSalary?: FloatFieldUpdateOperationsInput | number
     balance?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17669,9 +18579,104 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type UserNullableRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
+  export type ProductListRelationFilter = {
+    every?: ProductWhereInput
+    some?: ProductWhereInput
+    none?: ProductWhereInput
+  }
+
+  export type CustomerListRelationFilter = {
+    every?: CustomerWhereInput
+    some?: CustomerWhereInput
+    none?: CustomerWhereInput
+  }
+
+  export type SupplierListRelationFilter = {
+    every?: SupplierWhereInput
+    some?: SupplierWhereInput
+    none?: SupplierWhereInput
+  }
+
+  export type InvoiceListRelationFilter = {
+    every?: InvoiceWhereInput
+    some?: InvoiceWhereInput
+    none?: InvoiceWhereInput
+  }
+
+  export type ExpenseListRelationFilter = {
+    every?: ExpenseWhereInput
+    some?: ExpenseWhereInput
+    none?: ExpenseWhereInput
+  }
+
+  export type ExpenseCategoryListRelationFilter = {
+    every?: ExpenseCategoryWhereInput
+    some?: ExpenseCategoryWhereInput
+    none?: ExpenseCategoryWhereInput
+  }
+
+  export type WarehouseListRelationFilter = {
+    every?: WarehouseWhereInput
+    some?: WarehouseWhereInput
+    none?: WarehouseWhereInput
+  }
+
+  export type StaffListRelationFilter = {
+    every?: StaffWhereInput
+    some?: StaffWhereInput
+    none?: StaffWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CustomerOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SupplierOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type InvoiceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ExpenseOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ExpenseCategoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WarehouseOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StaffOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -17698,9 +18703,11 @@ export namespace Prisma {
     storePhone?: SortOrder
     storeEmail?: SortOrder
     currency?: SortOrder
+    storeLogo?: SortOrder
     isVerified?: SortOrder
     verificationCode?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -17727,9 +18734,11 @@ export namespace Prisma {
     storePhone?: SortOrder
     storeEmail?: SortOrder
     currency?: SortOrder
+    storeLogo?: SortOrder
     isVerified?: SortOrder
     verificationCode?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -17756,9 +18765,11 @@ export namespace Prisma {
     storePhone?: SortOrder
     storeEmail?: SortOrder
     currency?: SortOrder
+    storeLogo?: SortOrder
     isVerified?: SortOrder
     verificationCode?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -17841,6 +18852,11 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
   export type SaleItemListRelationFilter = {
     every?: SaleItemWhereInput
     some?: SaleItemWhereInput
@@ -17871,6 +18887,11 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type ProductBarcodeUserIdCompoundUniqueInput = {
+    barcode: string
+    userId: string
+  }
+
   export type ProductCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -17879,6 +18900,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     stockQty?: SortOrder
     minStockAlert?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -17897,6 +18919,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     stockQty?: SortOrder
     minStockAlert?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -17908,6 +18931,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     stockQty?: SortOrder
     minStockAlert?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -17956,6 +18980,7 @@ export namespace Prisma {
     location?: SortOrder
     manager?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -17965,6 +18990,7 @@ export namespace Prisma {
     location?: SortOrder
     manager?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -17974,6 +19000,7 @@ export namespace Prisma {
     location?: SortOrder
     manager?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18070,22 +19097,13 @@ export namespace Prisma {
     qty?: SortOrder
   }
 
-  export type InvoiceListRelationFilter = {
-    every?: InvoiceWhereInput
-    some?: InvoiceWhereInput
-    none?: InvoiceWhereInput
-  }
-
-  export type InvoiceOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type CustomerCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     phone?: SortOrder
     email?: SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18099,6 +19117,7 @@ export namespace Prisma {
     phone?: SortOrder
     email?: SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18108,6 +19127,7 @@ export namespace Prisma {
     phone?: SortOrder
     email?: SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18122,6 +19142,7 @@ export namespace Prisma {
     email?: SortOrder
     company?: SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18136,6 +19157,7 @@ export namespace Prisma {
     email?: SortOrder
     company?: SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18146,6 +19168,7 @@ export namespace Prisma {
     email?: SortOrder
     company?: SortOrder
     balance?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18160,6 +19183,7 @@ export namespace Prisma {
     category?: SortOrder
     date?: SortOrder
     description?: SortOrder
+    userId?: SortOrder
   }
 
   export type ExpenseAvgOrderByAggregateInput = {
@@ -18173,6 +19197,7 @@ export namespace Prisma {
     category?: SortOrder
     date?: SortOrder
     description?: SortOrder
+    userId?: SortOrder
   }
 
   export type ExpenseMinOrderByAggregateInput = {
@@ -18182,6 +19207,7 @@ export namespace Prisma {
     category?: SortOrder
     date?: SortOrder
     description?: SortOrder
+    userId?: SortOrder
   }
 
   export type ExpenseSumOrderByAggregateInput = {
@@ -18191,18 +19217,21 @@ export namespace Prisma {
   export type ExpenseCategoryCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type ExpenseCategoryMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type ExpenseCategoryMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18214,6 +19243,11 @@ export namespace Prisma {
   export type CustomerNullableRelationFilter = {
     is?: CustomerWhereInput | null
     isNot?: CustomerWhereInput | null
+  }
+
+  export type InvoiceInvoiceNoUserIdCompoundUniqueInput = {
+    invoiceNo: string
+    userId: string
   }
 
   export type InvoiceCountOrderByAggregateInput = {
@@ -18229,6 +19263,7 @@ export namespace Prisma {
     type?: SortOrder
     isDebt?: SortOrder
     paymentMethod?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18253,6 +19288,7 @@ export namespace Prisma {
     type?: SortOrder
     isDebt?: SortOrder
     paymentMethod?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18269,6 +19305,7 @@ export namespace Prisma {
     type?: SortOrder
     isDebt?: SortOrder
     paymentMethod?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18342,6 +19379,7 @@ export namespace Prisma {
     baseSalary?: SortOrder
     balance?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     joinedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -18359,6 +19397,7 @@ export namespace Prisma {
     baseSalary?: SortOrder
     balance?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     joinedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -18371,6 +19410,7 @@ export namespace Prisma {
     baseSalary?: SortOrder
     balance?: SortOrder
     isActive?: SortOrder
+    userId?: SortOrder
     joinedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -18425,6 +19465,138 @@ export namespace Prisma {
     balanceAfter?: SortOrder
   }
 
+  export type UserCreateNestedOneWithoutSubUsersInput = {
+    create?: XOR<UserCreateWithoutSubUsersInput, UserUncheckedCreateWithoutSubUsersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSubUsersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedManyWithoutOwnerInput = {
+    create?: XOR<UserCreateWithoutOwnerInput, UserUncheckedCreateWithoutOwnerInput> | UserCreateWithoutOwnerInput[] | UserUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOwnerInput | UserCreateOrConnectWithoutOwnerInput[]
+    createMany?: UserCreateManyOwnerInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type ProductCreateNestedManyWithoutUserInput = {
+    create?: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput> | ProductCreateWithoutUserInput[] | ProductUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
+    createMany?: ProductCreateManyUserInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type CustomerCreateNestedManyWithoutUserInput = {
+    create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
+    createMany?: CustomerCreateManyUserInputEnvelope
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+  }
+
+  export type SupplierCreateNestedManyWithoutUserInput = {
+    create?: XOR<SupplierCreateWithoutUserInput, SupplierUncheckedCreateWithoutUserInput> | SupplierCreateWithoutUserInput[] | SupplierUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupplierCreateOrConnectWithoutUserInput | SupplierCreateOrConnectWithoutUserInput[]
+    createMany?: SupplierCreateManyUserInputEnvelope
+    connect?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+  }
+
+  export type InvoiceCreateNestedManyWithoutUserInput = {
+    create?: XOR<InvoiceCreateWithoutUserInput, InvoiceUncheckedCreateWithoutUserInput> | InvoiceCreateWithoutUserInput[] | InvoiceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: InvoiceCreateOrConnectWithoutUserInput | InvoiceCreateOrConnectWithoutUserInput[]
+    createMany?: InvoiceCreateManyUserInputEnvelope
+    connect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+  }
+
+  export type ExpenseCreateNestedManyWithoutUserInput = {
+    create?: XOR<ExpenseCreateWithoutUserInput, ExpenseUncheckedCreateWithoutUserInput> | ExpenseCreateWithoutUserInput[] | ExpenseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutUserInput | ExpenseCreateOrConnectWithoutUserInput[]
+    createMany?: ExpenseCreateManyUserInputEnvelope
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+  }
+
+  export type ExpenseCategoryCreateNestedManyWithoutUserInput = {
+    create?: XOR<ExpenseCategoryCreateWithoutUserInput, ExpenseCategoryUncheckedCreateWithoutUserInput> | ExpenseCategoryCreateWithoutUserInput[] | ExpenseCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCategoryCreateOrConnectWithoutUserInput | ExpenseCategoryCreateOrConnectWithoutUserInput[]
+    createMany?: ExpenseCategoryCreateManyUserInputEnvelope
+    connect?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+  }
+
+  export type WarehouseCreateNestedManyWithoutUserInput = {
+    create?: XOR<WarehouseCreateWithoutUserInput, WarehouseUncheckedCreateWithoutUserInput> | WarehouseCreateWithoutUserInput[] | WarehouseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WarehouseCreateOrConnectWithoutUserInput | WarehouseCreateOrConnectWithoutUserInput[]
+    createMany?: WarehouseCreateManyUserInputEnvelope
+    connect?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+  }
+
+  export type StaffCreateNestedManyWithoutUserInput = {
+    create?: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput> | StaffCreateWithoutUserInput[] | StaffUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffCreateOrConnectWithoutUserInput | StaffCreateOrConnectWithoutUserInput[]
+    createMany?: StaffCreateManyUserInputEnvelope
+    connect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutOwnerInput = {
+    create?: XOR<UserCreateWithoutOwnerInput, UserUncheckedCreateWithoutOwnerInput> | UserCreateWithoutOwnerInput[] | UserUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOwnerInput | UserCreateOrConnectWithoutOwnerInput[]
+    createMany?: UserCreateManyOwnerInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput> | ProductCreateWithoutUserInput[] | ProductUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
+    createMany?: ProductCreateManyUserInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type CustomerUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
+    createMany?: CustomerCreateManyUserInputEnvelope
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+  }
+
+  export type SupplierUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SupplierCreateWithoutUserInput, SupplierUncheckedCreateWithoutUserInput> | SupplierCreateWithoutUserInput[] | SupplierUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupplierCreateOrConnectWithoutUserInput | SupplierCreateOrConnectWithoutUserInput[]
+    createMany?: SupplierCreateManyUserInputEnvelope
+    connect?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+  }
+
+  export type InvoiceUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<InvoiceCreateWithoutUserInput, InvoiceUncheckedCreateWithoutUserInput> | InvoiceCreateWithoutUserInput[] | InvoiceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: InvoiceCreateOrConnectWithoutUserInput | InvoiceCreateOrConnectWithoutUserInput[]
+    createMany?: InvoiceCreateManyUserInputEnvelope
+    connect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+  }
+
+  export type ExpenseUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ExpenseCreateWithoutUserInput, ExpenseUncheckedCreateWithoutUserInput> | ExpenseCreateWithoutUserInput[] | ExpenseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutUserInput | ExpenseCreateOrConnectWithoutUserInput[]
+    createMany?: ExpenseCreateManyUserInputEnvelope
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+  }
+
+  export type ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ExpenseCategoryCreateWithoutUserInput, ExpenseCategoryUncheckedCreateWithoutUserInput> | ExpenseCategoryCreateWithoutUserInput[] | ExpenseCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCategoryCreateOrConnectWithoutUserInput | ExpenseCategoryCreateOrConnectWithoutUserInput[]
+    createMany?: ExpenseCategoryCreateManyUserInputEnvelope
+    connect?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+  }
+
+  export type WarehouseUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<WarehouseCreateWithoutUserInput, WarehouseUncheckedCreateWithoutUserInput> | WarehouseCreateWithoutUserInput[] | WarehouseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WarehouseCreateOrConnectWithoutUserInput | WarehouseCreateOrConnectWithoutUserInput[]
+    createMany?: WarehouseCreateManyUserInputEnvelope
+    connect?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+  }
+
+  export type StaffUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput> | StaffCreateWithoutUserInput[] | StaffUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffCreateOrConnectWithoutUserInput | StaffCreateOrConnectWithoutUserInput[]
+    createMany?: StaffCreateManyUserInputEnvelope
+    connect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -18439,6 +19611,274 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type UserUpdateOneWithoutSubUsersNestedInput = {
+    create?: XOR<UserCreateWithoutSubUsersInput, UserUncheckedCreateWithoutSubUsersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSubUsersInput
+    upsert?: UserUpsertWithoutSubUsersInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSubUsersInput, UserUpdateWithoutSubUsersInput>, UserUncheckedUpdateWithoutSubUsersInput>
+  }
+
+  export type UserUpdateManyWithoutOwnerNestedInput = {
+    create?: XOR<UserCreateWithoutOwnerInput, UserUncheckedCreateWithoutOwnerInput> | UserCreateWithoutOwnerInput[] | UserUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOwnerInput | UserCreateOrConnectWithoutOwnerInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutOwnerInput | UserUpsertWithWhereUniqueWithoutOwnerInput[]
+    createMany?: UserCreateManyOwnerInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutOwnerInput | UserUpdateWithWhereUniqueWithoutOwnerInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutOwnerInput | UserUpdateManyWithWhereWithoutOwnerInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type ProductUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput> | ProductCreateWithoutUserInput[] | ProductUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutUserInput | ProductUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ProductCreateManyUserInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutUserInput | ProductUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutUserInput | ProductUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type CustomerUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
+    upsert?: CustomerUpsertWithWhereUniqueWithoutUserInput | CustomerUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CustomerCreateManyUserInputEnvelope
+    set?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    disconnect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    delete?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    update?: CustomerUpdateWithWhereUniqueWithoutUserInput | CustomerUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CustomerUpdateManyWithWhereWithoutUserInput | CustomerUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+  }
+
+  export type SupplierUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SupplierCreateWithoutUserInput, SupplierUncheckedCreateWithoutUserInput> | SupplierCreateWithoutUserInput[] | SupplierUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupplierCreateOrConnectWithoutUserInput | SupplierCreateOrConnectWithoutUserInput[]
+    upsert?: SupplierUpsertWithWhereUniqueWithoutUserInput | SupplierUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SupplierCreateManyUserInputEnvelope
+    set?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    disconnect?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    delete?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    connect?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    update?: SupplierUpdateWithWhereUniqueWithoutUserInput | SupplierUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SupplierUpdateManyWithWhereWithoutUserInput | SupplierUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SupplierScalarWhereInput | SupplierScalarWhereInput[]
+  }
+
+  export type InvoiceUpdateManyWithoutUserNestedInput = {
+    create?: XOR<InvoiceCreateWithoutUserInput, InvoiceUncheckedCreateWithoutUserInput> | InvoiceCreateWithoutUserInput[] | InvoiceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: InvoiceCreateOrConnectWithoutUserInput | InvoiceCreateOrConnectWithoutUserInput[]
+    upsert?: InvoiceUpsertWithWhereUniqueWithoutUserInput | InvoiceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: InvoiceCreateManyUserInputEnvelope
+    set?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    disconnect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    delete?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    connect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    update?: InvoiceUpdateWithWhereUniqueWithoutUserInput | InvoiceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: InvoiceUpdateManyWithWhereWithoutUserInput | InvoiceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
+  }
+
+  export type ExpenseUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ExpenseCreateWithoutUserInput, ExpenseUncheckedCreateWithoutUserInput> | ExpenseCreateWithoutUserInput[] | ExpenseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutUserInput | ExpenseCreateOrConnectWithoutUserInput[]
+    upsert?: ExpenseUpsertWithWhereUniqueWithoutUserInput | ExpenseUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ExpenseCreateManyUserInputEnvelope
+    set?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    disconnect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    delete?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    update?: ExpenseUpdateWithWhereUniqueWithoutUserInput | ExpenseUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ExpenseUpdateManyWithWhereWithoutUserInput | ExpenseUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+  }
+
+  export type ExpenseCategoryUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ExpenseCategoryCreateWithoutUserInput, ExpenseCategoryUncheckedCreateWithoutUserInput> | ExpenseCategoryCreateWithoutUserInput[] | ExpenseCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCategoryCreateOrConnectWithoutUserInput | ExpenseCategoryCreateOrConnectWithoutUserInput[]
+    upsert?: ExpenseCategoryUpsertWithWhereUniqueWithoutUserInput | ExpenseCategoryUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ExpenseCategoryCreateManyUserInputEnvelope
+    set?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    disconnect?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    delete?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    connect?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    update?: ExpenseCategoryUpdateWithWhereUniqueWithoutUserInput | ExpenseCategoryUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ExpenseCategoryUpdateManyWithWhereWithoutUserInput | ExpenseCategoryUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ExpenseCategoryScalarWhereInput | ExpenseCategoryScalarWhereInput[]
+  }
+
+  export type WarehouseUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WarehouseCreateWithoutUserInput, WarehouseUncheckedCreateWithoutUserInput> | WarehouseCreateWithoutUserInput[] | WarehouseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WarehouseCreateOrConnectWithoutUserInput | WarehouseCreateOrConnectWithoutUserInput[]
+    upsert?: WarehouseUpsertWithWhereUniqueWithoutUserInput | WarehouseUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WarehouseCreateManyUserInputEnvelope
+    set?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    disconnect?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    delete?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    connect?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    update?: WarehouseUpdateWithWhereUniqueWithoutUserInput | WarehouseUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WarehouseUpdateManyWithWhereWithoutUserInput | WarehouseUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WarehouseScalarWhereInput | WarehouseScalarWhereInput[]
+  }
+
+  export type StaffUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput> | StaffCreateWithoutUserInput[] | StaffUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffCreateOrConnectWithoutUserInput | StaffCreateOrConnectWithoutUserInput[]
+    upsert?: StaffUpsertWithWhereUniqueWithoutUserInput | StaffUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StaffCreateManyUserInputEnvelope
+    set?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    disconnect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    delete?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    connect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    update?: StaffUpdateWithWhereUniqueWithoutUserInput | StaffUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StaffUpdateManyWithWhereWithoutUserInput | StaffUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StaffScalarWhereInput | StaffScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutOwnerNestedInput = {
+    create?: XOR<UserCreateWithoutOwnerInput, UserUncheckedCreateWithoutOwnerInput> | UserCreateWithoutOwnerInput[] | UserUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOwnerInput | UserCreateOrConnectWithoutOwnerInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutOwnerInput | UserUpsertWithWhereUniqueWithoutOwnerInput[]
+    createMany?: UserCreateManyOwnerInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutOwnerInput | UserUpdateWithWhereUniqueWithoutOwnerInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutOwnerInput | UserUpdateManyWithWhereWithoutOwnerInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type ProductUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput> | ProductCreateWithoutUserInput[] | ProductUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutUserInput | ProductUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ProductCreateManyUserInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutUserInput | ProductUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutUserInput | ProductUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type CustomerUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
+    upsert?: CustomerUpsertWithWhereUniqueWithoutUserInput | CustomerUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CustomerCreateManyUserInputEnvelope
+    set?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    disconnect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    delete?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    update?: CustomerUpdateWithWhereUniqueWithoutUserInput | CustomerUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CustomerUpdateManyWithWhereWithoutUserInput | CustomerUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+  }
+
+  export type SupplierUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SupplierCreateWithoutUserInput, SupplierUncheckedCreateWithoutUserInput> | SupplierCreateWithoutUserInput[] | SupplierUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupplierCreateOrConnectWithoutUserInput | SupplierCreateOrConnectWithoutUserInput[]
+    upsert?: SupplierUpsertWithWhereUniqueWithoutUserInput | SupplierUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SupplierCreateManyUserInputEnvelope
+    set?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    disconnect?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    delete?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    connect?: SupplierWhereUniqueInput | SupplierWhereUniqueInput[]
+    update?: SupplierUpdateWithWhereUniqueWithoutUserInput | SupplierUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SupplierUpdateManyWithWhereWithoutUserInput | SupplierUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SupplierScalarWhereInput | SupplierScalarWhereInput[]
+  }
+
+  export type InvoiceUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<InvoiceCreateWithoutUserInput, InvoiceUncheckedCreateWithoutUserInput> | InvoiceCreateWithoutUserInput[] | InvoiceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: InvoiceCreateOrConnectWithoutUserInput | InvoiceCreateOrConnectWithoutUserInput[]
+    upsert?: InvoiceUpsertWithWhereUniqueWithoutUserInput | InvoiceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: InvoiceCreateManyUserInputEnvelope
+    set?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    disconnect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    delete?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    connect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+    update?: InvoiceUpdateWithWhereUniqueWithoutUserInput | InvoiceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: InvoiceUpdateManyWithWhereWithoutUserInput | InvoiceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
+  }
+
+  export type ExpenseUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ExpenseCreateWithoutUserInput, ExpenseUncheckedCreateWithoutUserInput> | ExpenseCreateWithoutUserInput[] | ExpenseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutUserInput | ExpenseCreateOrConnectWithoutUserInput[]
+    upsert?: ExpenseUpsertWithWhereUniqueWithoutUserInput | ExpenseUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ExpenseCreateManyUserInputEnvelope
+    set?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    disconnect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    delete?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    update?: ExpenseUpdateWithWhereUniqueWithoutUserInput | ExpenseUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ExpenseUpdateManyWithWhereWithoutUserInput | ExpenseUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+  }
+
+  export type ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ExpenseCategoryCreateWithoutUserInput, ExpenseCategoryUncheckedCreateWithoutUserInput> | ExpenseCategoryCreateWithoutUserInput[] | ExpenseCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExpenseCategoryCreateOrConnectWithoutUserInput | ExpenseCategoryCreateOrConnectWithoutUserInput[]
+    upsert?: ExpenseCategoryUpsertWithWhereUniqueWithoutUserInput | ExpenseCategoryUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ExpenseCategoryCreateManyUserInputEnvelope
+    set?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    disconnect?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    delete?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    connect?: ExpenseCategoryWhereUniqueInput | ExpenseCategoryWhereUniqueInput[]
+    update?: ExpenseCategoryUpdateWithWhereUniqueWithoutUserInput | ExpenseCategoryUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ExpenseCategoryUpdateManyWithWhereWithoutUserInput | ExpenseCategoryUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ExpenseCategoryScalarWhereInput | ExpenseCategoryScalarWhereInput[]
+  }
+
+  export type WarehouseUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WarehouseCreateWithoutUserInput, WarehouseUncheckedCreateWithoutUserInput> | WarehouseCreateWithoutUserInput[] | WarehouseUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WarehouseCreateOrConnectWithoutUserInput | WarehouseCreateOrConnectWithoutUserInput[]
+    upsert?: WarehouseUpsertWithWhereUniqueWithoutUserInput | WarehouseUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WarehouseCreateManyUserInputEnvelope
+    set?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    disconnect?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    delete?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    connect?: WarehouseWhereUniqueInput | WarehouseWhereUniqueInput[]
+    update?: WarehouseUpdateWithWhereUniqueWithoutUserInput | WarehouseUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WarehouseUpdateManyWithWhereWithoutUserInput | WarehouseUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WarehouseScalarWhereInput | WarehouseScalarWhereInput[]
+  }
+
+  export type StaffUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput> | StaffCreateWithoutUserInput[] | StaffUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffCreateOrConnectWithoutUserInput | StaffCreateOrConnectWithoutUserInput[]
+    upsert?: StaffUpsertWithWhereUniqueWithoutUserInput | StaffUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StaffCreateManyUserInputEnvelope
+    set?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    disconnect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    delete?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    connect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+    update?: StaffUpdateWithWhereUniqueWithoutUserInput | StaffUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StaffUpdateManyWithWhereWithoutUserInput | StaffUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StaffScalarWhereInput | StaffScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutProductsInput = {
+    create?: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type SaleItemCreateNestedManyWithoutProductInput = {
@@ -18497,6 +19937,14 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutProductsNestedInput = {
+    create?: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsInput
+    upsert?: UserUpsertWithoutProductsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProductsInput, UserUpdateWithoutProductsInput>, UserUncheckedUpdateWithoutProductsInput>
   }
 
   export type SaleItemUpdateManyWithoutProductNestedInput = {
@@ -18583,6 +20031,12 @@ export namespace Prisma {
     deleteMany?: WarehouseInventoryScalarWhereInput | WarehouseInventoryScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutWarehousesInput = {
+    create?: XOR<UserCreateWithoutWarehousesInput, UserUncheckedCreateWithoutWarehousesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWarehousesInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type StockMovementCreateNestedManyWithoutDestinationInput = {
     create?: XOR<StockMovementCreateWithoutDestinationInput, StockMovementUncheckedCreateWithoutDestinationInput> | StockMovementCreateWithoutDestinationInput[] | StockMovementUncheckedCreateWithoutDestinationInput[]
     connectOrCreate?: StockMovementCreateOrConnectWithoutDestinationInput | StockMovementCreateOrConnectWithoutDestinationInput[]
@@ -18623,6 +20077,14 @@ export namespace Prisma {
     connectOrCreate?: WarehouseInventoryCreateOrConnectWithoutWarehouseInput | WarehouseInventoryCreateOrConnectWithoutWarehouseInput[]
     createMany?: WarehouseInventoryCreateManyWarehouseInputEnvelope
     connect?: WarehouseInventoryWhereUniqueInput | WarehouseInventoryWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutWarehousesNestedInput = {
+    create?: XOR<UserCreateWithoutWarehousesInput, UserUncheckedCreateWithoutWarehousesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWarehousesInput
+    upsert?: UserUpsertWithoutWarehousesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWarehousesInput, UserUpdateWithoutWarehousesInput>, UserUncheckedUpdateWithoutWarehousesInput>
   }
 
   export type StockMovementUpdateManyWithoutDestinationNestedInput = {
@@ -18783,6 +20245,12 @@ export namespace Prisma {
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutMovementsInput, ProductUpdateWithoutMovementsInput>, ProductUncheckedUpdateWithoutMovementsInput>
   }
 
+  export type UserCreateNestedOneWithoutCustomersInput = {
+    create?: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCustomersInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type InvoiceCreateNestedManyWithoutCustomerInput = {
     create?: XOR<InvoiceCreateWithoutCustomerInput, InvoiceUncheckedCreateWithoutCustomerInput> | InvoiceCreateWithoutCustomerInput[] | InvoiceUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: InvoiceCreateOrConnectWithoutCustomerInput | InvoiceCreateOrConnectWithoutCustomerInput[]
@@ -18795,6 +20263,14 @@ export namespace Prisma {
     connectOrCreate?: InvoiceCreateOrConnectWithoutCustomerInput | InvoiceCreateOrConnectWithoutCustomerInput[]
     createMany?: InvoiceCreateManyCustomerInputEnvelope
     connect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutCustomersNestedInput = {
+    create?: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCustomersInput
+    upsert?: UserUpsertWithoutCustomersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCustomersInput, UserUpdateWithoutCustomersInput>, UserUncheckedUpdateWithoutCustomersInput>
   }
 
   export type InvoiceUpdateManyWithoutCustomerNestedInput = {
@@ -18825,6 +20301,12 @@ export namespace Prisma {
     deleteMany?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutSuppliersInput = {
+    create?: XOR<UserCreateWithoutSuppliersInput, UserUncheckedCreateWithoutSuppliersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSuppliersInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type InvoiceCreateNestedManyWithoutSupplierInput = {
     create?: XOR<InvoiceCreateWithoutSupplierInput, InvoiceUncheckedCreateWithoutSupplierInput> | InvoiceCreateWithoutSupplierInput[] | InvoiceUncheckedCreateWithoutSupplierInput[]
     connectOrCreate?: InvoiceCreateOrConnectWithoutSupplierInput | InvoiceCreateOrConnectWithoutSupplierInput[]
@@ -18837,6 +20319,14 @@ export namespace Prisma {
     connectOrCreate?: InvoiceCreateOrConnectWithoutSupplierInput | InvoiceCreateOrConnectWithoutSupplierInput[]
     createMany?: InvoiceCreateManySupplierInputEnvelope
     connect?: InvoiceWhereUniqueInput | InvoiceWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutSuppliersNestedInput = {
+    create?: XOR<UserCreateWithoutSuppliersInput, UserUncheckedCreateWithoutSuppliersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSuppliersInput
+    upsert?: UserUpsertWithoutSuppliersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSuppliersInput, UserUpdateWithoutSuppliersInput>, UserUncheckedUpdateWithoutSuppliersInput>
   }
 
   export type InvoiceUpdateManyWithoutSupplierNestedInput = {
@@ -18867,6 +20357,42 @@ export namespace Prisma {
     deleteMany?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutExpensesInput = {
+    create?: XOR<UserCreateWithoutExpensesInput, UserUncheckedCreateWithoutExpensesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutExpensesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutExpensesNestedInput = {
+    create?: XOR<UserCreateWithoutExpensesInput, UserUncheckedCreateWithoutExpensesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutExpensesInput
+    upsert?: UserUpsertWithoutExpensesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutExpensesInput, UserUpdateWithoutExpensesInput>, UserUncheckedUpdateWithoutExpensesInput>
+  }
+
+  export type UserCreateNestedOneWithoutExpenseCategoriesInput = {
+    create?: XOR<UserCreateWithoutExpenseCategoriesInput, UserUncheckedCreateWithoutExpenseCategoriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutExpenseCategoriesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneWithoutExpenseCategoriesNestedInput = {
+    create?: XOR<UserCreateWithoutExpenseCategoriesInput, UserUncheckedCreateWithoutExpenseCategoriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutExpenseCategoriesInput
+    upsert?: UserUpsertWithoutExpenseCategoriesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutExpenseCategoriesInput, UserUpdateWithoutExpenseCategoriesInput>, UserUncheckedUpdateWithoutExpenseCategoriesInput>
+  }
+
+  export type UserCreateNestedOneWithoutInvoicesInput = {
+    create?: XOR<UserCreateWithoutInvoicesInput, UserUncheckedCreateWithoutInvoicesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvoicesInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type SupplierCreateNestedOneWithoutInvoicesInput = {
     create?: XOR<SupplierCreateWithoutInvoicesInput, SupplierUncheckedCreateWithoutInvoicesInput>
     connectOrCreate?: SupplierCreateOrConnectWithoutInvoicesInput
@@ -18891,6 +20417,14 @@ export namespace Prisma {
     connectOrCreate?: SaleItemCreateOrConnectWithoutInvoiceInput | SaleItemCreateOrConnectWithoutInvoiceInput[]
     createMany?: SaleItemCreateManyInvoiceInputEnvelope
     connect?: SaleItemWhereUniqueInput | SaleItemWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutInvoicesNestedInput = {
+    create?: XOR<UserCreateWithoutInvoicesInput, UserUncheckedCreateWithoutInvoicesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvoicesInput
+    upsert?: UserUpsertWithoutInvoicesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInvoicesInput, UserUpdateWithoutInvoicesInput>, UserUncheckedUpdateWithoutInvoicesInput>
   }
 
   export type SupplierUpdateOneWithoutInvoicesNestedInput = {
@@ -18969,6 +20503,12 @@ export namespace Prisma {
     update?: XOR<XOR<InvoiceUpdateToOneWithWhereWithoutItemsInput, InvoiceUpdateWithoutItemsInput>, InvoiceUncheckedUpdateWithoutItemsInput>
   }
 
+  export type UserCreateNestedOneWithoutStaffInput = {
+    create?: XOR<UserCreateWithoutStaffInput, UserUncheckedCreateWithoutStaffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStaffInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type SalaryTransactionCreateNestedManyWithoutStaffInput = {
     create?: XOR<SalaryTransactionCreateWithoutStaffInput, SalaryTransactionUncheckedCreateWithoutStaffInput> | SalaryTransactionCreateWithoutStaffInput[] | SalaryTransactionUncheckedCreateWithoutStaffInput[]
     connectOrCreate?: SalaryTransactionCreateOrConnectWithoutStaffInput | SalaryTransactionCreateOrConnectWithoutStaffInput[]
@@ -18981,6 +20521,14 @@ export namespace Prisma {
     connectOrCreate?: SalaryTransactionCreateOrConnectWithoutStaffInput | SalaryTransactionCreateOrConnectWithoutStaffInput[]
     createMany?: SalaryTransactionCreateManyStaffInputEnvelope
     connect?: SalaryTransactionWhereUniqueInput | SalaryTransactionWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutStaffNestedInput = {
+    create?: XOR<UserCreateWithoutStaffInput, UserUncheckedCreateWithoutStaffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStaffInput
+    upsert?: UserUpsertWithoutStaffInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStaffInput, UserUpdateWithoutStaffInput>, UserUncheckedUpdateWithoutStaffInput>
   }
 
   export type SalaryTransactionUpdateManyWithoutStaffNestedInput = {
@@ -19190,6 +20738,905 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type UserCreateWithoutSubUsersInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSubUsersInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSubUsersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSubUsersInput, UserUncheckedCreateWithoutSubUsersInput>
+  }
+
+  export type UserCreateWithoutOwnerInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutOwnerInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutOwnerInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOwnerInput, UserUncheckedCreateWithoutOwnerInput>
+  }
+
+  export type UserCreateManyOwnerInputEnvelope = {
+    data: UserCreateManyOwnerInput | UserCreateManyOwnerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductCreateWithoutUserInput = {
+    id?: string
+    name: string
+    barcode?: string | null
+    buyPrice: number
+    sellPrice: number
+    stockQty?: number
+    minStockAlert?: number
+    createdAt?: Date | string
+    Sales?: SaleItemCreateNestedManyWithoutProductInput
+    Movements?: StockMovementCreateNestedManyWithoutProductInput
+    WarehouseInventory?: WarehouseInventoryCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    barcode?: string | null
+    buyPrice: number
+    sellPrice: number
+    stockQty?: number
+    minStockAlert?: number
+    createdAt?: Date | string
+    Sales?: SaleItemUncheckedCreateNestedManyWithoutProductInput
+    Movements?: StockMovementUncheckedCreateNestedManyWithoutProductInput
+    WarehouseInventory?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutUserInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProductCreateManyUserInputEnvelope = {
+    data: ProductCreateManyUserInput | ProductCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CustomerCreateWithoutUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    email?: string | null
+    balance?: number
+    createdAt?: Date | string
+    Invoices?: InvoiceCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    email?: string | null
+    balance?: number
+    createdAt?: Date | string
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutUserInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput>
+  }
+
+  export type CustomerCreateManyUserInputEnvelope = {
+    data: CustomerCreateManyUserInput | CustomerCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupplierCreateWithoutUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    email?: string | null
+    company?: string | null
+    balance?: number
+    createdAt?: Date | string
+    Invoices?: InvoiceCreateNestedManyWithoutSupplierInput
+  }
+
+  export type SupplierUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    email?: string | null
+    company?: string | null
+    balance?: number
+    createdAt?: Date | string
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutSupplierInput
+  }
+
+  export type SupplierCreateOrConnectWithoutUserInput = {
+    where: SupplierWhereUniqueInput
+    create: XOR<SupplierCreateWithoutUserInput, SupplierUncheckedCreateWithoutUserInput>
+  }
+
+  export type SupplierCreateManyUserInputEnvelope = {
+    data: SupplierCreateManyUserInput | SupplierCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type InvoiceCreateWithoutUserInput = {
+    id?: string
+    invoiceNo: string
+    totalAmount: number
+    discount?: number
+    taxRate?: number
+    taxAmount?: number
+    finalAmount: number
+    type?: string
+    isDebt?: boolean
+    paymentMethod?: string
+    createdAt?: Date | string
+    supplier?: SupplierCreateNestedOneWithoutInvoicesInput
+    customer?: CustomerCreateNestedOneWithoutInvoicesInput
+    items?: SaleItemCreateNestedManyWithoutInvoiceInput
+  }
+
+  export type InvoiceUncheckedCreateWithoutUserInput = {
+    id?: string
+    invoiceNo: string
+    customerId?: string | null
+    supplierId?: string | null
+    totalAmount: number
+    discount?: number
+    taxRate?: number
+    taxAmount?: number
+    finalAmount: number
+    type?: string
+    isDebt?: boolean
+    paymentMethod?: string
+    createdAt?: Date | string
+    items?: SaleItemUncheckedCreateNestedManyWithoutInvoiceInput
+  }
+
+  export type InvoiceCreateOrConnectWithoutUserInput = {
+    where: InvoiceWhereUniqueInput
+    create: XOR<InvoiceCreateWithoutUserInput, InvoiceUncheckedCreateWithoutUserInput>
+  }
+
+  export type InvoiceCreateManyUserInputEnvelope = {
+    data: InvoiceCreateManyUserInput | InvoiceCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ExpenseCreateWithoutUserInput = {
+    id?: string
+    title: string
+    amount: number
+    category: string
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type ExpenseUncheckedCreateWithoutUserInput = {
+    id?: string
+    title: string
+    amount: number
+    category: string
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type ExpenseCreateOrConnectWithoutUserInput = {
+    where: ExpenseWhereUniqueInput
+    create: XOR<ExpenseCreateWithoutUserInput, ExpenseUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExpenseCreateManyUserInputEnvelope = {
+    data: ExpenseCreateManyUserInput | ExpenseCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ExpenseCategoryCreateWithoutUserInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+  }
+
+  export type ExpenseCategoryUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+  }
+
+  export type ExpenseCategoryCreateOrConnectWithoutUserInput = {
+    where: ExpenseCategoryWhereUniqueInput
+    create: XOR<ExpenseCategoryCreateWithoutUserInput, ExpenseCategoryUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExpenseCategoryCreateManyUserInputEnvelope = {
+    data: ExpenseCategoryCreateManyUserInput | ExpenseCategoryCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WarehouseCreateWithoutUserInput = {
+    id?: string
+    name: string
+    location?: string | null
+    manager?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    MovementsTo?: StockMovementCreateNestedManyWithoutDestinationInput
+    MovementsFrom?: StockMovementCreateNestedManyWithoutSourceInput
+    Inventory?: WarehouseInventoryCreateNestedManyWithoutWarehouseInput
+  }
+
+  export type WarehouseUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    location?: string | null
+    manager?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    MovementsTo?: StockMovementUncheckedCreateNestedManyWithoutDestinationInput
+    MovementsFrom?: StockMovementUncheckedCreateNestedManyWithoutSourceInput
+    Inventory?: WarehouseInventoryUncheckedCreateNestedManyWithoutWarehouseInput
+  }
+
+  export type WarehouseCreateOrConnectWithoutUserInput = {
+    where: WarehouseWhereUniqueInput
+    create: XOR<WarehouseCreateWithoutUserInput, WarehouseUncheckedCreateWithoutUserInput>
+  }
+
+  export type WarehouseCreateManyUserInputEnvelope = {
+    data: WarehouseCreateManyUserInput | WarehouseCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StaffCreateWithoutUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+    Transactions?: SalaryTransactionCreateNestedManyWithoutStaffInput
+  }
+
+  export type StaffUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+    Transactions?: SalaryTransactionUncheckedCreateNestedManyWithoutStaffInput
+  }
+
+  export type StaffCreateOrConnectWithoutUserInput = {
+    where: StaffWhereUniqueInput
+    create: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput>
+  }
+
+  export type StaffCreateManyUserInputEnvelope = {
+    data: StaffCreateManyUserInput | StaffCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutSubUsersInput = {
+    update: XOR<UserUpdateWithoutSubUsersInput, UserUncheckedUpdateWithoutSubUsersInput>
+    create: XOR<UserCreateWithoutSubUsersInput, UserUncheckedCreateWithoutSubUsersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSubUsersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSubUsersInput, UserUncheckedUpdateWithoutSubUsersInput>
+  }
+
+  export type UserUpdateWithoutSubUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSubUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutOwnerInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutOwnerInput, UserUncheckedUpdateWithoutOwnerInput>
+    create: XOR<UserCreateWithoutOwnerInput, UserUncheckedCreateWithoutOwnerInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutOwnerInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutOwnerInput, UserUncheckedUpdateWithoutOwnerInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutOwnerInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutOwnerInput>
+  }
+
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: StringFilter<"User"> | string
+    name?: StringFilter<"User"> | string
+    email?: StringFilter<"User"> | string
+    passwordHash?: StringFilter<"User"> | string
+    phone?: StringNullableFilter<"User"> | string | null
+    role?: StringFilter<"User"> | string
+    isActive?: BoolFilter<"User"> | boolean
+    canAccessSales?: BoolFilter<"User"> | boolean
+    canCreateInvoices?: BoolFilter<"User"> | boolean
+    canManageInventory?: BoolFilter<"User"> | boolean
+    canViewReports?: BoolFilter<"User"> | boolean
+    canManageCustomers?: BoolFilter<"User"> | boolean
+    canManageExpenses?: BoolFilter<"User"> | boolean
+    canAccessSettings?: BoolFilter<"User"> | boolean
+    language?: StringFilter<"User"> | string
+    theme?: StringFilter<"User"> | string
+    primaryColor?: StringFilter<"User"> | string
+    storeName?: StringFilter<"User"> | string
+    storeTaxId?: StringNullableFilter<"User"> | string | null
+    storeAddress?: StringNullableFilter<"User"> | string | null
+    storePhone?: StringNullableFilter<"User"> | string | null
+    storeEmail?: StringNullableFilter<"User"> | string | null
+    currency?: StringFilter<"User"> | string
+    storeLogo?: StringNullableFilter<"User"> | string | null
+    isVerified?: BoolFilter<"User"> | boolean
+    verificationCode?: StringNullableFilter<"User"> | string | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    ownerId?: StringNullableFilter<"User"> | string | null
+  }
+
+  export type ProductUpsertWithWhereUniqueWithoutUserInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutUserInput, ProductUncheckedUpdateWithoutUserInput>
+    create: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutUserInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutUserInput, ProductUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutUserInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ProductScalarWhereInput = {
+    AND?: ProductScalarWhereInput | ProductScalarWhereInput[]
+    OR?: ProductScalarWhereInput[]
+    NOT?: ProductScalarWhereInput | ProductScalarWhereInput[]
+    id?: StringFilter<"Product"> | string
+    name?: StringFilter<"Product"> | string
+    barcode?: StringNullableFilter<"Product"> | string | null
+    buyPrice?: FloatFilter<"Product"> | number
+    sellPrice?: FloatFilter<"Product"> | number
+    stockQty?: IntFilter<"Product"> | number
+    minStockAlert?: IntFilter<"Product"> | number
+    userId?: StringFilter<"Product"> | string
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+  }
+
+  export type CustomerUpsertWithWhereUniqueWithoutUserInput = {
+    where: CustomerWhereUniqueInput
+    update: XOR<CustomerUpdateWithoutUserInput, CustomerUncheckedUpdateWithoutUserInput>
+    create: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput>
+  }
+
+  export type CustomerUpdateWithWhereUniqueWithoutUserInput = {
+    where: CustomerWhereUniqueInput
+    data: XOR<CustomerUpdateWithoutUserInput, CustomerUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CustomerUpdateManyWithWhereWithoutUserInput = {
+    where: CustomerScalarWhereInput
+    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CustomerScalarWhereInput = {
+    AND?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+    OR?: CustomerScalarWhereInput[]
+    NOT?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+    id?: StringFilter<"Customer"> | string
+    name?: StringFilter<"Customer"> | string
+    phone?: StringNullableFilter<"Customer"> | string | null
+    email?: StringNullableFilter<"Customer"> | string | null
+    balance?: FloatFilter<"Customer"> | number
+    userId?: StringFilter<"Customer"> | string
+    createdAt?: DateTimeFilter<"Customer"> | Date | string
+  }
+
+  export type SupplierUpsertWithWhereUniqueWithoutUserInput = {
+    where: SupplierWhereUniqueInput
+    update: XOR<SupplierUpdateWithoutUserInput, SupplierUncheckedUpdateWithoutUserInput>
+    create: XOR<SupplierCreateWithoutUserInput, SupplierUncheckedCreateWithoutUserInput>
+  }
+
+  export type SupplierUpdateWithWhereUniqueWithoutUserInput = {
+    where: SupplierWhereUniqueInput
+    data: XOR<SupplierUpdateWithoutUserInput, SupplierUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SupplierUpdateManyWithWhereWithoutUserInput = {
+    where: SupplierScalarWhereInput
+    data: XOR<SupplierUpdateManyMutationInput, SupplierUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SupplierScalarWhereInput = {
+    AND?: SupplierScalarWhereInput | SupplierScalarWhereInput[]
+    OR?: SupplierScalarWhereInput[]
+    NOT?: SupplierScalarWhereInput | SupplierScalarWhereInput[]
+    id?: StringFilter<"Supplier"> | string
+    name?: StringFilter<"Supplier"> | string
+    phone?: StringNullableFilter<"Supplier"> | string | null
+    email?: StringNullableFilter<"Supplier"> | string | null
+    company?: StringNullableFilter<"Supplier"> | string | null
+    balance?: FloatFilter<"Supplier"> | number
+    userId?: StringFilter<"Supplier"> | string
+    createdAt?: DateTimeFilter<"Supplier"> | Date | string
+  }
+
+  export type InvoiceUpsertWithWhereUniqueWithoutUserInput = {
+    where: InvoiceWhereUniqueInput
+    update: XOR<InvoiceUpdateWithoutUserInput, InvoiceUncheckedUpdateWithoutUserInput>
+    create: XOR<InvoiceCreateWithoutUserInput, InvoiceUncheckedCreateWithoutUserInput>
+  }
+
+  export type InvoiceUpdateWithWhereUniqueWithoutUserInput = {
+    where: InvoiceWhereUniqueInput
+    data: XOR<InvoiceUpdateWithoutUserInput, InvoiceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type InvoiceUpdateManyWithWhereWithoutUserInput = {
+    where: InvoiceScalarWhereInput
+    data: XOR<InvoiceUpdateManyMutationInput, InvoiceUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type InvoiceScalarWhereInput = {
+    AND?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
+    OR?: InvoiceScalarWhereInput[]
+    NOT?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
+    id?: StringFilter<"Invoice"> | string
+    invoiceNo?: StringFilter<"Invoice"> | string
+    customerId?: StringNullableFilter<"Invoice"> | string | null
+    supplierId?: StringNullableFilter<"Invoice"> | string | null
+    totalAmount?: FloatFilter<"Invoice"> | number
+    discount?: FloatFilter<"Invoice"> | number
+    taxRate?: FloatFilter<"Invoice"> | number
+    taxAmount?: FloatFilter<"Invoice"> | number
+    finalAmount?: FloatFilter<"Invoice"> | number
+    type?: StringFilter<"Invoice"> | string
+    isDebt?: BoolFilter<"Invoice"> | boolean
+    paymentMethod?: StringFilter<"Invoice"> | string
+    userId?: StringFilter<"Invoice"> | string
+    createdAt?: DateTimeFilter<"Invoice"> | Date | string
+  }
+
+  export type ExpenseUpsertWithWhereUniqueWithoutUserInput = {
+    where: ExpenseWhereUniqueInput
+    update: XOR<ExpenseUpdateWithoutUserInput, ExpenseUncheckedUpdateWithoutUserInput>
+    create: XOR<ExpenseCreateWithoutUserInput, ExpenseUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExpenseUpdateWithWhereUniqueWithoutUserInput = {
+    where: ExpenseWhereUniqueInput
+    data: XOR<ExpenseUpdateWithoutUserInput, ExpenseUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ExpenseUpdateManyWithWhereWithoutUserInput = {
+    where: ExpenseScalarWhereInput
+    data: XOR<ExpenseUpdateManyMutationInput, ExpenseUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ExpenseScalarWhereInput = {
+    AND?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+    OR?: ExpenseScalarWhereInput[]
+    NOT?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+    id?: StringFilter<"Expense"> | string
+    title?: StringFilter<"Expense"> | string
+    amount?: FloatFilter<"Expense"> | number
+    category?: StringFilter<"Expense"> | string
+    date?: DateTimeFilter<"Expense"> | Date | string
+    description?: StringNullableFilter<"Expense"> | string | null
+    userId?: StringFilter<"Expense"> | string
+  }
+
+  export type ExpenseCategoryUpsertWithWhereUniqueWithoutUserInput = {
+    where: ExpenseCategoryWhereUniqueInput
+    update: XOR<ExpenseCategoryUpdateWithoutUserInput, ExpenseCategoryUncheckedUpdateWithoutUserInput>
+    create: XOR<ExpenseCategoryCreateWithoutUserInput, ExpenseCategoryUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExpenseCategoryUpdateWithWhereUniqueWithoutUserInput = {
+    where: ExpenseCategoryWhereUniqueInput
+    data: XOR<ExpenseCategoryUpdateWithoutUserInput, ExpenseCategoryUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ExpenseCategoryUpdateManyWithWhereWithoutUserInput = {
+    where: ExpenseCategoryScalarWhereInput
+    data: XOR<ExpenseCategoryUpdateManyMutationInput, ExpenseCategoryUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ExpenseCategoryScalarWhereInput = {
+    AND?: ExpenseCategoryScalarWhereInput | ExpenseCategoryScalarWhereInput[]
+    OR?: ExpenseCategoryScalarWhereInput[]
+    NOT?: ExpenseCategoryScalarWhereInput | ExpenseCategoryScalarWhereInput[]
+    id?: StringFilter<"ExpenseCategory"> | string
+    name?: StringFilter<"ExpenseCategory"> | string
+    userId?: StringNullableFilter<"ExpenseCategory"> | string | null
+    createdAt?: DateTimeFilter<"ExpenseCategory"> | Date | string
+  }
+
+  export type WarehouseUpsertWithWhereUniqueWithoutUserInput = {
+    where: WarehouseWhereUniqueInput
+    update: XOR<WarehouseUpdateWithoutUserInput, WarehouseUncheckedUpdateWithoutUserInput>
+    create: XOR<WarehouseCreateWithoutUserInput, WarehouseUncheckedCreateWithoutUserInput>
+  }
+
+  export type WarehouseUpdateWithWhereUniqueWithoutUserInput = {
+    where: WarehouseWhereUniqueInput
+    data: XOR<WarehouseUpdateWithoutUserInput, WarehouseUncheckedUpdateWithoutUserInput>
+  }
+
+  export type WarehouseUpdateManyWithWhereWithoutUserInput = {
+    where: WarehouseScalarWhereInput
+    data: XOR<WarehouseUpdateManyMutationInput, WarehouseUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type WarehouseScalarWhereInput = {
+    AND?: WarehouseScalarWhereInput | WarehouseScalarWhereInput[]
+    OR?: WarehouseScalarWhereInput[]
+    NOT?: WarehouseScalarWhereInput | WarehouseScalarWhereInput[]
+    id?: StringFilter<"Warehouse"> | string
+    name?: StringFilter<"Warehouse"> | string
+    location?: StringNullableFilter<"Warehouse"> | string | null
+    manager?: StringNullableFilter<"Warehouse"> | string | null
+    isActive?: BoolFilter<"Warehouse"> | boolean
+    userId?: StringFilter<"Warehouse"> | string
+    createdAt?: DateTimeFilter<"Warehouse"> | Date | string
+  }
+
+  export type StaffUpsertWithWhereUniqueWithoutUserInput = {
+    where: StaffWhereUniqueInput
+    update: XOR<StaffUpdateWithoutUserInput, StaffUncheckedUpdateWithoutUserInput>
+    create: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput>
+  }
+
+  export type StaffUpdateWithWhereUniqueWithoutUserInput = {
+    where: StaffWhereUniqueInput
+    data: XOR<StaffUpdateWithoutUserInput, StaffUncheckedUpdateWithoutUserInput>
+  }
+
+  export type StaffUpdateManyWithWhereWithoutUserInput = {
+    where: StaffScalarWhereInput
+    data: XOR<StaffUpdateManyMutationInput, StaffUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type StaffScalarWhereInput = {
+    AND?: StaffScalarWhereInput | StaffScalarWhereInput[]
+    OR?: StaffScalarWhereInput[]
+    NOT?: StaffScalarWhereInput | StaffScalarWhereInput[]
+    id?: StringFilter<"Staff"> | string
+    name?: StringFilter<"Staff"> | string
+    phone?: StringNullableFilter<"Staff"> | string | null
+    role?: StringNullableFilter<"Staff"> | string | null
+    baseSalary?: FloatFilter<"Staff"> | number
+    balance?: FloatFilter<"Staff"> | number
+    isActive?: BoolFilter<"Staff"> | boolean
+    userId?: StringFilter<"Staff"> | string
+    joinedAt?: DateTimeFilter<"Staff"> | Date | string
+    createdAt?: DateTimeFilter<"Staff"> | Date | string
+  }
+
+  export type UserCreateWithoutProductsInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutProductsInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutProductsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
+  }
+
   export type SaleItemCreateWithoutProductInput = {
     id?: string
     qty: number
@@ -19268,6 +21715,95 @@ export namespace Prisma {
   export type WarehouseInventoryCreateManyProductInputEnvelope = {
     data: WarehouseInventoryCreateManyProductInput | WarehouseInventoryCreateManyProductInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutProductsInput = {
+    update: XOR<UserUpdateWithoutProductsInput, UserUncheckedUpdateWithoutProductsInput>
+    create: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProductsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProductsInput, UserUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type UserUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SaleItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -19353,6 +21889,89 @@ export namespace Prisma {
     productId?: StringFilter<"WarehouseInventory"> | string
     warehouseId?: StringFilter<"WarehouseInventory"> | string
     qty?: IntFilter<"WarehouseInventory"> | number
+  }
+
+  export type UserCreateWithoutWarehousesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutWarehousesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutWarehousesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutWarehousesInput, UserUncheckedCreateWithoutWarehousesInput>
   }
 
   export type StockMovementCreateWithoutDestinationInput = {
@@ -19441,6 +22060,95 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserUpsertWithoutWarehousesInput = {
+    update: XOR<UserUpdateWithoutWarehousesInput, UserUncheckedUpdateWithoutWarehousesInput>
+    create: XOR<UserCreateWithoutWarehousesInput, UserUncheckedCreateWithoutWarehousesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutWarehousesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutWarehousesInput, UserUncheckedUpdateWithoutWarehousesInput>
+  }
+
+  export type UserUpdateWithoutWarehousesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutWarehousesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type StockMovementUpsertWithWhereUniqueWithoutDestinationInput = {
     where: StockMovementWhereUniqueInput
     update: XOR<StockMovementUpdateWithoutDestinationInput, StockMovementUncheckedUpdateWithoutDestinationInput>
@@ -19496,6 +22204,7 @@ export namespace Prisma {
     manager?: string | null
     isActive?: boolean
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutWarehousesInput
     MovementsTo?: StockMovementCreateNestedManyWithoutDestinationInput
     MovementsFrom?: StockMovementCreateNestedManyWithoutSourceInput
   }
@@ -19506,6 +22215,7 @@ export namespace Prisma {
     location?: string | null
     manager?: string | null
     isActive?: boolean
+    userId: string
     createdAt?: Date | string
     MovementsTo?: StockMovementUncheckedCreateNestedManyWithoutDestinationInput
     MovementsFrom?: StockMovementUncheckedCreateNestedManyWithoutSourceInput
@@ -19525,6 +22235,7 @@ export namespace Prisma {
     stockQty?: number
     minStockAlert?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutProductsInput
     Sales?: SaleItemCreateNestedManyWithoutProductInput
     Movements?: StockMovementCreateNestedManyWithoutProductInput
   }
@@ -19537,6 +22248,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty?: number
     minStockAlert?: number
+    userId: string
     createdAt?: Date | string
     Sales?: SaleItemUncheckedCreateNestedManyWithoutProductInput
     Movements?: StockMovementUncheckedCreateNestedManyWithoutProductInput
@@ -19565,6 +22277,7 @@ export namespace Prisma {
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWarehousesNestedInput
     MovementsTo?: StockMovementUpdateManyWithoutDestinationNestedInput
     MovementsFrom?: StockMovementUpdateManyWithoutSourceNestedInput
   }
@@ -19575,6 +22288,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     MovementsTo?: StockMovementUncheckedUpdateManyWithoutDestinationNestedInput
     MovementsFrom?: StockMovementUncheckedUpdateManyWithoutSourceNestedInput
@@ -19600,6 +22314,7 @@ export namespace Prisma {
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProductsNestedInput
     Sales?: SaleItemUpdateManyWithoutProductNestedInput
     Movements?: StockMovementUpdateManyWithoutProductNestedInput
   }
@@ -19612,6 +22327,7 @@ export namespace Prisma {
     sellPrice?: FloatFieldUpdateOperationsInput | number
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Sales?: SaleItemUncheckedUpdateManyWithoutProductNestedInput
     Movements?: StockMovementUncheckedUpdateManyWithoutProductNestedInput
@@ -19624,6 +22340,7 @@ export namespace Prisma {
     manager?: string | null
     isActive?: boolean
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutWarehousesInput
     MovementsFrom?: StockMovementCreateNestedManyWithoutSourceInput
     Inventory?: WarehouseInventoryCreateNestedManyWithoutWarehouseInput
   }
@@ -19634,6 +22351,7 @@ export namespace Prisma {
     location?: string | null
     manager?: string | null
     isActive?: boolean
+    userId: string
     createdAt?: Date | string
     MovementsFrom?: StockMovementUncheckedCreateNestedManyWithoutSourceInput
     Inventory?: WarehouseInventoryUncheckedCreateNestedManyWithoutWarehouseInput
@@ -19651,6 +22369,7 @@ export namespace Prisma {
     manager?: string | null
     isActive?: boolean
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutWarehousesInput
     MovementsTo?: StockMovementCreateNestedManyWithoutDestinationInput
     Inventory?: WarehouseInventoryCreateNestedManyWithoutWarehouseInput
   }
@@ -19661,6 +22380,7 @@ export namespace Prisma {
     location?: string | null
     manager?: string | null
     isActive?: boolean
+    userId: string
     createdAt?: Date | string
     MovementsTo?: StockMovementUncheckedCreateNestedManyWithoutDestinationInput
     Inventory?: WarehouseInventoryUncheckedCreateNestedManyWithoutWarehouseInput
@@ -19680,6 +22400,7 @@ export namespace Prisma {
     stockQty?: number
     minStockAlert?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutProductsInput
     Sales?: SaleItemCreateNestedManyWithoutProductInput
     WarehouseInventory?: WarehouseInventoryCreateNestedManyWithoutProductInput
   }
@@ -19692,6 +22413,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty?: number
     minStockAlert?: number
+    userId: string
     createdAt?: Date | string
     Sales?: SaleItemUncheckedCreateNestedManyWithoutProductInput
     WarehouseInventory?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
@@ -19720,6 +22442,7 @@ export namespace Prisma {
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWarehousesNestedInput
     MovementsFrom?: StockMovementUpdateManyWithoutSourceNestedInput
     Inventory?: WarehouseInventoryUpdateManyWithoutWarehouseNestedInput
   }
@@ -19730,6 +22453,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     MovementsFrom?: StockMovementUncheckedUpdateManyWithoutSourceNestedInput
     Inventory?: WarehouseInventoryUncheckedUpdateManyWithoutWarehouseNestedInput
@@ -19753,6 +22477,7 @@ export namespace Prisma {
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWarehousesNestedInput
     MovementsTo?: StockMovementUpdateManyWithoutDestinationNestedInput
     Inventory?: WarehouseInventoryUpdateManyWithoutWarehouseNestedInput
   }
@@ -19763,6 +22488,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     manager?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     MovementsTo?: StockMovementUncheckedUpdateManyWithoutDestinationNestedInput
     Inventory?: WarehouseInventoryUncheckedUpdateManyWithoutWarehouseNestedInput
@@ -19788,6 +22514,7 @@ export namespace Prisma {
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProductsNestedInput
     Sales?: SaleItemUpdateManyWithoutProductNestedInput
     WarehouseInventory?: WarehouseInventoryUpdateManyWithoutProductNestedInput
   }
@@ -19800,9 +22527,93 @@ export namespace Prisma {
     sellPrice?: FloatFieldUpdateOperationsInput | number
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Sales?: SaleItemUncheckedUpdateManyWithoutProductNestedInput
     WarehouseInventory?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type UserCreateWithoutCustomersInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCustomersInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCustomersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput>
   }
 
   export type InvoiceCreateWithoutCustomerInput = {
@@ -19817,6 +22628,7 @@ export namespace Prisma {
     isDebt?: boolean
     paymentMethod?: string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutInvoicesInput
     supplier?: SupplierCreateNestedOneWithoutInvoicesInput
     items?: SaleItemCreateNestedManyWithoutInvoiceInput
   }
@@ -19833,6 +22645,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
     items?: SaleItemUncheckedCreateNestedManyWithoutInvoiceInput
   }
@@ -19845,6 +22658,95 @@ export namespace Prisma {
   export type InvoiceCreateManyCustomerInputEnvelope = {
     data: InvoiceCreateManyCustomerInput | InvoiceCreateManyCustomerInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutCustomersInput = {
+    update: XOR<UserUpdateWithoutCustomersInput, UserUncheckedUpdateWithoutCustomersInput>
+    create: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCustomersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCustomersInput, UserUncheckedUpdateWithoutCustomersInput>
+  }
+
+  export type UserUpdateWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -19863,23 +22765,87 @@ export namespace Prisma {
     data: XOR<InvoiceUpdateManyMutationInput, InvoiceUncheckedUpdateManyWithoutCustomerInput>
   }
 
-  export type InvoiceScalarWhereInput = {
-    AND?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
-    OR?: InvoiceScalarWhereInput[]
-    NOT?: InvoiceScalarWhereInput | InvoiceScalarWhereInput[]
-    id?: StringFilter<"Invoice"> | string
-    invoiceNo?: StringFilter<"Invoice"> | string
-    customerId?: StringNullableFilter<"Invoice"> | string | null
-    supplierId?: StringNullableFilter<"Invoice"> | string | null
-    totalAmount?: FloatFilter<"Invoice"> | number
-    discount?: FloatFilter<"Invoice"> | number
-    taxRate?: FloatFilter<"Invoice"> | number
-    taxAmount?: FloatFilter<"Invoice"> | number
-    finalAmount?: FloatFilter<"Invoice"> | number
-    type?: StringFilter<"Invoice"> | string
-    isDebt?: BoolFilter<"Invoice"> | boolean
-    paymentMethod?: StringFilter<"Invoice"> | string
-    createdAt?: DateTimeFilter<"Invoice"> | Date | string
+  export type UserCreateWithoutSuppliersInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSuppliersInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSuppliersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSuppliersInput, UserUncheckedCreateWithoutSuppliersInput>
   }
 
   export type InvoiceCreateWithoutSupplierInput = {
@@ -19894,6 +22860,7 @@ export namespace Prisma {
     isDebt?: boolean
     paymentMethod?: string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutInvoicesInput
     customer?: CustomerCreateNestedOneWithoutInvoicesInput
     items?: SaleItemCreateNestedManyWithoutInvoiceInput
   }
@@ -19910,6 +22877,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
     items?: SaleItemUncheckedCreateNestedManyWithoutInvoiceInput
   }
@@ -19922,6 +22890,95 @@ export namespace Prisma {
   export type InvoiceCreateManySupplierInputEnvelope = {
     data: InvoiceCreateManySupplierInput | InvoiceCreateManySupplierInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutSuppliersInput = {
+    update: XOR<UserUpdateWithoutSuppliersInput, UserUncheckedUpdateWithoutSuppliersInput>
+    create: XOR<UserCreateWithoutSuppliersInput, UserUncheckedCreateWithoutSuppliersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSuppliersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSuppliersInput, UserUncheckedUpdateWithoutSuppliersInput>
+  }
+
+  export type UserUpdateWithoutSuppliersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSuppliersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutSupplierInput = {
@@ -19940,6 +22997,433 @@ export namespace Prisma {
     data: XOR<InvoiceUpdateManyMutationInput, InvoiceUncheckedUpdateManyWithoutSupplierInput>
   }
 
+  export type UserCreateWithoutExpensesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutExpensesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutExpensesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutExpensesInput, UserUncheckedCreateWithoutExpensesInput>
+  }
+
+  export type UserUpsertWithoutExpensesInput = {
+    update: XOR<UserUpdateWithoutExpensesInput, UserUncheckedUpdateWithoutExpensesInput>
+    create: XOR<UserCreateWithoutExpensesInput, UserUncheckedCreateWithoutExpensesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutExpensesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutExpensesInput, UserUncheckedUpdateWithoutExpensesInput>
+  }
+
+  export type UserUpdateWithoutExpensesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutExpensesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutExpenseCategoriesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutExpenseCategoriesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutExpenseCategoriesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutExpenseCategoriesInput, UserUncheckedCreateWithoutExpenseCategoriesInput>
+  }
+
+  export type UserUpsertWithoutExpenseCategoriesInput = {
+    update: XOR<UserUpdateWithoutExpenseCategoriesInput, UserUncheckedUpdateWithoutExpenseCategoriesInput>
+    create: XOR<UserCreateWithoutExpenseCategoriesInput, UserUncheckedCreateWithoutExpenseCategoriesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutExpenseCategoriesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutExpenseCategoriesInput, UserUncheckedUpdateWithoutExpenseCategoriesInput>
+  }
+
+  export type UserUpdateWithoutExpenseCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutExpenseCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutInvoicesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+    Staff?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutInvoicesInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+    Staff?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutInvoicesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutInvoicesInput, UserUncheckedCreateWithoutInvoicesInput>
+  }
+
   export type SupplierCreateWithoutInvoicesInput = {
     id?: string
     name: string
@@ -19948,6 +23432,7 @@ export namespace Prisma {
     company?: string | null
     balance?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSuppliersInput
   }
 
   export type SupplierUncheckedCreateWithoutInvoicesInput = {
@@ -19957,6 +23442,7 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     balance?: number
+    userId: string
     createdAt?: Date | string
   }
 
@@ -19972,6 +23458,7 @@ export namespace Prisma {
     email?: string | null
     balance?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutCustomersInput
   }
 
   export type CustomerUncheckedCreateWithoutInvoicesInput = {
@@ -19980,6 +23467,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     balance?: number
+    userId: string
     createdAt?: Date | string
   }
 
@@ -20014,6 +23502,95 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserUpsertWithoutInvoicesInput = {
+    update: XOR<UserUpdateWithoutInvoicesInput, UserUncheckedUpdateWithoutInvoicesInput>
+    create: XOR<UserCreateWithoutInvoicesInput, UserUncheckedCreateWithoutInvoicesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutInvoicesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutInvoicesInput, UserUncheckedUpdateWithoutInvoicesInput>
+  }
+
+  export type UserUpdateWithoutInvoicesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutInvoicesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type SupplierUpsertWithoutInvoicesInput = {
     update: XOR<SupplierUpdateWithoutInvoicesInput, SupplierUncheckedUpdateWithoutInvoicesInput>
     create: XOR<SupplierCreateWithoutInvoicesInput, SupplierUncheckedCreateWithoutInvoicesInput>
@@ -20033,6 +23610,7 @@ export namespace Prisma {
     company?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSuppliersNestedInput
   }
 
   export type SupplierUncheckedUpdateWithoutInvoicesInput = {
@@ -20042,6 +23620,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20063,6 +23642,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCustomersNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutInvoicesInput = {
@@ -20071,6 +23651,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     balance?: FloatFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20099,6 +23680,7 @@ export namespace Prisma {
     stockQty?: number
     minStockAlert?: number
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutProductsInput
     Movements?: StockMovementCreateNestedManyWithoutProductInput
     WarehouseInventory?: WarehouseInventoryCreateNestedManyWithoutProductInput
   }
@@ -20111,6 +23693,7 @@ export namespace Prisma {
     sellPrice: number
     stockQty?: number
     minStockAlert?: number
+    userId: string
     createdAt?: Date | string
     Movements?: StockMovementUncheckedCreateNestedManyWithoutProductInput
     WarehouseInventory?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
@@ -20133,6 +23716,7 @@ export namespace Prisma {
     isDebt?: boolean
     paymentMethod?: string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutInvoicesInput
     supplier?: SupplierCreateNestedOneWithoutInvoicesInput
     customer?: CustomerCreateNestedOneWithoutInvoicesInput
   }
@@ -20150,6 +23734,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
   }
 
@@ -20178,6 +23763,7 @@ export namespace Prisma {
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProductsNestedInput
     Movements?: StockMovementUpdateManyWithoutProductNestedInput
     WarehouseInventory?: WarehouseInventoryUpdateManyWithoutProductNestedInput
   }
@@ -20190,6 +23776,7 @@ export namespace Prisma {
     sellPrice?: FloatFieldUpdateOperationsInput | number
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockAlert?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Movements?: StockMovementUncheckedUpdateManyWithoutProductNestedInput
     WarehouseInventory?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
@@ -20218,6 +23805,7 @@ export namespace Prisma {
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutInvoicesNestedInput
     supplier?: SupplierUpdateOneWithoutInvoicesNestedInput
     customer?: CustomerUpdateOneWithoutInvoicesNestedInput
   }
@@ -20235,7 +23823,91 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutStaffInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    owner?: UserCreateNestedOneWithoutSubUsersInput
+    SubUsers?: UserCreateNestedManyWithoutOwnerInput
+    Products?: ProductCreateNestedManyWithoutUserInput
+    Customers?: CustomerCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutStaffInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+    ownerId?: string | null
+    SubUsers?: UserUncheckedCreateNestedManyWithoutOwnerInput
+    Products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    Customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    Suppliers?: SupplierUncheckedCreateNestedManyWithoutUserInput
+    Invoices?: InvoiceUncheckedCreateNestedManyWithoutUserInput
+    Expenses?: ExpenseUncheckedCreateNestedManyWithoutUserInput
+    ExpenseCategories?: ExpenseCategoryUncheckedCreateNestedManyWithoutUserInput
+    Warehouses?: WarehouseUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutStaffInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutStaffInput, UserUncheckedCreateWithoutStaffInput>
   }
 
   export type SalaryTransactionCreateWithoutStaffInput = {
@@ -20264,6 +23936,95 @@ export namespace Prisma {
   export type SalaryTransactionCreateManyStaffInputEnvelope = {
     data: SalaryTransactionCreateManyStaffInput | SalaryTransactionCreateManyStaffInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutStaffInput = {
+    update: XOR<UserUpdateWithoutStaffInput, UserUncheckedUpdateWithoutStaffInput>
+    create: XOR<UserCreateWithoutStaffInput, UserUncheckedCreateWithoutStaffInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutStaffInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutStaffInput, UserUncheckedUpdateWithoutStaffInput>
+  }
+
+  export type UserUpdateWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutSubUsersNestedInput
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SalaryTransactionUpsertWithWhereUniqueWithoutStaffInput = {
@@ -20305,6 +24066,7 @@ export namespace Prisma {
     isActive?: boolean
     joinedAt?: Date | string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutStaffInput
   }
 
   export type StaffUncheckedCreateWithoutTransactionsInput = {
@@ -20315,6 +24077,7 @@ export namespace Prisma {
     baseSalary?: number
     balance?: number
     isActive?: boolean
+    userId: string
     joinedAt?: Date | string
     createdAt?: Date | string
   }
@@ -20345,9 +24108,497 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutStaffNestedInput
   }
 
   export type StaffUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateManyOwnerInput = {
+    id?: string
+    name: string
+    email: string
+    passwordHash: string
+    phone?: string | null
+    role?: string
+    isActive?: boolean
+    canAccessSales?: boolean
+    canCreateInvoices?: boolean
+    canManageInventory?: boolean
+    canViewReports?: boolean
+    canManageCustomers?: boolean
+    canManageExpenses?: boolean
+    canAccessSettings?: boolean
+    language?: string
+    theme?: string
+    primaryColor?: string
+    storeName?: string
+    storeTaxId?: string | null
+    storeAddress?: string | null
+    storePhone?: string | null
+    storeEmail?: string | null
+    currency?: string
+    storeLogo?: string | null
+    isVerified?: boolean
+    verificationCode?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ProductCreateManyUserInput = {
+    id?: string
+    name: string
+    barcode?: string | null
+    buyPrice: number
+    sellPrice: number
+    stockQty?: number
+    minStockAlert?: number
+    createdAt?: Date | string
+  }
+
+  export type CustomerCreateManyUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    email?: string | null
+    balance?: number
+    createdAt?: Date | string
+  }
+
+  export type SupplierCreateManyUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    email?: string | null
+    company?: string | null
+    balance?: number
+    createdAt?: Date | string
+  }
+
+  export type InvoiceCreateManyUserInput = {
+    id?: string
+    invoiceNo: string
+    customerId?: string | null
+    supplierId?: string | null
+    totalAmount: number
+    discount?: number
+    taxRate?: number
+    taxAmount?: number
+    finalAmount: number
+    type?: string
+    isDebt?: boolean
+    paymentMethod?: string
+    createdAt?: Date | string
+  }
+
+  export type ExpenseCreateManyUserInput = {
+    id?: string
+    title: string
+    amount: number
+    category: string
+    date?: Date | string
+    description?: string | null
+  }
+
+  export type ExpenseCategoryCreateManyUserInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+  }
+
+  export type WarehouseCreateManyUserInput = {
+    id?: string
+    name: string
+    location?: string | null
+    manager?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type StaffCreateManyUserInput = {
+    id?: string
+    name: string
+    phone?: string | null
+    role?: string | null
+    baseSalary?: number
+    balance?: number
+    isActive?: boolean
+    joinedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type UserUpdateWithoutOwnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    SubUsers?: UserUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUpdateManyWithoutUserNestedInput
+    Staff?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOwnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    SubUsers?: UserUncheckedUpdateManyWithoutOwnerNestedInput
+    Products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    Customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    Suppliers?: SupplierUncheckedUpdateManyWithoutUserNestedInput
+    Invoices?: InvoiceUncheckedUpdateManyWithoutUserNestedInput
+    Expenses?: ExpenseUncheckedUpdateManyWithoutUserNestedInput
+    ExpenseCategories?: ExpenseCategoryUncheckedUpdateManyWithoutUserNestedInput
+    Warehouses?: WarehouseUncheckedUpdateManyWithoutUserNestedInput
+    Staff?: StaffUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutOwnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSales?: BoolFieldUpdateOperationsInput | boolean
+    canCreateInvoices?: BoolFieldUpdateOperationsInput | boolean
+    canManageInventory?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canManageCustomers?: BoolFieldUpdateOperationsInput | boolean
+    canManageExpenses?: BoolFieldUpdateOperationsInput | boolean
+    canAccessSettings?: BoolFieldUpdateOperationsInput | boolean
+    language?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    storeName?: StringFieldUpdateOperationsInput | string
+    storeTaxId?: NullableStringFieldUpdateOperationsInput | string | null
+    storeAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    storePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    storeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    currency?: StringFieldUpdateOperationsInput | string
+    storeLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    buyPrice?: FloatFieldUpdateOperationsInput | number
+    sellPrice?: FloatFieldUpdateOperationsInput | number
+    stockQty?: IntFieldUpdateOperationsInput | number
+    minStockAlert?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Sales?: SaleItemUpdateManyWithoutProductNestedInput
+    Movements?: StockMovementUpdateManyWithoutProductNestedInput
+    WarehouseInventory?: WarehouseInventoryUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    buyPrice?: FloatFieldUpdateOperationsInput | number
+    sellPrice?: FloatFieldUpdateOperationsInput | number
+    stockQty?: IntFieldUpdateOperationsInput | number
+    minStockAlert?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Sales?: SaleItemUncheckedUpdateManyWithoutProductNestedInput
+    Movements?: StockMovementUncheckedUpdateManyWithoutProductNestedInput
+    WarehouseInventory?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    buyPrice?: FloatFieldUpdateOperationsInput | number
+    sellPrice?: FloatFieldUpdateOperationsInput | number
+    stockQty?: IntFieldUpdateOperationsInput | number
+    minStockAlert?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupplierUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Invoices?: InvoiceUpdateManyWithoutSupplierNestedInput
+  }
+
+  export type SupplierUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Invoices?: InvoiceUncheckedUpdateManyWithoutSupplierNestedInput
+  }
+
+  export type SupplierUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type InvoiceUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoiceNo?: StringFieldUpdateOperationsInput | string
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
+    finalAmount?: FloatFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    isDebt?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    supplier?: SupplierUpdateOneWithoutInvoicesNestedInput
+    customer?: CustomerUpdateOneWithoutInvoicesNestedInput
+    items?: SaleItemUpdateManyWithoutInvoiceNestedInput
+  }
+
+  export type InvoiceUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoiceNo?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    supplierId?: NullableStringFieldUpdateOperationsInput | string | null
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
+    finalAmount?: FloatFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    isDebt?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: SaleItemUncheckedUpdateManyWithoutInvoiceNestedInput
+  }
+
+  export type InvoiceUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoiceNo?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    supplierId?: NullableStringFieldUpdateOperationsInput | string | null
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    taxRate?: FloatFieldUpdateOperationsInput | number
+    taxAmount?: FloatFieldUpdateOperationsInput | number
+    finalAmount?: FloatFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    isDebt?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ExpenseUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ExpenseUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ExpenseCategoryUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseCategoryUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseCategoryUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WarehouseUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    manager?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    MovementsTo?: StockMovementUpdateManyWithoutDestinationNestedInput
+    MovementsFrom?: StockMovementUpdateManyWithoutSourceNestedInput
+    Inventory?: WarehouseInventoryUpdateManyWithoutWarehouseNestedInput
+  }
+
+  export type WarehouseUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    manager?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    MovementsTo?: StockMovementUncheckedUpdateManyWithoutDestinationNestedInput
+    MovementsFrom?: StockMovementUncheckedUpdateManyWithoutSourceNestedInput
+    Inventory?: WarehouseInventoryUncheckedUpdateManyWithoutWarehouseNestedInput
+  }
+
+  export type WarehouseUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    manager?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Transactions?: SalaryTransactionUpdateManyWithoutStaffNestedInput
+  }
+
+  export type StaffUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    baseSalary?: FloatFieldUpdateOperationsInput | number
+    balance?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    Transactions?: SalaryTransactionUncheckedUpdateManyWithoutStaffNestedInput
+  }
+
+  export type StaffUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20583,6 +24834,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
   }
 
@@ -20598,6 +24850,7 @@ export namespace Prisma {
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutInvoicesNestedInput
     supplier?: SupplierUpdateOneWithoutInvoicesNestedInput
     items?: SaleItemUpdateManyWithoutInvoiceNestedInput
   }
@@ -20614,6 +24867,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: SaleItemUncheckedUpdateManyWithoutInvoiceNestedInput
   }
@@ -20630,6 +24884,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20645,6 +24900,7 @@ export namespace Prisma {
     type?: string
     isDebt?: boolean
     paymentMethod?: string
+    userId: string
     createdAt?: Date | string
   }
 
@@ -20660,6 +24916,7 @@ export namespace Prisma {
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutInvoicesNestedInput
     customer?: CustomerUpdateOneWithoutInvoicesNestedInput
     items?: SaleItemUpdateManyWithoutInvoiceNestedInput
   }
@@ -20676,6 +24933,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: SaleItemUncheckedUpdateManyWithoutInvoiceNestedInput
   }
@@ -20692,6 +24950,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isDebt?: BoolFieldUpdateOperationsInput | boolean
     paymentMethod?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20768,6 +25027,10 @@ export namespace Prisma {
   /**
    * Aliases for legacy arg types
    */
+    /**
+     * @deprecated Use UserCountOutputTypeDefaultArgs instead
+     */
+    export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ProductCountOutputTypeDefaultArgs instead
      */

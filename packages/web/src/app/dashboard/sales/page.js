@@ -5,8 +5,10 @@ import api from '@/lib/api';
 import {
     ShoppingCart, Search, TrendingUp, Filter, Calendar,
     CreditCard, Plus, ChevronDown, Package, Hash, DollarSign,
-    Trash2, RefreshCw, ArrowUpRight, Barcode, Layers, Tag
+    Trash2, RefreshCw, ArrowUpRight, Barcode, Layers, Tag,
+    CheckCircle2, AlertTriangle, X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
 
@@ -55,6 +57,12 @@ export default function DailySalesPage() {
     };
 
     const closeDialog = () => setDialog({ ...dialog, isOpen: false });
+
+    const [toast, setToast] = useState(null);
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+    };
 
     const dropdownRef = useRef(null);
 
@@ -183,14 +191,10 @@ export default function DailySalesPage() {
             setQuantity(1);
             setPaymentMethod('cash');
             fetchSales();
-            triggerDialog(
-                isRTL ? 'نجاح' : 'Succès', 
-                isRTL ? 'تم حفظ البيانات بنجاح ✨' : 'Données enregistrées ✨', 
-                'success'
-            );
+            showToast(isRTL ? 'تم حفظ البيانات بنجاح ✨' : 'Données enregistrées ✨');
         } catch (err) {
             console.error('Error saving sale:', err);
-            triggerDialog(isRTL ? 'خطأ' : 'Erreur', isRTL ? 'فشل حفظ البيانات' : 'Échec de l\'enregistrement', 'danger');
+            showToast(isRTL ? 'فشل حفظ البيانات' : 'Échec de l\'enregistrement', 'error');
         } finally {
             setIsSaving(false);
         }
@@ -640,6 +644,28 @@ export default function DailySalesPage() {
                 type={dialog.type}
                 onConfirm={dialog.onConfirm}
             />
+            {/* ─── TOAST NOTIFICATION ─── */}
+            <AnimatePresence>
+                {toast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -30, x: 30 }}
+                        animate={{ opacity: 1, y: 0, x: 0 }}
+                        exit={{ opacity: 0, y: -20, x: 30 }}
+                        transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+                        className={`fixed top-6 ${isRTL ? 'left-6' : 'right-6'} z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl border ${
+                            toast.type === 'error'
+                                ? 'bg-red-500/90 border-red-400/30 text-white'
+                                : 'bg-emerald-500/90 border-emerald-400/30 text-white'
+                        }`}
+                    >
+                        {toast.type === 'error' ? <AlertTriangle size={18} /> : <CheckCircle2 size={18} />}
+                        <span className="font-black text-sm">{toast.message}</span>
+                        <button onClick={() => setToast(null)} className="ml-2 opacity-70 hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

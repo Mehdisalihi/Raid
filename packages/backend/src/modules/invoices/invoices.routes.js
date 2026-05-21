@@ -225,9 +225,10 @@ router.delete('/:id', async (req, res) => {
 // Update Invoice (Universal)
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { customerName, customerId, supplierId, items, cart, totalAmount, discount, taxRate, taxAmount, finalAmount, isDebt, paymentMethod, type, warehouseId } = req.body;
+    const { customerName, customerId, supplierId, items, cart, totalAmount, discount, taxRate, taxAmount, finalAmount, isDebt, paymentMethod, type, warehouseId, createdAt, date } = req.body;
     
     const cleanCart = cart || items || [];
+    const invoiceDate = date || createdAt;
 
     try {
         const result = await prisma.$transaction(async (tx) => {
@@ -306,6 +307,7 @@ router.put('/:id', async (req, res) => {
                     isDebt: !!isDebt,
                     paymentMethod: paymentMethod || 'cash',
                     type: type || oldInv.type,
+                    createdAt: invoiceDate ? new Date(invoiceDate) : oldInv.createdAt,
                     items: {
                         create: cleanCart.map(item => ({
                             productId: item.id || item.productId,

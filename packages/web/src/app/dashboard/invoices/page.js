@@ -133,16 +133,20 @@ export default function InvoicesPage() {
                     </div>
 
                     <div className="flex flex-col gap-1 w-56">
+                        {inv.taxRate > 0 && (
                         <div className="flex justify-between items-center py-1.5 px-3 bg-slate-50 border border-slate-200">
                             <span className="text-[9px] font-black text-slate-400 uppercase">{isRTL ? 'المجموع الصافي' : 'Total HT'}</span>
                             <span className="text-sm font-black text-slate-900">{fmtNumber(inv.totalAmount)}</span>
                         </div>
+                        )}
+                        {inv.taxRate > 0 && (
                         <div className="flex justify-between items-center py-1.5 px-3 bg-slate-50 border border-slate-200">
                             <span className="text-[9px] font-black text-slate-400 uppercase">{isRTL ? 'الضريبة' : 'TVA'} ({inv.taxRate}%)</span>
                             <span className="text-sm font-black text-emerald-600">{fmtNumber(inv.taxAmount)}</span>
                         </div>
+                        )}
                         <div className="flex justify-between items-center py-2 px-3 bg-sky-600 text-white shadow-md print-exact">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{isRTL ? 'الإجمالي النهائي' : 'Total TTC'}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{inv.taxRate > 0 ? (isRTL ? 'الإجمالي النهائي' : 'Total TTC') : (isRTL ? 'الإجمالي' : 'Total')}</span>
                             <span className="text-lg font-black">{fmtNumber(inv.finalAmount)}</span>
                         </div>
                         <div className="mt-8 pt-4 border-t border-slate-200 text-center">
@@ -185,7 +189,8 @@ export default function InvoicesPage() {
     const [isDebt, setIsDebt] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [settings, setSettings] = useState(null);
-    const [taxRate, setTaxRate] = useState(16);
+    const [taxRate, setTaxRate] = useState(0);
+    const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
     const [editingInvoiceId, setEditingInvoiceId] = useState(null);
     const [manualItem, setManualItem] = useState({ name: '', price: '', qty: 1 });
 
@@ -206,6 +211,11 @@ export default function InvoicesPage() {
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [isPrinting, setIsPrinting] = useState(false);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+    const [toast, setToast] = useState(null);
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+    };
 
     useEffect(() => {
         const loadAll = async () => {
@@ -319,6 +329,7 @@ export default function InvoicesPage() {
         setCustomerId('');
         setSupplierId('');
         setIsDebt(type === 'SALE'); // Default debt for sales in this new system? Or maybe not.
+        setInvoiceDate(new Date().toISOString().split('T')[0]);
         setIsCreateModalOpen(true);
     };
 
@@ -375,6 +386,11 @@ export default function InvoicesPage() {
         setIsDebt(inv.isDebt);
         setTaxRate(inv.taxRate || 0);
         setSelectedWarehouseId(inv.warehouseId);
+        if (inv.createdAt) {
+            setInvoiceDate(new Date(inv.createdAt).toISOString().split('T')[0]);
+        } else {
+            setInvoiceDate(new Date().toISOString().split('T')[0]);
+        }
         
         // Map items back to cart format
         const items = inv.items.map(item => ({
@@ -393,7 +409,8 @@ export default function InvoicesPage() {
         setCustomerName('');
         setSupplierId('');
         setIsDebt(false);
-        setTaxRate(16);
+        setTaxRate(0);
+        setInvoiceDate(new Date().toISOString().split('T')[0]);
         setIsCreateModalOpen(false);
     };
 
@@ -409,12 +426,14 @@ export default function InvoicesPage() {
                 isDebt: isDebt && activeTab !== 'QUOTATION',
                 cart: cart,
                 totalAmount: calculateTotal(),
-                taxRate: taxRate,
-                taxAmount: Number((calculateTotal() * (taxRate / 100)).toFixed(2)),
-                finalAmount: Number((calculateTotal() * (1 + taxRate / 100)).toFixed(2)),
+                taxRate: 0,
+                taxAmount: 0,
+                finalAmount: Number(calculateTotal().toFixed(2)),
                 type: activeTab,
                 warehouseId: selectedWarehouseId || warehouses[0]?.id,
-                total: calculateTotal() // Needed for purchases
+                total: calculateTotal(), // Needed for purchases
+                createdAt: invoiceDate,
+                date: invoiceDate
             };
 
             let response;
@@ -428,20 +447,8 @@ export default function InvoicesPage() {
                 }
             }
 
-            if (response?.data?.offline) {
-                triggerDialog(
-                    isRTL ? 'تم الحفظ محلياً 📵' : 'Enregistré localement 📵',
-                    isRTL ? 'أنت غير متصل بالإنترنت. تم حفظ الفاتورة على جهازك وسيتم مزامنتها تلقائياً عند عودة الاتصال.' : 'Vous êtes hors ligne. La facture est enregistrée localement et sera synchronisée dès le retour de la connexion.',
-                    'info'
-                );
-            } else {
-                triggerDialog(
-                    isRTL ? 'نجاح ✨' : 'Succès ✨', 
-                    isRTL ? (editingInvoiceId ? 'تم تحديث الفاتورة بنجاح' : 'تم حفظ الفاتورة بنجاح') : (editingInvoiceId ? 'Facture mise à jour' : 'Facture enregistrée avec succès'), 
-                    'success'
-                );
-            }
-            
+            // Directly save and show success
+            showToast(isRTL ? (editingInvoiceId ? 'تم تحديث الفاتورة بنجاح ✨' : 'تم حفظ الفاتورة بنجاح ✨') : (editingInvoiceId ? 'Facture mise à jour ✨' : 'Facture enregistrée ✨'));
             setIsCreateModalOpen(false);
             setCart([]);
             setEditingInvoiceId(null);
@@ -449,11 +456,7 @@ export default function InvoicesPage() {
         } catch (err) {
             console.error('Save Error:', err.response?.data || err);
             const errorMsg = err.response?.data?.error || (isRTL ? 'حدث خطأ أثناء حفظ الفاتورة' : 'Erreur lors de l\'enregistrement');
-            triggerDialog(
-                isRTL ? 'خطأ ❌' : 'Erreur ❌', 
-                errorMsg, 
-                'danger'
-            );
+            showToast(errorMsg, 'error');
         } finally {
             setSaving(false);
         }
@@ -470,18 +473,8 @@ export default function InvoicesPage() {
                         warehouseId: selectedWarehouseId,
                         isDebt: true
                     });
-                    triggerDialog(
-                        isRTL ? 'تم التحويل' : 'Converti', 
-                        isRTL ? 'تم تحويل عرض السعر بنجاح' : 'Devis converti avec succès', 
-                        'success'
-                    );
                     fetchInvoices();
                 } catch (err) {
-                    triggerDialog(
-                        isRTL ? 'خطأ' : 'Erreur', 
-                        isRTL ? 'فشل تحويل عرض السعر' : 'Échec de la conversion', 
-                        'danger'
-                    );
                 }
             }
         );
@@ -496,18 +489,8 @@ export default function InvoicesPage() {
                 try {
                     await api.delete(`/invoices/${id}`);
                     fetchInvoices();
-                    triggerDialog(
-                        isRTL ? 'تم الحذف' : 'Supprimé', 
-                        isRTL ? 'تم حذف الفاتورة بنجاح' : 'Facture supprimée avec succès', 
-                        'success'
-                    );
                 } catch (err) {
                     console.error(err);
-                    triggerDialog(
-                        isRTL ? 'خطأ' : 'Erreur', 
-                        isRTL ? 'فشل حذف الفاتورة' : 'Échec de la suppression', 
-                        'warning'
-                    );
                 }
             }
         );
@@ -836,20 +819,33 @@ export default function InvoicesPage() {
                                                     <input type="checkbox" checked={isDebt} onChange={(e) => setIsDebt(e.target.checked)} className="w-4 h-4 rounded border-[var(--border-color)] bg-[var(--bg-secondary)] text-primary" />
                                                     <span className="text-xs font-bold text-[var(--text-muted)]">{t('debt')}</span>
                                                 </label>
-                                                <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-[var(--border-color)]">
-                                                    <label className="text-[10px] font-black uppercase text-[var(--text-faint)] tracking-widest">{t('tax_rate')}</label>
-                                                    <div className="relative">
-                                                        <input 
-                                                            type="number" 
-                                                            value={taxRate}
-                                                            onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
-                                                            className="w-full h-11 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl px-4 text-sm font-bold text-[var(--text-main)] focus:outline-none focus:border-primary/50"
-                                                        />
-                                                        <span className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 text-xs font-black text-[var(--text-faint)]`}>%</span>
-                                                    </div>
-                                                </div>
+{activeTab !== 'PURCHASE' && (
+    <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-[var(--border-color)]">
+        <label className="text-[10px] font-black uppercase text-[var(--text-faint)] tracking-widest">{t('tax_rate')}</label>
+        <div className="relative">
+            <input
+                type="number"
+                value={taxRate}
+                onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
+                className="w-full h-11 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl px-4 text-sm font-bold text-[var(--text-main)] focus:outline-none focus:border-primary/50"
+            />
+            <span className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 text-xs font-black text-[var(--text-faint)]`}>%</span>
+        </div>
+    </div>
+)}
                                             </div>
                                         )}
+                                    </div>
+
+                                    {/* Invoice Date Manual Input */}
+                                    <div className="flex flex-col gap-2 mb-4">
+                                        <label className="text-[10px] font-black uppercase text-[var(--text-faint)] tracking-widest">{isRTL ? 'تاريخ الفاتورة' : 'Date de Facture'}</label>
+                                        <input 
+                                            type="date"
+                                            value={invoiceDate}
+                                            onChange={(e) => setInvoiceDate(e.target.value)}
+                                            className="w-full h-12 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl px-4 text-sm font-bold text-[var(--text-main)] focus:outline-none focus:border-primary/50"
+                                        />
                                     </div>
 
                                     {/* Manual Item Entry */}
@@ -911,14 +907,10 @@ export default function InvoicesPage() {
                                             <span>{isRTL ? 'المجموع الفرعي' : 'Sous-total'}</span>
                                             <span>{fmtNumber(calculateTotal())}</span>
                                         </div>
-                                        <div className="flex justify-between items-center text-xs font-bold text-emerald-500">
-                                            <span>{t('tax_rate')} ({taxRate}%)</span>
-                                            <span>{fmtNumber(calculateTotal() * (taxRate / 100))}</span>
-                                        </div>
                                         <div className="flex justify-between items-end pt-2 border-t border-[var(--border-color)]">
                                             <div>
                                                 <div className="text-[10px] font-black text-[var(--text-faint)] uppercase">{t('total_net')}</div>
-                                                <div className="text-2xl font-black text-[var(--text-main)]">{fmtNumber(calculateTotal() * (1 + taxRate / 100))} <span className="text-xs">MRU</span></div>
+                                                <div className="text-2xl font-black text-[var(--text-main)]">{fmtNumber(calculateTotal())} <span className="text-xs">MRU</span></div>
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
@@ -1002,6 +994,29 @@ export default function InvoicesPage() {
                     </div>
                 </RaidModal>
             </div>
+
+            {/* ─── TOAST NOTIFICATION ─── */}
+            <AnimatePresence>
+                {toast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -30, x: 30 }}
+                        animate={{ opacity: 1, y: 0, x: 0 }}
+                        exit={{ opacity: 0, y: -20, x: 30 }}
+                        transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+                        className={`fixed top-6 ${isRTL ? 'left-6' : 'right-6'} z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl border ${
+                            toast.type === 'error'
+                                ? 'bg-red-500/90 border-red-400/30 text-white'
+                                : 'bg-emerald-500/90 border-emerald-400/30 text-white'
+                        }`}
+                    >
+                        {toast.type === 'error' ? <AlertTriangle size={18} /> : <CheckCircle2 size={18} />}
+                        <span className="font-black text-sm">{toast.message}</span>
+                        <button onClick={() => setToast(null)} className="ml-2 opacity-70 hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

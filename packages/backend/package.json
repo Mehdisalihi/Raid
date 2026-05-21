@@ -4,6 +4,7 @@
     "type": "module",
     "private": true,
     "scripts": {
+      "lint": "eslint . --ext .js --ignore-path .gitignore",
         "dev": "nodemon src/app.js",
         "start": "node src/app.js",
         "build": "prisma generate",
@@ -29,6 +30,7 @@
         "prisma": "^5.10.0"
     },
     "devDependencies": {
-        "nodemon": "^3.1.0"
+      "eslint": "^8.57.0",
+      "nodemon": "^3.1.0"
     }
 }

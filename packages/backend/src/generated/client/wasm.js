@@ -146,9 +146,11 @@ exports.Prisma.UserScalarFieldEnum = {
   storePhone: 'storePhone',
   storeEmail: 'storeEmail',
   currency: 'currency',
+  storeLogo: 'storeLogo',
   isVerified: 'isVerified',
   verificationCode: 'verificationCode',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -159,6 +161,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   sellPrice: 'sellPrice',
   stockQty: 'stockQty',
   minStockAlert: 'minStockAlert',
+  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -168,6 +171,7 @@ exports.Prisma.WarehouseScalarFieldEnum = {
   location: 'location',
   manager: 'manager',
   isActive: 'isActive',
+  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -196,6 +200,7 @@ exports.Prisma.CustomerScalarFieldEnum = {
   phone: 'phone',
   email: 'email',
   balance: 'balance',
+  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -206,6 +211,7 @@ exports.Prisma.SupplierScalarFieldEnum = {
   email: 'email',
   company: 'company',
   balance: 'balance',
+  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -215,12 +221,14 @@ exports.Prisma.ExpenseScalarFieldEnum = {
   amount: 'amount',
   category: 'category',
   date: 'date',
-  description: 'description'
+  description: 'description',
+  userId: 'userId'
 };
 
 exports.Prisma.ExpenseCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -237,6 +245,7 @@ exports.Prisma.InvoiceScalarFieldEnum = {
   type: 'type',
   isDebt: 'isDebt',
   paymentMethod: 'paymentMethod',
+  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -257,6 +266,7 @@ exports.Prisma.StaffScalarFieldEnum = {
   baseSalary: 'baseSalary',
   balance: 'balance',
   isActive: 'isActive',
+  userId: 'userId',
   joinedAt: 'joinedAt',
   createdAt: 'createdAt'
 };
