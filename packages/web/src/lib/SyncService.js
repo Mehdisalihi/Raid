@@ -95,7 +95,7 @@ export const SyncService = {
       { api: 'invoices', local: 'invoices' },
       { api: 'expenses', local: 'expenses' },
       { api: 'warehouses', local: 'warehouses' },
-      { api: 'suppliers', local: 'suppliers' },
+      { api: 'suppliers', local: 'clients' },
       { api: 'sales', local: 'sales' },
       { api: 'purchases', local: 'purchases' },
       { api: 'returns', local: 'returns' },

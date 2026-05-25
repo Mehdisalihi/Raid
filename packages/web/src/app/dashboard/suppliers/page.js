@@ -53,7 +53,7 @@ export default function SuppliersPage() {
             console.error('Suppliers fetch error:', err);
             // Offline fallback: load from IndexedDB
             try {
-                const local = await db.suppliers.toArray();
+                const local = await db.clients.where('role').equals('supplier').toArray();
                 setSuppliers(local);
             } catch { setSuppliers([]); }
         } finally {

@@ -11,7 +11,6 @@ db.version(4).stores({
   invoice_items: '++id, server_id, invoice_id, product_id, sync_status',
   expenses: '++id, server_id, organization_id, title, amount, category, date, sync_status',
   warehouses: '++id, server_id, organization_id, name, location, manager, sync_status',
-  suppliers: '++id, server_id, organization_id, name, phone, email, balance, sync_status',
   sales: '++id, server_id, organization_id, invoiceNo, customerId, type, sync_status',
   purchases: '++id, server_id, organization_id, invoiceNo, supplierId, type, sync_status',
   returns: '++id, server_id, organization_id, saleId, total, sync_status',

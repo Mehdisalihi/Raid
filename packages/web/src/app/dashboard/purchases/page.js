@@ -84,7 +84,7 @@ export default function PurchasesPage() {
             if (purchasesData.length === 0 && suppliersData.length === 0 && !navigator.onLine) {
                 try {
                     purchasesData = await db.purchases.toArray();
-                    suppliersData = await db.suppliers.toArray();
+                    suppliersData = await db.clients.where('role').equals('supplier').toArray();
                     warehousesData = await db.warehouses.toArray();
                 } catch {}
             }
@@ -101,7 +101,7 @@ export default function PurchasesPage() {
             // Full offline fallback
             try {
                 setPurchases(await db.purchases.toArray());
-                setSuppliers(await db.suppliers.toArray());
+                setSuppliers(await db.clients.where('role').equals('supplier').toArray());
                 setProducts(await db.products.toArray());
                 const wh = await db.warehouses.toArray();
                 setWarehouses(wh);

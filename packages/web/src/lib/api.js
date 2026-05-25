@@ -97,6 +97,12 @@ async function handleOfflineWrite(config) {
                         createdAt: new Date().toISOString() 
                     };
                     
+                    if (config.url.includes('/suppliers')) {
+                        newRecord.role = 'supplier';
+                    } else if (config.url.includes('/customers')) {
+                        newRecord.role = 'customer';
+                    }
+                    
                     const localId = await db[dexieTable].add(newRecord);
                     mockResponseData.id = localId; // Return the correct integer ID to the UI
                     

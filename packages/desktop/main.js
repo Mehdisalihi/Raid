@@ -1,6 +1,9 @@
 const { app, BrowserWindow, session, ipcMain, Menu, dialog } = require('electron');
 const path = require('path');
 
+// Disable Hardware Acceleration to prevent white screen issues on Windows
+app.disableHardwareAcceleration();
+
 let mainWindow;
 
 function createWindow() {
