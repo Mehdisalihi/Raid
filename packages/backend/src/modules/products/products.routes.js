@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
         res.json(mappedProducts);
     } catch (error) {
         console.error('GET /v1/products - ERROR:', error);
-        res.status(500).json({ error: 'error fetching products' });
+        res.status(500).json({ error: 'error fetching products', details: error.message });
     }
 });
 

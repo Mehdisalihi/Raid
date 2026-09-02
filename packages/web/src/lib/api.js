@@ -61,7 +61,7 @@ function resolveTableFromUrl(url) {
 async function handleOfflineWrite(config) {
     try {
         console.log(`📡 Handling ${config.method.toUpperCase()} offline/network failure for ${config.url}`);
-        
+
         let payload = config.data;
         if (typeof payload === 'string') {
             try { payload = JSON.parse(payload); } catch { payload = {}; }
@@ -69,16 +69,17 @@ async function handleOfflineWrite(config) {
         if (!payload || typeof payload !== 'object') payload = {};
 
         const { table: dexieTable } = resolveTableFromUrl(config.url);
-        
+        console.log(`📦 Resolved table: ${dexieTable}`);
+
         const path = config.url.split('?')[0];
         const segments = path.split('/').filter(Boolean);
         const idx = segments.indexOf('v1');
         const relevant = idx !== -1 ? segments.slice(idx + 1) : segments;
-        
+
         const method = (config.method || '').toLowerCase();
         const recordId = method === 'post' ? null : relevant[relevant.length - 1];
         const resource = relevant[0] || dexieTable;
-        
+
         let mockResponseData = { id: recordId || 'local_' + Date.now(), ...payload };
 
         const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
@@ -91,21 +92,22 @@ async function handleOfflineWrite(config) {
                 if (method === 'post') {
                     // Remove string ID to let Dexie generate a valid auto-increment integer ID
                     const { id: _temp, ...recordData } = payload;
-                    const newRecord = { 
-                        ...recordData, 
-                        sync_status: 'pending_push', 
-                        createdAt: new Date().toISOString() 
+                    const newRecord = {
+                        ...recordData,
+                        sync_status: 'pending_push',
+                        createdAt: new Date().toISOString()
                     };
-                    
+
                     if (config.url.includes('/suppliers')) {
                         newRecord.role = 'supplier';
                     } else if (config.url.includes('/customers')) {
                         newRecord.role = 'customer';
                     }
-                    
+
+                    console.log(`💾 Local write to ${dexieTable}:`, newRecord);
                     const localId = await db[dexieTable].add(newRecord);
                     mockResponseData.id = localId; // Return the correct integer ID to the UI
-                    
+
                     // SPECIAL LOGIC: Update UI tables and stock
                     if (['sales', 'purchases', 'returns'].includes(resource)) {
                         let customer = null;
@@ -130,7 +132,7 @@ async function handleOfflineWrite(config) {
                             customer,
                             supplier,
                         };
-                        
+
                         if (dexieTable !== 'invoices') {
                             await db.invoices.put(invRecord);
                         }
@@ -143,8 +145,8 @@ async function handleOfflineWrite(config) {
                                     const product = await db.products.get(Number(productId));
                                     if (product) {
                                         const qtyChange = resource === 'sales' ? -item.quantity : (resource === 'purchases' || resource === 'returns') ? item.quantity : 0;
-                                        await db.products.update(Number(productId), { 
-                                            stockQty: (product.stockQty || 0) + qtyChange 
+                                        await db.products.update(Number(productId), {
+                                            stockQty: (product.stockQty || 0) + qtyChange
                                         });
                                     }
                                 }
@@ -154,6 +156,7 @@ async function handleOfflineWrite(config) {
                 } else if (method === 'put') {
                     const numericId = Number(recordId);
                     if (!isNaN(numericId)) {
+                        console.log(`💾 Local update to ${dexieTable} ID ${numericId}`);
                         await db[dexieTable].update(numericId, { ...payload, sync_status: 'pending_push' });
                         if (db.invoices) {
                             const exists = await db.invoices.get(numericId);
@@ -163,6 +166,7 @@ async function handleOfflineWrite(config) {
                 } else if (method === 'delete') {
                     const numericId = Number(recordId);
                     if (!isNaN(numericId)) {
+                        console.log(`💾 Local delete from ${dexieTable} ID ${numericId}`);
                         await db[dexieTable].delete(numericId);
                         if (db.invoices) await db.invoices.delete(numericId);
                     }
@@ -171,7 +175,7 @@ async function handleOfflineWrite(config) {
                 console.error('Failed to update local DB logic:', e);
             }
         }
-
+...
         // Add to outbox AFTER local DB so we use the actual localId if it was a POST
         await addToOutbox(
             resource,

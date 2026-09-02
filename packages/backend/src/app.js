@@ -58,6 +58,16 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', service: 'mohassibe-backend' });
 });
 
+// Global Error Logger Middleware
+app.use((err, req, res, next) => {
+    console.error(`🚨 GLOBAL ERROR [${req.method} ${req.url}]:`, err);
+    console.error('Payload:', req.body);
+    res.status(err.status || 500).json({
+        error: err.message || 'Internal Server Error',
+        details: err.stack
+    });
+});
+
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`🚀 mohassibe API running on port ${PORT}`);

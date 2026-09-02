@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create supplier
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     const { name, phone, email, company } = req.body;
     try {
         const supplier = await prisma.supplier.create({
@@ -27,12 +27,12 @@ router.post('/', async (req, res) => {
         res.json(supplier);
     } catch (error) {
         console.error('Error creating supplier:', error);
-        res.status(500).json({ error: 'error creating supplier', details: error.message });
+        next(error);
     }
 });
 
 // Update supplier
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
     const { name, phone, email, company } = req.body;
     try {
@@ -45,12 +45,12 @@ router.put('/:id', async (req, res) => {
         });
         res.json(supplier);
     } catch (error) {
-        res.status(500).json({ error: 'error updating supplier' });
+        next(error);
     }
 });
 
 // Delete supplier
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
         const existing = await prisma.supplier.findFirst({ where: { id, userId: req.userId } });
@@ -59,12 +59,12 @@ router.delete('/:id', async (req, res) => {
         await prisma.supplier.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: 'error deleting supplier' });
+        next(error);
     }
 });
 
 // Get Supplier Statement (History of all transactions)
-router.get('/:id/statement', async (req, res) => {
+router.get('/:id/statement', async (req, res, next) => {
     const { id } = req.params;
     try {
         const supplier = await prisma.supplier.findFirst({
@@ -81,8 +81,7 @@ router.get('/:id/statement', async (req, res) => {
 
         res.json(supplier);
     } catch (error) {
-        console.error('Fetch supplier statement error:', error);
-        res.status(500).json({ error: 'error fetching supplier statement' });
+        next(error);
     }
 });
 
