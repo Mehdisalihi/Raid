@@ -69,8 +69,10 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-    console.log(`🚀 mohassibe API running on port ${PORT}`);
-});
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`🚀 mohassibe API running on port ${PORT}`);
+    });
+}
 
 export default app;
