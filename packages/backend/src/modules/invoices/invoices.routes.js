@@ -47,6 +47,199 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Create Invoice (SALE, PURCHASE, QUOTATION, RETURN)
+router.post('/', async (req, res) => {
+    const {
+        customerId, supplierId, items, cart,
+        totalAmount, discount, taxRate, taxAmount, finalAmount,
+        isDebt, paymentMethod, type, warehouseId, date, customerName
+    } = req.body;
+
+    const cleanCart = cart || items || [];
+    const invoiceType = type || 'SALE';
+
+    try {
+        const result = await prisma.$transaction(async (tx) => {
+            // 1. Auto-generate invoice number
+            const count = await tx.invoice.count({ where: { userId: req.userId } });
+            const invoiceNo = `INV-${String(count + 1).padStart(5, '0')}`;
+
+            // 2. Resolve warehouse (use provided, find default, or create one)
+            let targetWarehouseId = warehouseId;
+            if (!targetWarehouseId) {
+                const defaultWarehouse = await tx.warehouse.findFirst({
+                    where: { isActive: true, userId: req.userId },
+                    orderBy: { createdAt: 'asc' }
+                });
+                if (defaultWarehouse) {
+                    targetWarehouseId = defaultWarehouse.id;
+                } else {
+                    // Create a default warehouse automatically
+                    const newWarehouse = await tx.warehouse.create({
+                        data: { name: 'المخزن الرئيسي', isActive: true, userId: req.userId }
+                    });
+                    targetWarehouseId = newWarehouse.id;
+                }
+            }
+
+            // 3. Auto-create customer by name if none selected
+            let resolvedCustomerId = customerId || null;
+            if (!resolvedCustomerId && customerName && invoiceType !== 'PURCHASE') {
+                const existing = await tx.customer.findFirst({
+                    where: { name: { equals: customerName }, userId: req.userId }
+                });
+                if (existing) {
+                    resolvedCustomerId = existing.id;
+                } else {
+                    const newCustomer = await tx.customer.create({
+                        data: { name: customerName, userId: req.userId }
+                    });
+                    resolvedCustomerId = newCustomer.id;
+                }
+            }
+
+            // 4. Pre-process items — auto-create missing products
+            const processedItems = [];
+            for (const item of cleanCart) {
+                let productId = item.id || item.productId;
+                if (!productId && item.name) {
+                    const existing = await tx.product.findFirst({
+                        where: { name: { equals: item.name }, userId: req.userId }
+                    });
+                    if (existing) {
+                        productId = existing.id;
+                    } else {
+                        const newProduct = await tx.product.create({
+                            data: {
+                                name: item.name,
+                                sellPrice: parseFloat(item.sellPrice || item.price || 0),
+                                buyPrice: parseFloat(item.buyPrice || item.price || 0),
+                                stockQty: 0,
+                                userId: req.userId
+                            }
+                        });
+                        productId = newProduct.id;
+                    }
+                }
+                processedItems.push({
+                    productId,
+                    qty: parseInt(item.qty || 0),
+                    price: parseFloat(item.sellPrice || item.buyPrice || item.price || 0),
+                    total: parseFloat((item.sellPrice || item.buyPrice || item.price || 0) * (item.qty || 0))
+                });
+            }
+
+            // 5. Create the Invoice
+            const invoice = await tx.invoice.create({
+                data: {
+                    invoiceNo,
+                    customerId: resolvedCustomerId,
+                    supplierId: supplierId || null,
+                    totalAmount: parseFloat(totalAmount || 0),
+                    discount: parseFloat(discount || 0),
+                    taxRate: parseFloat(taxRate || 0),
+                    taxAmount: parseFloat(taxAmount || 0),
+                    finalAmount: parseFloat(finalAmount || 0),
+                    type: invoiceType,
+                    isDebt: !!isDebt,
+                    paymentMethod: paymentMethod || 'cash',
+                    userId: req.userId,
+                    createdAt: date ? new Date(date) : undefined,
+                    items: { create: processedItems }
+                },
+                include: { items: true, customer: true, supplier: true }
+            });
+
+            // 6. Update stock based on invoice type
+            for (const item of processedItems) {
+                if (!item.productId || item.qty <= 0) continue;
+
+                if (invoiceType === 'SALE' || invoiceType === 'RETURN_PURCHASE') {
+                    await tx.product.update({
+                        where: { id: item.productId },
+                        data: { stockQty: { decrement: item.qty } }
+                    });
+                    await tx.warehouseInventory.upsert({
+                        where: { productId_warehouseId: { productId: item.productId, warehouseId: targetWarehouseId } },
+                        update: { qty: { decrement: item.qty } },
+                        create: { productId: item.productId, warehouseId: targetWarehouseId, qty: -item.qty }
+                    });
+                    await tx.stockMovement.create({
+                        data: {
+                            productId: item.productId, sourceId: targetWarehouseId,
+                            qty: item.qty, type: 'SALE', userId: req.userId,
+                            notes: `فاتورة: ${invoiceNo}`
+                        }
+                    });
+                } else if (invoiceType === 'PURCHASE' || invoiceType === 'RETURN_SALE') {
+                    const price = parseFloat(item.price || 0);
+                    await tx.product.update({
+                        where: { id: item.productId },
+                        data: { stockQty: { increment: item.qty }, ...(price > 0 ? { buyPrice: price } : {}) }
+                    });
+                    await tx.warehouseInventory.upsert({
+                        where: { productId_warehouseId: { productId: item.productId, warehouseId: targetWarehouseId } },
+                        update: { qty: { increment: item.qty } },
+                        create: { productId: item.productId, warehouseId: targetWarehouseId, qty: item.qty }
+                    });
+                    await tx.stockMovement.create({
+                        data: {
+                            productId: item.productId, destinationId: targetWarehouseId,
+                            qty: item.qty, type: 'PURCHASE', userId: req.userId,
+                            notes: `فاتورة: ${invoiceNo}`
+                        }
+                    });
+                }
+                // QUOTATION — no stock movement
+            }
+
+            // 7. Update balances
+            const finalAmt = parseFloat(finalAmount || 0);
+            if (invoiceType === 'SALE' && isDebt && resolvedCustomerId) {
+                await tx.customer.update({
+                    where: { id: resolvedCustomerId },
+                    data: { balance: { increment: finalAmt } }
+                });
+            } else if (invoiceType === 'PURCHASE') {
+                if (supplierId) {
+                    await tx.supplier.update({
+                        where: { id: supplierId },
+                        data: { balance: { decrement: finalAmt } }
+                    });
+                } else if (resolvedCustomerId) {
+                    await tx.customer.update({
+                        where: { id: resolvedCustomerId },
+                        data: { balance: { decrement: finalAmt } }
+                    });
+                }
+            }
+
+            return invoice;
+        });
+
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('POST /invoices - error:', error);
+        res.status(500).json({ error: 'error creating invoice', details: error.message });
+    }
+});
+
+// Get single invoice
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const invoice = await prisma.invoice.findFirst({
+            where: { id, userId: req.userId },
+            include: { customer: true, supplier: true, items: { include: { product: true } } }
+        });
+        if (!invoice) return res.status(404).json({ error: 'Invoice not found' });
+        res.json(invoice);
+    } catch (error) {
+        console.error('GET /invoices/:id - error:', error);
+        res.status(500).json({ error: 'error fetching invoice' });
+    }
+});
+
 // Convert Quotation to Sale
 router.post('/convert-quote/:id', async (req, res) => {
     const { id } = req.params;

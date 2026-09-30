@@ -6,7 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database_service.dart';
 
-String _baseUrl = 'https://backend-dedamed222s-projects.vercel.app/v1';
+// Detect if we are on Android emulator to use 10.0.2.2, otherwise localhost
+String _baseUrl = kIsWeb 
+    ? 'http://localhost:5001/v1' 
+    : (Platform.isAndroid ? 'http://10.0.2.2:5001/v1' : 'http://localhost:5001/v1');
 
 class ApiService {
   static const _timeout = Duration(seconds: 15);
