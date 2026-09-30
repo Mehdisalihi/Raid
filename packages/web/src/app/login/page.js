@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Mail, ChevronRight, ShieldCheck, CheckCircle2, BarChart3, Cloud, LayoutDashboard, Sun, Moon } from 'lucide-react';
+import { Lock, Mail, ChevronRight, ShieldCheck, CheckCircle2, BarChart3, Cloud, LayoutDashboard, Sun, Moon, Eye, EyeOff } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useTheme } from '@/lib/ThemeContext';
 
@@ -14,6 +14,7 @@ export default function LoginPage() {
     const { theme, toggleTheme } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -213,13 +214,20 @@ export default function LoginPage() {
                                     <div className="relative group/input">
                                         <Lock size={18} className={`absolute top-1/2 -translate-y-1/2 opacity-20 group-focus-within/input:opacity-100 group-focus-within/input:text-primary transition-all ${isRTL ? 'right-5' : 'left-5'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} />
                                         <input
-                                            type="password"
+                                            type={showPassword ? 'text' : 'password'}
                                             required
-                                            className={`w-full border rounded-2xl py-4 focus:border-primary/50 outline-none transition-all text-sm font-bold tracking-[0.3em] placeholder:opacity-20 ${theme === 'dark' ? 'bg-white/5 border-white/5 text-white focus:bg-white/10 placeholder:text-white' : 'bg-slate-100 border-slate-200 text-slate-900 focus:bg-white placeholder:text-slate-900'} ${isRTL ? 'pr-14 pl-6 text-right font-sans' : 'pl-14 pr-6 text-left'}`}
+                                            className={`w-full border rounded-2xl py-4 focus:border-primary/50 outline-none transition-all text-sm font-bold tracking-[0.3em] placeholder:opacity-20 ${theme === 'dark' ? 'bg-white/5 border-white/5 text-white focus:bg-white/10 placeholder:text-white' : 'bg-slate-100 border-slate-200 text-slate-900 focus:bg-white placeholder:text-slate-900'} ${isRTL ? 'pr-14 pl-12 text-right font-sans' : 'pl-14 pr-12 text-left'}`}
                                             placeholder="••••••••"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                         />
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className={`absolute top-1/2 -translate-y-1/2 opacity-40 hover:opacity-100 transition-all ${isRTL ? 'left-5' : 'right-5'} ${theme === 'dark' ? 'text-white hover:text-primary' : 'text-slate-900 hover:text-primary'}`}
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                 </div>
 
