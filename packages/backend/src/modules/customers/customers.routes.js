@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../lib/prisma.js';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Get all customers
 router.get('/', async (req, res) => {
@@ -20,11 +19,14 @@ router.get('/', async (req, res) => {
 // Create customer
 router.post('/', async (req, res) => {
     const { name, phone, email } = req.body;
+    if (!name?.trim()) {
+        return res.status(400).json({ error: 'اسم العميل مطلوب' });
+    }
     try {
         const customer = await prisma.customer.create({
-            data: { name, phone, email, userId: req.userId },
+            data: { name: name.trim(), phone, email, userId: req.userId },
         });
-        res.json(customer);
+        res.status(201).json(customer);
     } catch (error) {
         res.status(500).json({ error: 'error creating customer' });
     }

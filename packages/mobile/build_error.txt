@@ -1,0 +1,34 @@
+Running Gradle task 'assembleRelease'...                        
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+A problem occurred configuring project ':shared_preferences_android'.
+> A build operation failed.
+      Could not read workspace metadata from C:\Users\pc\.gradle\caches\8.11.1\transforms\d6043714b62b1d404ddfaee53572b6dc\metadata.bin
+   > Could not read workspace metadata from C:\Users\pc\.gradle\caches\8.11.1\transforms\d6043714b62b1d404ddfaee53572b6dc\metadata.bin
+> Failed to notify project evaluation listener.
+   > java.lang.NullPointerException (no error message)
+   > java.lang.NullPointerException (no error message)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5s
+Running Gradle task 'assembleRelease'...                            6,1s
+
+ÔöîÔöÇ Flutter Fix ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÉ
+Ôöé [!] Starting AGP 9+, only the new DSL interface will be read. This results in a build failure Ôöé
+Ôöé when applying the Flutter Gradle plugin at                                                    Ôöé
+Ôöé C:\Users\pc\mohassibe\packages\mobile\android\app\build.gradle.                               Ôöé
+Ôöé                                                                                               Ôöé
+Ôöé To resolve this update flutter or opt out of `android.newDsl`. For instructions on how to opt Ôöé
+Ôöé out, see: https://docs.flutter.dev/release/breaking-changes/migrate-to-agp-9                  Ôöé
+Ôöé                                                                                               Ôöé
+Ôöé If you are not upgrading to AGP 9+, run `flutter analyze --suggestions` to check for          Ôöé
+Ôöé incompatible dependencies.                                                                    Ôöé
+ÔööÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÿ
+Gradle task assembleRelease failed with exit code 1

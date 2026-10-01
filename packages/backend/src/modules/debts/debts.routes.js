@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../lib/prisma.js';
 
 const router = Router();
-const prisma = new PrismaClient();
+
 
 // Get Debtors (Customers who owe us)
 router.get('/debtors', async (req, res) => {

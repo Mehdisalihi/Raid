@@ -175,7 +175,7 @@ async function handleOfflineWrite(config) {
                 console.error('Failed to update local DB logic:', e);
             }
         }
-...
+
         // Add to outbox AFTER local DB so we use the actual localId if it was a POST
         await addToOutbox(
             resource,

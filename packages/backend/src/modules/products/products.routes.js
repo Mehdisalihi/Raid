@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../lib/prisma.js';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Get all products
 router.get('/', async (req, res) => {
@@ -187,21 +186,14 @@ router.post('/import', async (req, res) => {
         return res.status(400).json({ error: 'No products provided' });
     }
     try {
-        const data = products.map((p, index) => {
-            try {
-                return {
-                    name: String(p.name || '').trim(),
-                    barcode: p.barcode && String(p.barcode).trim() !== '' ? String(p.barcode).trim() : null,
-                    buyPrice: parseFloat(p.buyPrice) || 0,
-                    sellPrice: parseFloat(p.sellPrice) || 0,
-                    stockQty: parseInt(p.stockQty) || 0,
-                    minStockAlert: parseInt(p.minStockAlert) || 5,
-                };
-            } catch (e) {
-                console.error(`Error processing product at index ${index}:`, p, e);
-                throw e;
-            }
-        }).filter(p => p.name.length > 0);
+        const data = products.map((p) => ({
+            name: String(p.name || '').trim(),
+            barcode: p.barcode && String(p.barcode).trim() !== '' ? String(p.barcode).trim() : null,
+            buyPrice: parseFloat(p.buyPrice) || 0,
+            sellPrice: parseFloat(p.sellPrice) || 0,
+            stockQty: parseInt(p.stockQty) || 0,
+            minStockAlert: parseInt(p.minStockAlert) || 5,
+        })).filter(p => p.name.length > 0);
 
         console.log(`POST /import - cleaned data size: ${data.length}`);
         

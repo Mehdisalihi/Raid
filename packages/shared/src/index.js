@@ -14,7 +14,7 @@ export const calculateLineTotal = (qty, price) => {
 };
 
 export const API_CONFIG = {
-    BASE_URL: 'http://localhost:4000/v1',
+    BASE_URL: 'http://localhost:5001/v1',
     ENDPOINTS: {
         AUTH: '/auth',
         PRODUCTS: '/products',
@@ -22,6 +22,14 @@ export const API_CONFIG = {
         CUSTOMERS: '/customers',
         SUPPLIERS: '/suppliers',
         EXPENSES: '/expenses',
-        REPORTS: '/reports'
+        REPORTS: '/reports',
+        PURCHASES: '/purchases',
+        DEBTS: '/debts',
+        RETURNS: '/returns',
+        WAREHOUSES: '/warehouses',
+        INVENTORY: '/inventory',
+        INVOICES: '/invoices',
+        STAFF: '/staff',
+        USERS: '/users',
     }
 };

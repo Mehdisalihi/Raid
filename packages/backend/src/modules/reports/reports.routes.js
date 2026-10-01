@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../lib/prisma.js';
 
 const router = Router();
-const prisma = new PrismaClient();
+
 
 // Get Dashboard Stats
 router.get('/stats', async (req, res) => {

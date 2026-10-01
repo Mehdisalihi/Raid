@@ -14,6 +14,7 @@ import { useLanguage } from '@/lib/LanguageContext';
 import { useTheme } from '@/lib/ThemeContext';
 import GlobalStatusBar from '@/components/GlobalStatusBar';
 import RaidModal from '@/components/RaidModal';
+import { SyncService } from '@/lib/SyncService';
 
 const NAV_ITEMS = [
     { href: '/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', color: 'primary' },
@@ -53,8 +54,6 @@ export default function DashboardLayout({ children }) {
         <DashboardContent>{children}</DashboardContent>
     );
 }
-
-import { SyncService } from '@/lib/SyncService';
 
 function DashboardContent({ children }) {
     const [user, setUser] = useState(null);

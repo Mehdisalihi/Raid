@@ -1,8 +1,26 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../lib/prisma.js';
 
 const router = Router();
-const prisma = new PrismaClient();
+
+// ─── Helper: find existing product by id/name or create one ─────────────────
+async function findOrCreateProduct(tx, item, userId) {
+    if (item.id) return item.id;
+    const existing = await tx.product.findFirst({
+        where: { name: { equals: item.name }, userId },
+    });
+    if (existing) return existing.id;
+    const created = await tx.product.create({
+        data: {
+            name: item.name,
+            sellPrice: parseFloat(item.sellPrice || item.price || 0),
+            buyPrice: parseFloat(item.sellPrice || item.price || 0) * 0.8,
+            stockQty: 0,
+            userId,
+        },
+    });
+    return created.id;
+}
 
 // 1. Create Sale
 router.post('/', async (req, res) => {
@@ -23,35 +41,14 @@ router.post('/', async (req, res) => {
             }
 
             // Pre-process items to auto-create missing products
-            let processedItems = [];
+            const processedItems = [];
             for (const item of cart) {
-                let productId = item.id;
-                if (!productId) {
-                    const existing = await tx.product.findFirst({
-                        where: { name: { equals: item.name }, userId: req.userId }
-                    });
-                    if (existing) {
-                        productId = existing.id;
-                    } else {
-                        const newProduct = await tx.product.create({
-                            data: {
-                                name: item.name,
-                                sellPrice: parseFloat(item.sellPrice || item.price || 0),
-                                buyPrice: parseFloat(item.sellPrice || item.price || 0) * 0.8,
-                                stockQty: 0,
-                                userId: req.userId
-                            }
-                        });
-                        productId = newProduct.id;
-                    }
-                }
-                // Overwrite the id so we can use it in the stock updates later
-                item.id = productId; 
+                item.id = await findOrCreateProduct(tx, item, req.userId);
                 processedItems.push({
-                    productId,
+                    productId: item.id,
                     qty: parseInt(item.qty || 0),
                     price: parseFloat(item.sellPrice || item.price || 0),
-                    total: parseFloat((item.sellPrice || item.price || 0) * (item.qty || 0))
+                    total: parseFloat((item.sellPrice || item.price || 0) * (item.qty || 0)),
                 });
             }
 
@@ -183,10 +180,10 @@ router.put('/:id', async (req, res) => {
                     } 
                 });
                 await tx.product.update({ where: { id: item.productId }, data: { stockQty: { increment: item.qty } } });
-                if (move) {
+                if (move?.sourceId) {
                     await tx.warehouseInventory.update({
                         where: { productId_warehouseId: { productId: item.productId, warehouseId: move.sourceId } },
-                        data: { qty: { increment: item.qty } }
+                        data: { qty: { increment: item.qty } },
                     });
                 }
             }
@@ -197,34 +194,14 @@ router.put('/:id', async (req, res) => {
             await tx.stockMovement.deleteMany({ where: { notes: { contains: old.invoiceNo } } });
 
             // Pre-process items to auto-create missing products
-            let processedItems = [];
+            const processedItems = [];
             for (const it of cart) {
-                let productId = it.id || it.productId;
-                if (!productId) {
-                    const existing = await tx.product.findFirst({
-                        where: { name: { equals: it.name }, userId: req.userId }
-                    });
-                    if (existing) {
-                        productId = existing.id;
-                    } else {
-                        const newProduct = await tx.product.create({
-                            data: {
-                                name: it.name,
-                                sellPrice: parseFloat(it.sellPrice || it.price || 0),
-                                buyPrice: parseFloat(it.sellPrice || it.price || 0) * 0.8,
-                                stockQty: 0,
-                                userId: req.userId
-                            }
-                        });
-                        productId = newProduct.id;
-                    }
-                }
-                it.id = productId;
+                it.id = await findOrCreateProduct(tx, { id: it.id || it.productId, ...it }, req.userId);
                 processedItems.push({
-                    productId,
+                    productId: it.id,
                     qty: parseInt(it.qty || 0),
                     price: parseFloat(it.sellPrice || it.price || 0),
-                    total: parseFloat((it.sellPrice || it.price || 0) * (it.qty || 0))
+                    total: parseFloat((it.sellPrice || it.price || 0) * (it.qty || 0)),
                 });
             }
 

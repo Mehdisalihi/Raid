@@ -1,3 +1,0 @@
-LOG: ServiceWorker registration successful with scope:  https://mohassibe.vercel.app/
-LOG: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
-LOG: ServiceWorker registration successful with scope:  https://mohassibe.vercel.app/
