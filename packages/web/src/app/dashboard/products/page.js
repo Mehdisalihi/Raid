@@ -14,6 +14,7 @@ import RaidDialog from '@/components/RaidDialog';
 import RaidModal from '@/components/RaidModal';
 import { db } from '@/lib/db';
 import * as XLSX from 'xlsx';
+import { supabase } from '@/lib/supabase';
 
 // ─── PROFESSIONAL PRINT COMPONENTS ───────────────────
 const InventoryPrintContent = ({ products, isRTL, fmtDate, fmtNumber, title }) => (
@@ -225,18 +226,33 @@ export default function ProductsPage() {
         if (!file) return;
 
         setUploadingImage(true);
-        const data = new FormData();
-        data.append('image', file);
         try {
-            const res = await api.post('/products/upload', data, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            setFormData(prev => ({ ...prev, image: res.data.url }));
+            if (!supabase) {
+                throw new Error("Supabase is not configured (missing environment variables)");
+            }
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}.${fileExt}`;
+            const filePath = `products/uploads/${fileName}`;
+
+            // Upload directly to Supabase from frontend
+            const { error: uploadError } = await supabase.storage
+                .from('product-images')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            // Get public URL
+            const { data: publicUrlData } = supabase.storage
+                .from('product-images')
+                .getPublicUrl(filePath);
+
+            setFormData(prev => ({ ...prev, image: publicUrlData.publicUrl }));
         } catch (err) {
             console.error('Image upload error:', err);
             triggerDialog(
                 isRTL ? 'خطأ' : 'Erreur',
-                isRTL ? 'فشل رفع الصورة' : 'Échec du téléchargement',
+                isRTL ? 'فشل رفع الصورة (تأكد من إعدادات Supabase Storage)' : 'Échec du téléchargement',
                 'danger'
             );
         } finally {
