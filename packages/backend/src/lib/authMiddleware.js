@@ -9,7 +9,7 @@ if (!JWT_SECRET) {
  * Auth Middleware — Extracts userId from JWT token and attaches it to req.userId
  * All protected routes will have access to req.userId for data isolation.
  */
-export function authMiddleware(req, res, next) {
+export default function authMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -33,4 +33,3 @@ export function authMiddleware(req, res, next) {
     }
 }
 
-export default authMiddleware;

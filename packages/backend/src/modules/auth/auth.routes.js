@@ -62,6 +62,36 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// ─── POST /guest ─────────────────────────────────────────────────────────────
+router.post('/guest', async (req, res) => {
+    try {
+        const guestUser = {
+            id: `guest_${Date.now()}`,
+            name: 'Guest',
+            email: null,
+            role: 'GUEST',
+            isVerified: true,
+            isActive: true,
+            canAccessSales: true,
+            canCreateInvoices: true,
+            canManageInventory: true,
+            canViewReports: true,
+            canManageCustomers: true,
+            canManageExpenses: false,
+            canAccessSettings: false,
+            language: 'fr',
+            theme: 'light',
+            primaryColor: '#3b82f6',
+        };
+
+        const token = jwt.sign({ userId: guestUser.id, role: 'GUEST' }, JWT_SECRET, { expiresIn: '24h' });
+        res.json({ token, user: guestUser });
+    } catch (error) {
+        console.error('Guest Login Error:', error);
+        res.status(500).json({ error: 'حدث خطأ في الخادم' });
+    }
+});
+
 // ─── POST /register ──────────────────────────────────────────────────────────
 router.post('/register', async (req, res) => {
     const { name, email, password, phone } = req.body;
