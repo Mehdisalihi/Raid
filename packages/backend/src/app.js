@@ -75,4 +75,5 @@ if (!process.env.VERCEL) {
     });
 }
 
+// Export Vercel serverless application
 export default app;
