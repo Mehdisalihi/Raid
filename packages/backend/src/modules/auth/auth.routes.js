@@ -108,7 +108,7 @@ router.post('/register', async (req, res) => {
 
         let sbId = `local_${Date.now()}`;
 
-        if (supabase && process.env.NODE_ENV !== 'development') {
+        if (supabase) {
             try {
                 const { data: sbData, error } = await supabase.auth.signUp({
                     email,
