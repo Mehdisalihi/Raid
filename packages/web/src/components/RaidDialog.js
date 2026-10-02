@@ -21,11 +21,19 @@ const RaidDialog = ({
     setMounted(true);
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      const handleEsc = (e) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleEsc);
+      return () => { 
+        document.body.style.overflow = 'unset'; 
+        window.removeEventListener('keydown', handleEsc);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!mounted) return null;
 
@@ -124,9 +132,6 @@ const RaidDialog = ({
               </div>
             </div>
 
-            {/* Decorative subtle gradient */}
-            <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-secondary/5 rounded-full blur-2xl pointer-events-none" />
           </motion.div>
         </div>
       )}

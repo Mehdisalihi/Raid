@@ -20,11 +20,28 @@ const RaidModal = ({
     setMounted(true);
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      const handleEsc = (e) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleEsc);
+      
+      const timer = setTimeout(() => {
+        const firstInput = document.querySelector('.custom-scrollbar input:not([disabled]):not([type="file"])');
+        if (firstInput) {
+            firstInput.focus();
+        }
+      }, 100);
+
+      return () => { 
+        document.body.style.overflow = 'unset'; 
+        window.removeEventListener('keydown', handleEsc);
+        clearTimeout(timer);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!mounted) return null;
 
@@ -75,9 +92,6 @@ const RaidModal = ({
                {children}
             </div>
 
-            {/* Subtle decorative background elements */}
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
           </motion.div>
         </div>
       )}

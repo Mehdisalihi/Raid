@@ -265,6 +265,20 @@ export default function ProductsPage() {
         setCurrentProduct(null);
     };
 
+    const handleKeyDown = (e, nextFieldId) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (nextFieldId === 'submit') {
+                handleSubmit(e);
+            } else {
+                const nextField = document.getElementById(nextFieldId);
+                if (nextField) {
+                    nextField.focus();
+                }
+            }
+        }
+    };
+
     const filteredProducts = products.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || (p.barcode && p.barcode.includes(search));
         if (filterType === 'LOW') return matchesSearch && p.stockQty <= p.minStockAlert && p.stockQty > 0;
@@ -818,36 +832,40 @@ export default function ProductsPage() {
                     <div className="md:col-span-2 space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'اسم المنتج' : 'Nom du produit'} <span className="text-red-500">*</span></label>
                         <input
+                            id="product-name"
                             required
                             className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-extrabold focus:outline-none focus:border-primary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'} placeholder:text-[var(--text-faint)]`}
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            onKeyDown={e => handleKeyDown(e, 'product-barcode')}
                         />
                     </div>
                     <div className="md:col-span-2 space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'الباركود (اختياري)' : 'Code-barres (Optionnel)'}</label>
                         <input
+                            id="product-barcode"
                             className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-extrabold focus:outline-none focus:border-primary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'} placeholder:text-[var(--text-faint)]`}
                             value={formData.barcode}
                             placeholder={isRTL ? 'امسح الباركود أو اكتبه...' : 'Scanner ou saisir...'}
                             onChange={e => setFormData({ ...formData, barcode: e.target.value })}
+                            onKeyDown={e => handleKeyDown(e, 'product-buyprice')}
                         />
                     </div>
                     <div className="space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر الشراء' : 'Prix d\'achat'}</label>
-                        <input type="number" step="0.01" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-primary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.buyPrice} onChange={e => setFormData({ ...formData, buyPrice: e.target.value })} />
+                        <input id="product-buyprice" type="number" step="0.01" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-primary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.buyPrice} onChange={e => setFormData({ ...formData, buyPrice: e.target.value })} onKeyDown={e => handleKeyDown(e, 'product-sellprice')} />
                     </div>
                     <div className="space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'سعر البيع' : 'Prix de vente'}</label>
-                        <input type="number" step="0.01" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-secondary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.sellPrice} onChange={e => setFormData({ ...formData, sellPrice: e.target.value })} />
+                        <input id="product-sellprice" type="number" step="0.01" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-secondary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.sellPrice} onChange={e => setFormData({ ...formData, sellPrice: e.target.value })} onKeyDown={e => handleKeyDown(e, 'product-stockqty')} />
                     </div>
                     <div className="space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'الكمية الابتدائية' : 'Quantité Initiale'}</label>
-                        <input type="number" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-primary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.stockQty} onChange={e => setFormData({ ...formData, stockQty: e.target.value })} />
+                        <input id="product-stockqty" type="number" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-primary/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.stockQty} onChange={e => setFormData({ ...formData, stockQty: e.target.value })} onKeyDown={e => handleKeyDown(e, 'product-minstock')} />
                     </div>
                     <div className="space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'تنبيه النقص' : 'Alerte stock'}</label>
-                        <input type="number" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-red-500/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.minStockAlert} onChange={e => setFormData({ ...formData, minStockAlert: e.target.value })} />
+                        <input id="product-minstock" type="number" required className={`w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl h-12 px-4 text-sm font-black focus:outline-none focus:border-red-500/40 focus:bg-[var(--card-bg)] transition-all text-[var(--text-main)] ${isRTL ? 'text-right' : 'text-left'}`} value={formData.minStockAlert} onChange={e => setFormData({ ...formData, minStockAlert: e.target.value })} onKeyDown={e => handleKeyDown(e, 'submit')} />
                     </div>
                     <div className="md:col-span-2 pt-4">
                         <button type="submit" className="w-full btn-primary h-14 rounded-2xl text-base flex items-center justify-center gap-3 font-extrabold shadow-primary-glow">
