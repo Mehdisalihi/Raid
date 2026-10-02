@@ -6,8 +6,7 @@
   "builds": [
     {
       "src": "src/app.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["src/**", "prisma/**", "node_modules/.prisma/**", "node_modules/@prisma/client/**"] }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
