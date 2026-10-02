@@ -1,0 +1,6 @@
+scratch/
+scripts/
+test-*.js
+.env*
+!.env.example
+*.log
