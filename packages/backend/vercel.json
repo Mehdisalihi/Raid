@@ -1,20 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "src/app.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "src/**",
-          "prisma/schema.prisma",
-          "node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node",
-          "node_modules/@prisma/client/**"
-        ]
-      }
+  "functions": {
+    "src/app.js": {
+      "maxDuration": 30
     }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "src/app.js" }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/src/app.js" }
   ]
 }
