@@ -62,7 +62,7 @@ export default function InvoicesPage() {
                                 <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
                                     {inv.type === 'QUOTATION' ? t('quotation_number') : t('invoice_number')}
                                 </p>
-                                <p className="text-base font-black text-slate-900">#{inv.invoiceNo.split('-')[1] || inv.invoiceNo}</p>
+                                <p className="text-base font-black text-slate-900">#{inv.invoiceNo?.split('-')[1] || inv.invoiceNo || '—'}</p>
                             </div>
                         </div>
                     </div>
@@ -624,7 +624,7 @@ export default function InvoicesPage() {
                                 <tbody className="divide-y divide-[var(--border-color)]">
                                     {invoices.map(inv => (
                                         <tr key={inv.id} className="hover:bg-[var(--bg-secondary)] transition-colors group">
-                                            <td className="px-8 py-5 font-black text-sm text-[var(--text-main)]">#{inv.invoiceNo.split('-')[1] || inv.invoiceNo}</td>
+                                            <td className="px-8 py-5 font-black text-sm text-[var(--text-main)]">#{inv.invoiceNo?.split('-')[1] || inv.invoiceNo || '—'}</td>
                                             <td className="px-8 py-5">
                                                 <span className={`px-3 py-1.5 rounded-lg text-xs font-black border uppercase tracking-widest flex items-center justify-center gap-2 w-fit ${getTypeColor(inv.type)}`}>
                                                     {inv.type === 'SALE' && <CreditCard size={14} />}
