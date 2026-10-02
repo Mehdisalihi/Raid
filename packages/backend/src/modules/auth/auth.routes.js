@@ -110,7 +110,7 @@ router.post('/register', async (req, res) => {
 
         if (supabase && process.env.NODE_ENV !== 'development') {
             try {
-                const { data: sbData } = await supabase.auth.signUp({
+                const { data: sbData, error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
@@ -118,9 +118,14 @@ router.post('/register', async (req, res) => {
                         emailRedirectTo: `${process.env.FRONTEND_URL}/verify-direct`,
                     },
                 });
-                if (sbData?.user) sbId = sbData.user.id;
-            } catch {
-                console.warn('Skipping Supabase Auth due to connection issues');
+                
+                if (error) {
+                    console.warn(`Supabase Auth signup failed: ${error.message} (${error.status})`);
+                } else if (sbData?.user) {
+                    sbId = sbData.user.id;
+                }
+            } catch (err) {
+                console.warn('Skipping Supabase Auth due to connection issues', err);
             }
         }
 
@@ -140,14 +145,6 @@ router.post('/register', async (req, res) => {
         const user = await prisma.user.create({
             data: { id: sbId, name, email, passwordHash, phone, ...defaultPermissions },
         });
-
-        // Sync to Supabase PostgreSQL (only if a real Supabase UUID was obtained)
-        if (supabase && !sbId.startsWith('local_')) {
-            const { error: pgError } = await supabase.from('User').insert({
-                id: user.id, name, email, isActive: true, ...defaultPermissions,
-            });
-            if (pgError) console.error('Failed to sync to Supabase PG:', pgError.message, pgError.details);
-        }
 
         res.status(201).json({
             message: 'تم التسجيل بنجاح! مرحباً بك.',
