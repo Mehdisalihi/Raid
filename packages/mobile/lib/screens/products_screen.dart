@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../core/api_service.dart';
 import '../core/theme.dart';
 import '../core/format_utils.dart';
@@ -29,6 +31,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
   final _sellPrice = TextEditingController();
   final _stockQty = TextEditingController();
   final _minAlert = TextEditingController(text: '5');
+  File? _imageFile;
+  String? _imageUrl;
+  bool _uploadingImage = false;
+  final _imagePicker = ImagePicker();
 
   double get _totalValue {
     try {
@@ -97,6 +103,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   void _openModal([Map<String, dynamic>? product]) {
     _editing = product;
+    _imageFile = null;
+    _imageUrl = null;
     if (product != null) {
       _name.text = product['name']?.toString() ?? '';
       _barcode.text = product['barcode']?.toString() ?? '';
@@ -104,6 +112,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       _sellPrice.text = product['sellPrice']?.toString() ?? '';
       _stockQty.text = product['stockQty']?.toString() ?? '';
       _minAlert.text = product['minStockAlert']?.toString() ?? '5';
+      _imageUrl = product['image']?.toString();
     } else {
       _name.clear();
       _barcode.clear();
@@ -113,6 +122,28 @@ class _ProductsScreenState extends State<ProductsScreen> {
       _minAlert.text = '5';
     }
     setState(() => _showModal = true);
+  }
+
+  Future<void> _pickImage() async {
+    final picked = await _imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    if (picked == null) return;
+    setState(() {
+      _imageFile = File(picked.path);
+      _uploadingImage = true;
+    });
+    try {
+      final result = await ApiService.uploadFile('/products/upload', 'image', _imageFile!);
+      setState(() => _imageUrl = result['url']);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image upload failed: $e'), backgroundColor: AppColors.danger),
+        );
+        setState(() => _imageFile = null);
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingImage = false);
+    }
   }
 
   Future<void> _save() async {
@@ -129,6 +160,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       'sellPrice': double.tryParse(_sellPrice.text) ?? 0,
       'stockQty': int.tryParse(_stockQty.text) ?? 0,
       'minStockAlert': int.tryParse(_minAlert.text) ?? 5,
+      if (_imageUrl != null) 'image': _imageUrl,
       if (_editing == null) 'warehouseId': _selectedWarehouseId,
     };
     try {
@@ -533,10 +565,24 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     : AppColors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Icon(
-                isLow ? Icons.warning_rounded : Icons.inventory_2_rounded,
-                color: isLow ? AppColors.danger : AppColors.primary,
-              ),
+              child: p['image'] != null && p['image'].toString().isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: Image.network(
+                        p['image'],
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(
+                          isLow ? Icons.warning_rounded : Icons.inventory_2_rounded,
+                          color: isLow ? AppColors.danger : AppColors.primary,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      isLow ? Icons.warning_rounded : Icons.inventory_2_rounded,
+                      color: isLow ? AppColors.danger : AppColors.primary,
+                    ),
             ),
             title: Text(
               p['name'] ?? context.tr('guest'),
@@ -668,6 +714,43 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ],
             ),
             const Divider(color: AppColors.border, height: 32),
+            // ─── Image Picker ───
+            GestureDetector(
+              onTap: _uploadingImage ? null : _pickImage,
+              child: Container(
+                height: 100,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.bg.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.border, style: BorderStyle.solid),
+                ),
+                child: _uploadingImage
+                    ? const Center(child: CircularProgressIndicator())
+                    : _imageFile != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.file(_imageFile!, fit: BoxFit.cover, width: double.infinity),
+                          )
+                        : _imageUrl != null && _imageUrl!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.network(_imageUrl!, fit: BoxFit.cover, width: double.infinity),
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_photo_alternate_rounded,
+                                      color: AppColors.primary.withValues(alpha: 0.5), size: 36),
+                                  const SizedBox(height: 8),
+                                  Text('صورة المنتج',
+                                      style: TextStyle(
+                                          color: AppColors.textLight, fontSize: 12)),
+                                ],
+                              ),
+              ),
+            ),
+            // ─── Form Fields ───
             _inputField(context.tr('productName'), _name, Icons.label_rounded),
             Row(
               children: [

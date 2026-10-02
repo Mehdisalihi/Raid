@@ -106,6 +106,19 @@ class ApiService {
     }
   }
 
+  static Future<Map<String, dynamic>> uploadFile(String path, String fieldName, File file) async {
+    final token = await _getToken();
+    final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl$path'));
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    request.files.add(await http.MultipartFile.fromPath(fieldName, file.path));
+    final streamedResponse = await request.send().timeout(const Duration(seconds: 30));
+    final res = await http.Response.fromStream(streamedResponse);
+    _check(res);
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
   static Future<dynamic> _handleOfflineWrite(String method, String path, Map<String, dynamic>? body) async {
     final db = DatabaseService();
     final id = 'local_sync_${DateTime.now().millisecondsSinceEpoch}';
