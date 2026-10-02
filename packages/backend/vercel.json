@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "env": {
-    "VERCEL_SUPPORT_LARGE_FUNCTIONS": "1"
-  },
   "builds": [
     {
       "src": "src/app.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["src/**", "prisma/**", "node_modules/.prisma/**", "node_modules/@prisma/client/**"] }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
