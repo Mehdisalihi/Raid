@@ -64,6 +64,7 @@ model Product {
   sellPrice          Float
   stockQty           Int                  @default(0)
   minStockAlert      Int                  @default(5)
+  image              String?
   userId             String
   createdAt          DateTime             @default(now())
   user               User                 @relation(fields: [userId], references: [id])

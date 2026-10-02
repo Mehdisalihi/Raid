@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma.js';
+import multer from 'multer';
+import { supabase } from '../../lib/supabase.js';
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all products
 router.get('/', async (req, res) => {
@@ -37,9 +40,46 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Upload Product Image
+router.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        if (!supabase) {
+            return res.status(500).json({ error: 'Supabase storage is not configured' });
+        }
+
+        const fileExt = req.file.originalname.split('.').pop();
+        const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}.${fileExt}`;
+        const filePath = `products/${req.userId}/${fileName}`;
+
+        const { data, error } = await supabase.storage
+            .from('product-images')
+            .upload(filePath, req.file.buffer, {
+                contentType: req.file.mimetype,
+                upsert: false
+            });
+
+        if (error) {
+            console.error('Supabase upload error:', error);
+            return res.status(500).json({ error: 'Failed to upload image', details: error.message });
+        }
+
+        const { data: publicUrlData } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(filePath);
+
+        res.json({ url: publicUrlData.publicUrl });
+    } catch (error) {
+        console.error('POST /v1/products/upload - ERROR:', error);
+        res.status(500).json({ error: 'Error uploading image', details: error.message });
+    }
+});
+
 // Create product
 router.post('/', async (req, res) => {
-    const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert, warehouseId } = req.body;
+    const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert, warehouseId, image } = req.body;
     try {
         const product = await prisma.$transaction(async (tx) => {
             const safeBarcode = barcode ? String(barcode).trim() : '';
@@ -52,6 +92,7 @@ router.post('/', async (req, res) => {
                     sellPrice: parseFloat(sellPrice) || 0,
                     stockQty: parseInt(stockQty) || 0,
                     minStockAlert: parseInt(minStockAlert) || 5,
+                    image: image || null,
                     userId: req.userId,
                 },
             });
@@ -102,7 +143,7 @@ router.post('/', async (req, res) => {
 // Update product
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert, warehouseId } = req.body;
+    const { name, barcode, buyPrice, sellPrice, stockQty, minStockAlert, warehouseId, image } = req.body;
     try {
         const existing = await prisma.product.findFirst({ where: { id, userId: req.userId } });
         if (!existing) return res.status(404).json({ error: 'Product not found' });
@@ -120,6 +161,7 @@ router.put('/:id', async (req, res) => {
                     sellPrice: parseFloat(sellPrice) || 0,
                     stockQty: newQty,
                     minStockAlert: parseInt(minStockAlert) || 5,
+                    image: image !== undefined ? image : existing.image,
                 },
             });
 

@@ -6,7 +6,8 @@ import {
     Package, Plus, Search, Edit2, Trash2, X, Save,
     AlertCircle, TrendingUp, Barcode, DollarSign,
     LayoutGrid, List, ChevronRight, ChevronDown, ArrowUpDown,
-    CheckCircle2, AlertTriangle, Layers, Download, Upload, FileSpreadsheet, Printer
+    CheckCircle2, AlertTriangle, Layers, Download, Upload, FileSpreadsheet, Printer,
+    Image as ImageIcon, Loader2
 } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 import RaidDialog from '@/components/RaidDialog';
@@ -78,8 +79,10 @@ export default function ProductsPage() {
         buyPrice: '',
         sellPrice: '',
         stockQty: '',
-        minStockAlert: '5'
+        minStockAlert: '5',
+        image: ''
     });
+    const [uploadingImage, setUploadingImage] = useState(false);
     const { t, isRTL, fmtNumber, fmtDate } = useLanguage();
     const fileInputRef = useRef(null);
     const [importRows, setImportRows] = useState([]);
@@ -199,7 +202,8 @@ export default function ProductsPage() {
                 buyPrice: product.buyPrice.toString(),
                 sellPrice: product.sellPrice.toString(),
                 stockQty: product.stockQty.toString(),
-                minStockAlert: product.minStockAlert.toString()
+                minStockAlert: product.minStockAlert.toString(),
+                image: product.image || ''
             });
         } else {
             setCurrentProduct(null);
@@ -209,10 +213,35 @@ export default function ProductsPage() {
                 buyPrice: '',
                 sellPrice: '',
                 stockQty: '',
-                minStockAlert: '5'
+                minStockAlert: '5',
+                image: ''
             });
         }
         setIsModalOpen(true);
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadingImage(true);
+        const data = new FormData();
+        data.append('image', file);
+        try {
+            const res = await api.post('/products/upload', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setFormData(prev => ({ ...prev, image: res.data.url }));
+        } catch (err) {
+            console.error('Image upload error:', err);
+            triggerDialog(
+                isRTL ? 'خطأ' : 'Erreur',
+                isRTL ? 'فشل رفع الصورة' : 'Échec du téléchargement',
+                'danger'
+            );
+        } finally {
+            setUploadingImage(false);
+        }
     };
 
     const closeModal = () => {
@@ -619,8 +648,12 @@ export default function ProductsPage() {
                         {filteredProducts.map(product => (
                             <div key={product.id} className="card-premium group relative flex flex-col h-full border-[var(--glass-border)] bg-[var(--surface-2)] hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
                                 <div className="flex justify-between items-start mb-6">
-                                    <div className={`p-3.5 rounded-2xl shadow-sm ${product.stockQty <= product.minStockAlert ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-primary/10 text-primary border border-primary/20'}`}>
-                                        <Package size={22} />
+                                    <div className={`w-12 h-12 rounded-2xl shadow-sm flex items-center justify-center overflow-hidden ${product.stockQty <= product.minStockAlert ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-primary/10 text-primary border border-primary/20'}`}>
+                                        {product.image ? (
+                                            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Package size={22} />
+                                        )}
                                     </div>
                                     <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300">
                                         <button onClick={() => openModal(product)} className="p-2.5 bg-[var(--card-bg)] hover:bg-primary/10 rounded-xl text-[var(--text-muted)] hover:text-primary border border-[var(--glass-border)] transition-colors"><Edit2 size={16} /></button>
@@ -669,7 +702,13 @@ export default function ProductsPage() {
                                     <tr key={p.id} className="group hover:bg-[var(--surface-2)] transition-all duration-200">
                                         <td className="p-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm"><Package size={22} /></div>
+                                                <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm overflow-hidden">
+                                                    {p.image ? (
+                                                        <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <Package size={22} />
+                                                    )}
+                                                </div>
                                                 <span className="font-extrabold text-sm text-[var(--text-main)] group-hover:text-primary transition-colors">{p.name}</span>
                                             </div>
                                         </td>
@@ -744,6 +783,22 @@ export default function ProductsPage() {
                 title={currentProduct ? (isRTL ? 'تحرير المنتج' : 'Éditer le produit') : (isRTL ? 'إضافة منتج' : 'Nouveau produit')}
             >
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="md:col-span-2 flex flex-col items-center justify-center space-y-3 mb-2">
+                        <div className="relative w-24 h-24 rounded-2xl border-2 border-dashed border-[var(--border-color)] bg-[var(--surface-2)] flex items-center justify-center overflow-hidden hover:border-primary/50 transition-colors group">
+                            {formData.image ? (
+                                <img src={formData.image} className="w-full h-full object-cover" alt="Preview" />
+                            ) : (
+                                <ImageIcon size={28} className="text-[var(--text-faint)] group-hover:text-primary transition-colors" />
+                            )}
+                            {uploadingImage && (
+                                <div className="absolute inset-0 bg-[var(--background)]/40 flex items-center justify-center backdrop-blur-sm z-10">
+                                    <Loader2 className="animate-spin text-primary" size={24} />
+                                </div>
+                            )}
+                            <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 opacity-0 cursor-pointer z-20" disabled={uploadingImage} />
+                        </div>
+                        <span className="text-[10px] font-bold text-[var(--text-faint)]">{isRTL ? 'صورة المنتج' : 'Image du produit'}</span>
+                    </div>
                     <div className="md:col-span-2 space-y-2">
                         <label className={`text-[11px] font-black uppercase text-[var(--text-faint)] block ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? 'اسم المنتج' : 'Nom du produit'} <span className="text-red-500">*</span></label>
                         <input
