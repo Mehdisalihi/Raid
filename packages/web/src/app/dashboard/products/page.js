@@ -252,7 +252,7 @@ export default function ProductsPage() {
             console.error('Image upload error:', err);
             triggerDialog(
                 isRTL ? 'خطأ' : 'Erreur',
-                isRTL ? 'فشل رفع الصورة (تأكد من إعدادات Supabase Storage)' : 'Échec du téléchargement',
+                (isRTL ? 'فشل رفع الصورة' : 'Échec: ') + (err.message || 'Unknown error'),
                 'danger'
             );
         } finally {
