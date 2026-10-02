@@ -141,12 +141,12 @@ router.post('/register', async (req, res) => {
             data: { id: sbId, name, email, passwordHash, phone, ...defaultPermissions },
         });
 
-        // Sync to Supabase PostgreSQL
-        if (supabase) {
+        // Sync to Supabase PostgreSQL (only if a real Supabase UUID was obtained)
+        if (supabase && !sbId.startsWith('local_')) {
             const { error: pgError } = await supabase.from('User').insert({
-                id: user.id, name, email, passwordHash, isActive: true, ...defaultPermissions,
+                id: user.id, name, email, isActive: true, ...defaultPermissions,
             });
-            if (pgError) console.error('Failed to sync to Supabase PG:', pgError);
+            if (pgError) console.error('Failed to sync to Supabase PG:', pgError.message, pgError.details);
         }
 
         res.status(201).json({
