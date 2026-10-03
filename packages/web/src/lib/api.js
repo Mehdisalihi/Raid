@@ -23,6 +23,7 @@ const URL_TO_TABLE = {
     'returns': 'invoices',
     'users': 'users',
     'organizations': 'organizations',
+    'staff': 'staff', // Staff & payroll
 };
 
 // Special compound routes that need custom local handling
