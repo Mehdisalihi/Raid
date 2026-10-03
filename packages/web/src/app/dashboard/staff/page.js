@@ -16,6 +16,7 @@ export default function StaffPage() {
     const { t, lang, isRTL, fmtNumber, fmtDate } = useLanguage();
     const [staff, setStaff] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [showPayModal, setShowPayModal] = useState(false);
@@ -47,12 +48,16 @@ export default function StaffPage() {
 
     const fetchStaff = async () => {
         try {
-            const data = await api.get('/staff');
-            // Ensure data is always an array
-            setStaff(Array.isArray(data) ? data : (data?.data ?? data?.staff ?? []));
-        } catch (error) {
-            console.error('Error fetching staff:', error);
+            setError(null);
+            // api is an axios instance — always destructure { data } from the response
+            const { data } = await api.get('/staff');
+            // Defensive: normalize to array regardless of API shape
+            const list = Array.isArray(data) ? data : (data?.data ?? data?.staff ?? []);
+            setStaff(list);
+        } catch (err) {
+            console.error('Error fetching staff:', err);
             setStaff([]);
+            setError(lang === 'ar' ? 'تعذّر تحميل بيانات الموظفين' : 'Impossible de charger les employés');
         } finally {
             setLoading(false);
         }
@@ -116,8 +121,9 @@ export default function StaffPage() {
         }
     };
 
-    const filteredStaff = (Array.isArray(staff) ? staff : []).filter(s => 
-        s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const safeStaff = Array.isArray(staff) ? staff : [];
+    const filteredStaff = safeStaff.filter(s =>
+        s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.role?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -157,7 +163,14 @@ export default function StaffPage() {
 
             {/* Staff Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {loading ? (
+                {error ? (
+                <div className="col-span-full py-12 text-center">
+                    <p className="text-red-500 font-bold text-sm">{error}</p>
+                    <button onClick={fetchStaff} className="mt-4 text-xs text-primary underline font-bold">
+                        {lang === 'ar' ? 'إعادة المحاولة' : 'Réessayer'}
+                    </button>
+                </div>
+            ) : loading ? (
                     [1,2,3].map(i => <div key={i} className="h-48 bg-[var(--card-bg)] rounded-2xl animate-pulse border border-[var(--border-color)]" />)
                 ) : filteredStaff.length > 0 ? (
                     filteredStaff.map((member) => (
@@ -434,14 +447,22 @@ export default function StaffPage() {
 function StaffStatementDrawer({ staffId, onClose, t, lang, isRTL, fmtNumber, fmtDate }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
 
     useEffect(() => {
         const fetchStatement = async () => {
             try {
-                const json = await api.get(`/staff/${staffId}/statement`);
-                setData(json);
-            } catch (error) {
-                console.error(error);
+                setFetchError(null);
+                // api is an axios instance — always destructure { data } from the response
+                const { data: json } = await api.get(`/staff/${staffId}/statement`);
+                // Normalize Transactions to always be an array
+                setData({
+                    ...json,
+                    Transactions: Array.isArray(json?.Transactions) ? json.Transactions : []
+                });
+            } catch (err) {
+                console.error(err);
+                setFetchError(lang === 'ar' ? 'تعذّر تحميل كشف الحساب' : 'Impossible de charger le relevé');
             } finally {
                 setLoading(false);
             }
@@ -463,7 +484,12 @@ function StaffStatementDrawer({ staffId, onClose, t, lang, isRTL, fmtNumber, fmt
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 custom-scroll">
-                    {loading ? (
+                    {fetchError ? (
+                        <div className="flex flex-col items-center justify-center h-64 text-center">
+                            <Info size={48} className="mb-4 text-red-400 opacity-60" />
+                            <p className="font-bold text-red-500 text-sm">{fetchError}</p>
+                        </div>
+                    ) : loading ? (
                         <div className="space-y-4">
                             {[1,2,3,4].map(i => <div key={i} className="h-16 bg-[var(--bg-secondary)] rounded-xl animate-pulse" />)}
                         </div>
