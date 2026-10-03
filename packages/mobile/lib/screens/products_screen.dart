@@ -743,7 +743,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                   Icon(Icons.add_photo_alternate_rounded,
                                       color: AppColors.primary.withValues(alpha: 0.5), size: 36),
                                   const SizedBox(height: 8),
-                                  Text('صورة المنتج',
+                                  const Text('صورة المنتج',
                                       style: TextStyle(
                                           color: AppColors.textLight, fontSize: 12)),
                                 ],

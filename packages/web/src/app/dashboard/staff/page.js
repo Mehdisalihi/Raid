@@ -48,9 +48,11 @@ export default function StaffPage() {
     const fetchStaff = async () => {
         try {
             const data = await api.get('/staff');
-            setStaff(data);
+            // Ensure data is always an array
+            setStaff(Array.isArray(data) ? data : (data?.data ?? data?.staff ?? []));
         } catch (error) {
             console.error('Error fetching staff:', error);
+            setStaff([]);
         } finally {
             setLoading(false);
         }
@@ -114,7 +116,7 @@ export default function StaffPage() {
         }
     };
 
-    const filteredStaff = staff.filter(s => 
+    const filteredStaff = (Array.isArray(staff) ? staff : []).filter(s => 
         s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         s.role?.toLowerCase().includes(searchTerm.toLowerCase())
     );
