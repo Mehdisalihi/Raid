@@ -1,15 +1,6 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "packages/web/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "packages/web/$1"
-    }
-  ]
+  "buildCommand": "npm run build --workspace=@mohassibe/web",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": "packages/web/.next"
 }
