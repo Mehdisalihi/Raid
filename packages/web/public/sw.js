@@ -1,4 +1,4 @@
-const CACHE_NAME = 'raid-cache-v3';
+const CACHE_NAME = 'raid-cache-v4';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
