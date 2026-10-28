@@ -75,8 +75,6 @@ router.post('/:id/transactions', async (req, res) => {
     const { type, amount, description, date } = req.body;
     
     try {
-        const amt = parseFloat(amount || 0);
-        
         // Transaction using Prisma transaction to ensure balance is updated
         const result = await prisma.$transaction(async (tx) => {
             // Get current staff record to find current balance

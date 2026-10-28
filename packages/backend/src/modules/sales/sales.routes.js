@@ -205,10 +205,26 @@ router.put('/:id', async (req, res) => {
                 });
             }
 
+            let newCustomerId = old.customerId;
+            if (customerName) {
+                const existing = await tx.customer.findFirst({
+                    where: { name: { equals: customerName }, userId: req.userId }
+                });
+                if (existing) {
+                    newCustomerId = existing.id;
+                } else {
+                    const newCust = await tx.customer.create({
+                        data: { name: customerName, userId: req.userId }
+                    });
+                    newCustomerId = newCust.id;
+                }
+            }
+
             // Apply New
             const updated = await tx.invoice.update({
                 where: { id },
                 data: {
+                    customerId: newCustomerId,
                     finalAmount: parseFloat(finalAmount),
                     paymentMethod,
                     createdAt: createdAt ? new Date(createdAt) : old.createdAt,

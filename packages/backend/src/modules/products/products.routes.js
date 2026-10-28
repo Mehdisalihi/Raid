@@ -54,7 +54,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
         const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}.${fileExt}`;
         const filePath = `products/${req.userId}/${fileName}`;
 
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
             .from('product-images')
             .upload(filePath, req.file.buffer, {
                 contentType: req.file.mimetype,

@@ -10,7 +10,6 @@ router.post('/', async (req, res) => {
     const cleanCustomerId = customerId && customerId !== '' ? customerId : null;
     const cleanSupplierId = supplierId && supplierId !== '' ? supplierId : null;
     const invoiceDate = date ? new Date(date) : new Date();
-    const sId = cleanSupplierId || cleanCustomerId; // Support both for backward compatibility
 
     console.log('Incoming Purchase Request:', req.body);
     try {

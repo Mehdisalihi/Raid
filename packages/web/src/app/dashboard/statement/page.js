@@ -17,6 +17,7 @@ import {
 import SummaryBox from '@/components/SummaryBox';
 import TxRow from '@/components/TxRow';
 import RaidModal from '@/components/RaidModal';
+import { CorporateHeader, PrintFooter } from '@/components/StatementPrintHeader';
 
 // ─── TYPE LABELS ─────────────────────────────────────
 const TYPE_MAP = {
@@ -561,104 +562,6 @@ function StatementInner() {
 }
 
 // ─── SHARED SUB-COMPONENTS ────────────────────────────────
-
-function CorporateHeader({ isRTL, printDate, customerId }) {
-    const { lang } = useLanguage();
-    const [storeInfo, setStoreInfo] = useState({ name: '', logo: null, slogan: '', address: '', phone: '', email: '', taxId: '' });
-
-    useEffect(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            const user = JSON.parse(savedUser);
-            setStoreInfo({
-                name: user.storeName || (isRTL ? 'اسم مؤسستك' : 'Établissement Raid'),
-                logo: user.storeLogo || null,
-                slogan: user.storeSlogan || (isRTL ? 'لإدارة أموالك بذكاء' : 'Gestion financière intelligente'),
-                address: user.storeAddress || '',
-                phone: user.storePhone || '',
-                email: user.storeEmail || '',
-                taxId: user.storeTaxId || ''
-            });
-        }
-    }, [isRTL]);
-
-    return (
-        <div className="hidden print:block mb-4 border-b-2 border-slate-900 pb-4">
-            {/* Top row: Very small app branding */}
-            <div className={`flex items-center gap-1.5 mb-2 text-[8px] font-bold text-slate-400 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <img src="/Raed.png" alt="App Logo" className="w-4 h-4 opacity-80" />
-                <span>{isRTL ? 'رائد المحاسبي' : 'Raid Comptabilité'}</span>
-            </div>
-
-            <div className="flex justify-between items-start">
-                {/* Left: Institution Info & Logo */}
-                <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden p-1">
-                        {storeInfo.logo ? (
-                            <img src={storeInfo.logo} alt="Logo" className="w-full h-full object-contain" />
-                        ) : (
-                            <span className="text-[9px] text-slate-400 text-center font-bold">{isRTL ? 'شعار المؤسسة' : 'Logo Institution'}</span>
-                        )}
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                            {storeInfo.name}
-                        </h1>
-                        <div className="flex flex-col text-[9px] font-bold text-slate-600 uppercase tracking-tight">
-                            {storeInfo.address && <span>{isRTL ? 'العنوان: ' : 'Adresse: '}{storeInfo.address}</span>}
-                            {storeInfo.phone && <span>{isRTL ? 'الهاتف: ' : 'Tél: '}{storeInfo.phone}</span>}
-                            {storeInfo.email && <span>{isRTL ? 'الإيميل: ' : 'E-mail: '}{storeInfo.email}</span>}
-                            {storeInfo.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'NIF: '}{storeInfo.taxId}</span>}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right: Statement Title & Details Table */}
-                <div className="flex flex-col items-end gap-3">
-                    <h2 className="text-3xl font-black text-emerald-700 uppercase tracking-widest leading-none">
-                        {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'RELEVÉ DE COMPTE')}
-                    </h2>
-                    <table className="text-[10px] font-bold text-slate-800 border-collapse">
-                        <tbody>
-                            <tr>
-                                <td className="pr-4 py-0.5">{isRTL ? 'التاريخ:' : (lang === 'fr' ? 'Date:' : 'Date:')}</td>
-                                <td className="border border-slate-300 px-2 py-0.5 bg-white min-w-[100px]">{printDate}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function PrintFooter({ isRTL, finalBalance, fmt }) {
-    const { lang } = useLanguage();
-    return (
-        <div className="hidden print:flex flex-col items-center mt-12 text-[11px] text-slate-800 break-inside-avoid">
-            <p className="font-bold mb-3">
-                {isRTL 
-                    ? `رصيد حسابك هو ${fmt(finalBalance)} MRU. يرجى تسديد المبلغ المتبقي في أقرب وقت.`
-                    : (lang === 'fr' 
-                        ? `Le solde de votre compte est de ${fmt(finalBalance)} MRU. Veuillez régler le solde restant dès que possible.`
-                        : `Le solde de votre compte est de ${fmt(finalBalance)} MRU. Veuillez régler le solde restant dès que possible.`)}
-            </p>
-            <h4 className="text-base font-black mb-4">
-                {isRTL ? 'شكراً لتعاملكم معنا!' : (lang === 'fr' ? 'Merci de votre confiance !' : 'Merci de votre confiance !')}
-            </h4>
-            
-            <div className="w-full border-t border-slate-300 pt-3 text-center space-y-1 text-[10px]">
-                <p>
-                    {isRTL 
-                        ? 'إذا كان لديك أي استفسارات بخصوص كشف الحساب، يرجى التواصل معنا'
-                        : (lang === 'fr' 
-                            ? 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter'
-                            : 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter')}
-                </p>
-            </div>
-        </div>
-    );
-}
 
 function CustomerSection({ customer, fmtDate, isRTL, fmtNumber, summary }) {
     const { lang } = useLanguage();

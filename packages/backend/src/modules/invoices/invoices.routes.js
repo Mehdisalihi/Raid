@@ -519,11 +519,26 @@ router.put('/:id', async (req, res) => {
                 });
             }
 
+            let resolvedCustomerId = customerId || oldInv.customerId;
+            if (!resolvedCustomerId && customerName && (type || oldInv.type) !== 'PURCHASE') {
+                const existing = await tx.customer.findFirst({
+                    where: { name: { equals: customerName }, userId: req.userId }
+                });
+                if (existing) {
+                    resolvedCustomerId = existing.id;
+                } else {
+                    const newCustomer = await tx.customer.create({
+                        data: { name: customerName, userId: req.userId }
+                    });
+                    resolvedCustomerId = newCustomer.id;
+                }
+            }
+
             // Update Invoice Header
             const updated = await tx.invoice.update({
                 where: { id },
                 data: {
-                    customerId: customerId || oldInv.customerId,
+                    customerId: resolvedCustomerId,
                     supplierId: supplierId || oldInv.supplierId,
                     totalAmount: parseFloat(totalAmount || 0),
                     discount: parseFloat(discount || 0),

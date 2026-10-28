@@ -2,18 +2,33 @@ node_modules/
 dist/
 build/
 .env
+.env.*
+!.env.example
 .next/
 .expo/
 *.log
+
+# Package outputs
 packages/web/out/
 packages/backend/prisma/migrations/
+packages/backend/src/generated/
+packages/backend/scratch/
+
+# Desktop build artifacts
 packages/desktop/dist_zip/
 packages/desktop/dist_setup/
 packages/desktop/dist_final/
+packages/desktop/dist_old/
 packages/desktop/build_old/
 packages/desktop/dist/
+packages/desktop/bin/
+
+# Database files
 *.db
 *.db-journal
+business_manager.db
+
+# OS and IDE
 .DS_Store
 .vscode/
 .idea/
@@ -28,8 +43,7 @@ web_bundle_app.js
 evalBundle.js
 evalBundleApp.js
 
-# Debug/test files
-*.png
+# Debug/test/scratch files
 browser_logs.txt
 page_source.html
 puppeteer_debug.js
@@ -40,12 +54,23 @@ check_backend*.js
 check_db*.js
 check_suppliers.js
 mai.py
-business_manager.db
 local.properties
+test-supabase.js
 
+# Mobile debug artifacts
+packages/mobile/android/app/.cxx/
+packages/mobile/*.png
+packages/mobile/*.txt
+packages/mobile/*.log
+packages/mobile/build/
+
+# Deployments
 .vercel
 AppBundle/
+
+# Binaries & installers
 *.exe
 *.nsi
-
-.vercel
+*.apk
+*.aab
+*.asar

@@ -18,6 +18,7 @@ import dynamic from 'next/dynamic';
 
 import SummaryBox from '@/components/SummaryBox';
 import TxRow from '@/components/TxRow';
+import { CorporateHeader, PrintFooter } from '@/components/StatementPrintHeader';
 
 const StatementCharts = dynamic(() => import('@/components/StatementCharts'), { 
     ssr: false,
@@ -94,105 +95,7 @@ function buildTransactions(invoices = [], lang = 'ar') {
 
 const ROWS_PER_PAGE = 10;
 
-// ─── PROFESSIONAL PRINT COMPONENTS ───────────────────
-
-function CorporateHeader({ isRTL, printDate, supplierId }) {
-    const { lang } = useLanguage();
-    const [storeInfo, setStoreInfo] = useState({ name: '', logo: null, slogan: '', address: '', phone: '', email: '', taxId: '' });
-
-    useEffect(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            const user = JSON.parse(savedUser);
-            setStoreInfo({
-                name: user.storeName || (isRTL ? 'اسم مؤسستك' : 'Your Institution Name'),
-                logo: user.storeLogo || null,
-                slogan: user.storeSlogan || (isRTL ? 'لإدارة أموالك بذكاء' : 'Smart Financial Management'),
-                address: user.storeAddress || '',
-                phone: user.storePhone || '',
-                email: user.storeEmail || '',
-                taxId: user.storeTaxId || ''
-            });
-        }
-    }, [isRTL]);
-
-    return (
-        <div className="hidden print:block mb-4 border-b-2 border-slate-900 pb-4">
-            {/* Top row: Very small app branding */}
-            <div className={`flex items-center gap-1.5 mb-2 text-[8px] font-bold text-slate-400 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <img src="/Raed.png" alt="App Logo" className="w-3.5 h-3.5 grayscale opacity-40" />
-                <span>{isRTL ? 'رائد المحاسبي' : 'Raid Accounting'}</span>
-            </div>
-
-            <div className="flex justify-between items-start">
-                {/* Left: Institution Info & Logo */}
-                <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden p-1">
-                        {storeInfo.logo ? (
-                            <img src={storeInfo.logo} alt="Logo" className="w-full h-full object-contain" />
-                        ) : (
-                            <span className="text-[9px] text-slate-400 text-center font-bold">{isRTL ? 'شعار المؤسسة' : 'Institution Logo'}</span>
-                        )}
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                            {storeInfo.name}
-                        </h1>
-                        <div className="flex flex-col text-[9px] font-bold text-slate-600 uppercase tracking-tight">
-                            {storeInfo.address && <span>{isRTL ? 'العنوان: ' : 'Adresse: '}{storeInfo.address}</span>}
-                            {storeInfo.phone && <span>{isRTL ? 'الهاتف: ' : 'Tél: '}{storeInfo.phone}</span>}
-                            {storeInfo.email && <span>{isRTL ? 'الإيميل: ' : 'E-mail: '}{storeInfo.email}</span>}
-                            {storeInfo.taxId && <span className="mt-1 text-slate-900">{isRTL ? 'الرقم الضريبي: ' : 'NIF: '}{storeInfo.taxId}</span>}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right: Statement Title & Details Table */}
-                <div className="flex flex-col items-end gap-3">
-                    <h2 className="text-3xl font-black text-sky-600 uppercase tracking-widest leading-none">
-                        {isRTL ? 'كشف حساب' : (lang === 'fr' ? 'RELEVÉ DE COMPTE' : 'RELEVÉ DE COMPTE')}
-                    </h2>
-                    <table className="text-[10px] font-bold text-slate-800 border-collapse">
-                        <tbody>
-                            <tr>
-                                <td className="pr-4 py-0.5">{isRTL ? 'التاريخ:' : (lang === 'fr' ? 'Date:' : 'Date:')}</td>
-                                <td className="border border-slate-300 px-2 py-0.5 bg-white min-w-[100px]">{printDate}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function PrintFooter({ isRTL, finalBalance, fmt }) {
-    const { lang } = useLanguage();
-    return (
-        <div className="hidden print:flex flex-col items-center mt-12 text-[11px] text-slate-800 break-inside-avoid">
-            <p className="font-bold mb-3">
-                {isRTL 
-                    ? `رصيد الحساب هو ${fmt(Math.abs(finalBalance))} MRU. يرجى تسوية الحسابات المعلقة.`
-                    : (lang === 'fr' 
-                        ? `Le solde du compte est de ${fmt(Math.abs(finalBalance))} MRU. Veuillez régulariser les soldes impayés.`
-                        : `Account balance is ${fmt(Math.abs(finalBalance))} MRU. Please settle outstanding balances.`)}
-            </p>
-            <h4 className="text-base font-black mb-4">
-                {isRTL ? 'شكراً لتعاملكم معنا!' : (lang === 'fr' ? 'Merci de votre confiance !' : 'Merci de votre confiance !')}
-            </h4>
-            
-            <div className="w-full border-t border-slate-300 pt-3 text-center space-y-1 text-[10px]">
-                <p>
-                    {isRTL 
-                        ? 'إذا كان لديك أي استفسارات بخصوص كشف الحساب، يرجى التواصل معنا'
-                        : (lang === 'fr' 
-                            ? 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter'
-                            : 'Pour toute question concernant ce relevé, n\'hésitez pas à nous contacter')}
-                </p>
-            </div>
-        </div>
-    );
-}
+// ─── SUPPLIER PRINT SECTION ───────────────────────────
 
 function SupplierSection({ supplier, fmtDate, isRTL, fmtNumber, summary }) {
     const { lang } = useLanguage();

@@ -28,6 +28,7 @@ router.post('/', async (req, res) => {
                     finalAmount: parseFloat(total),
                     type: 'RETURN',
                     userId: req.userId,
+                    createdAt: date ? new Date(date) : new Date(),
                     items: {
                         create: items.map(item => ({
                             productId: item.productId,
