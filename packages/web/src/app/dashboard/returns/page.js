@@ -435,7 +435,7 @@ export default function ReturnsPage() {
 }
 
 function ReturnCard({ ret, index, isRTL }) {
-    const { fmtNumber } = useLanguage();
+    const { fmtNumber, fmtDate } = useLanguage();
     const date = new Date(ret.createdAt);
     const customerName = ret.customer?.name || (isRTL ? 'عميل نقدي' : 'Client Comptant');
 

@@ -14,7 +14,7 @@ import RaidModal from '@/components/RaidModal';
 import { db } from '@/lib/db';
 
 export default function PurchasesPage() {
-    const { t, isRTL, fmtNumber } = useLanguage();
+    const { t, isRTL, fmtNumber, fmtDate } = useLanguage();
     const [purchases, setPurchases] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [warehouses, setWarehouses] = useState([]);
@@ -589,7 +589,7 @@ export default function PurchasesPage() {
 }
 
 function PurchaseCard({ purchase, index, isRTL }) {
-    const { fmtNumber } = useLanguage();
+    const { fmtNumber, fmtDate } = useLanguage();
     const date = new Date(purchase.date || purchase.createdAt);
     const supplierName = purchase.supplier?.name || '---';
     const initials = supplierName.split(' ').slice(0, 2).map(w => w[0]).join('');
